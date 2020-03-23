@@ -1,0 +1,84 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    background: #FFEE30;
+    height: 100vh;
+}
+
+.contenedor{
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    height: 100vh;
+}
+
+/*+++++++++++  Reglas para el formulario de inicio  +++++++++*/
+.formulario{
+    display: grid;
+    width: 100%;
+    margin: auto;
+    grid-template-columns: repeat(2, 1fr);
+    margin: auto;
+}
+
+.formulario__titulo{
+    grid-column: span 2;
+    margin: 20px auto;
+    border-bottom: 2px solid darkblue;
+}
+
+.formulario__titulo h1{
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 2em;
+}
+
+.formulario__titulo p{
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.formulario__imagen{
+    margin-left: 20px;
+    margin-right: -40px;
+}
+
+.formulario img{
+    width: 100%;
+}
+
+.formulario__campos{
+    padding: 10px;
+}
+
+.formulario__campos label{
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.formulario__campos input[type="button"]{
+    display: block;
+    color: #fff;
+    background-color: #24cf5f;
+    padding: 12px 25px;
+    font-size: 0.75em;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: 0;
+    border-radius: 2px;
+    outline: 0;
+    box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.2);
+    margin: 20px auto;
+
+}
+
+.formulario__campos input[type="text"]{
+    font-size: 1em;
+}
