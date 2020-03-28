@@ -70,7 +70,44 @@ class Player {
   }
 }
 
+class Estate{
+  constructor(name, price, image){
+    this.name = name;
+    this.owner = undefined;
+    this.price = price;
+    this.image = image;
+    this.isMortgage = false;
 
+  }
+
+  mortgage(){
+    console.log("Se realizó la hipoteca");
+  }
+
+  withdrawMortgage(){
+    //TODO
+    console.log("Se levantó la hipoteca");
+  }
+}
+
+class Title extends Estate{
+  constructor(name, price, color, baseRent, rentWithAHouse, rentWithTwoHouses, rentWhitTreeHouses, rentWhitACastle, image){
+    super(name, price, image);
+    this.color = color;
+    this.rent = 0;
+    this.baseRent = baseRent;
+    this.rentWithAHouse = rentWithAHouse;
+    this.rentWithTwoHouses = rentWithTwoHouses;
+    this.rentWhitTreeHouses = rentWhitTreeHouses;
+    this.rentWhitACastle = rentWhitACastle;
+    this.houses = [];
+    this.castle = undefined; 
+  }
+
+  mortgage(){
+    console.log("Montando hipoteca desde titulo")
+  }
+}
 
 /********************************************************************
  **    A PARTIR DE AQUI SE DEFINEN LAS FUNCIONES GLOBALES          **
@@ -83,10 +120,110 @@ function createBanker(e){
     bankerName = bankerName.trim();
 
     if(bankerName.length!==0){
+        createTitles();
+        
+        let player = new Player(bankerName);
+        player.cashDeposit(INITIAL_BALANCE);
+        players.push(player);
+        money -= INITIAL_BALANCE;
+
         localStorage.bankerName = bankerName;
+        localStorage.titles = JSON.stringify(titles);
+        localStorage.money = money;
+        localStorage.players = JSON.stringify(players);
         localStorage.gameSaved = true;
+
         location.href = "./principal.html";
     }
+}
+
+//Este metodo solo se ejecuta al cear al banquero
+function createTitles(){
+  titles = [];
+  /* Titulos de la zona amarilla */
+  titles.push(new Title("Tierra de la Fantasía", 400, "#FFF228", 100, 200, 300,600, 900, "title_1.jpg"));
+  titles.push(new Title("Cielos de Dumbo", 600, "#FFF228", 100, 200, 300, 600, 900, "title_2.jpg"));
+  titles.push(new Title("Villa de Pinocho", 800, "#FFF228", 100, 300, 600, 1200, 1800, "title_3.jpg"));
+
+  /*Titulos de la zona roja */
+  titles.push(new Title("Lagos de Peter Pan", 1000, "#FF0901", 100, 500, 900, 1800, 2700, "title_4.jpg"));
+  titles.push(new Title("País de las Maravillas", 1200, "#FF0901", 100, 500, 900, 1800, 2700, "title_5.jpg"));
+  titles.push(new Title("Mina de los siete enanitos", 1200, "#FF0901", 200, 600, 1200, 2400, 3600, "title_6.jpg"));
+
+  /*Titulos de la zona ocre */
+  titles.push(new Title("Desierto Apache", 1400, "#FFBA20", 300, 800, 1500, 3000, 4500, "title_7.jpg"));
+  titles.push(new Title("Isla de Tom Sawyer", 1600, "#FFBA20", 300, 800, 1500, 3000, 4500, "title_8.jpg"));
+  titles.push(new Title("Pobaldo indio", 1800, "#FFBA20", 300, 900, 1800, 3600, 5400, "title_9.jpg"));
+
+  /*Titulos de la zona verde*/
+  titles.push(new Title("Desiertos de la diligencia", 1800, "#2C8000", 400, 1100, 2100, 4200, 6300, "title_10.jpg"));
+  titles.push(new Title("Rutas del tren Santa Fe", 2000, "#2C8000", 400, 1100, 2100, 4200, 6300, "title_11.jpg"));
+  titles.push(new Title("Región Cabañas", 2200, "#2C8000", 400, 1200, 2400, 4800, 7200, "title_12.jpg"));
+
+  /* Titulos de la zona morada*/
+  titles.push(new Title("Altos del monorriel", 2200, "#5113AD", 500, 1400, 2700, 5400, 8100, "title_13.jpg"));
+  titles.push(new Title("Glaciares del teleferico", 2400, "#5113AD", 500, 1400, 2700, 5400, 8100, "title_14.jpg"));
+  titles.push(new Title("Parques de los Astrojet", 2600, "#5113AD", 500, 1500, 3000, 6000, 9000, "title_15.jpg"));
+
+  /* Titulos de la zona naranja*/
+  titles.push(new Title("Playa de los botes del futuro", 2800, "#FFB012", 600, 1700, 3300, 6600, 9900, "title_16.jpg"));
+  titles.push(new Title("Puentes de la autopista", 3000, "#FFB012", 600, 1700, 3300, 6600, 9900, "title_17.jpg"));
+  titles.push(new Title("Imperio del Nautilus", 3000, "#FFB012", 600, 1800, 3600, 7200, 10800, "title_18.jpg"));
+
+  /* Titulos de la zona azul marino*/
+  titles.push(new Title("Muelle jungla", 3200, "#36DEF0", 700, 2000, 3900, 7800, 11700, "title_19.jpg"));
+  titles.push(new Title("Valle de los leones", 3400, "#36DEF0", 700, 2000, 3900, 7800, 11700, "title_20.jpg"));
+  titles.push(new Title("Ciénaga de los hipopotamos", 3600, "#36DEF0", 700, 2100, 4200, 8400, 12600, "title_21.jpg"));
+
+  /* Titulos de la zona rosada */
+  titles.push(new Title("Valle de las jirafas", 3600, "pink", 800, 2300, 4500, 9000, 13500, "title_22.jpg"));
+  titles.push(new Title("Valle de los elefantes", 3800, "pink", 800, 2300, 4500, 9000, 13500, "title_23.jpg"));
+  titles.push(new Title("Aldea Caníbal", 3600, "pink", 800, 2400, 4800, 9600, 14400, "title_24.jpg"));
+}
+
+function loadTitles(){
+  titles = [];
+  let temporal = JSON.parse(localStorage.titles);
+
+  for(let i = 0; i < temporal.length; i++){
+    let item = temporal[i];
+    titles.push(new Title(item.name, item.price, item.color, item.baseRent, item.rentWithAHouse,
+      item.rentWithTwoHouses, item.rentWhitTreeHouses, item.rentWhitACastle, item.image));
+
+  }
+}
+
+function printTitles(){
+  loadTitles();
+  let result = ``;
+  for(let i = 0; i < titles.length; i++){
+    let t = titles[i];
+    let owner = typeof t.owner === 'undefined' ? "Banco" : t.owner.name;
+    let castle = typeof t.castle === 'undefined' ? 0 : 1;
+    let foreground = "black"
+
+    if(t.color === "#FF0901" || t.color === "#2C8000" || t.color === "#5113AD") foreground = "white";
+
+    let division = `<div class="title-card" style="background-color: ${t.color}; color: ${foreground};">
+                      <img src="img/titles/${t.image}" alt="${t.name}" class="title-card__img">
+                      <div class="title-card__body">
+                        <h2 class="title-card__title">${t.name}</h2>
+                        <p>Propietario: <span>${owner}</span></p>
+                        <p>Precio: <span>$ ${t.price}</span></p>
+                        <p>Casas: <span>${t.houses.length}</span></p>
+                        <p>Castillo: <span>${castle}</span></p>
+                        <p>Alquiler: <span>$ ${t.rent}</span></p>
+                        <div class="button">
+                          <button type="button" class="btn btn-success">Vender</button>
+                          <button type="button" class="btn btn-primary">Subastar</button>
+                          <button type="button" class="btn btn-warning">Hipotecar</button>
+                        </div>
+                      </div>
+                    </div>`;
+    result += division;
+  }
+
+  document.getElementById('titlesView').innerHTML = result;
 }
 
 function loadState1(){
@@ -99,6 +236,7 @@ function loadState1(){
     //Escribo el nombre del banquero
     document.getElementById('bankerName').innerText="Banquero: " + localStorage.bankerName;
 
+    printTitles();
 
     // document.body.innerHTML = `<h1> Bienvenido ${localStorage.bankerName} </h1>
     // <input type="button" value="Reiniciar" id="reiniciar"/>`;
@@ -111,12 +249,12 @@ function loadState1(){
 /******************************************************************
     A PARTIR DE AQUI SE EMPIEZAN A EJECUTAR LAS FUNCIONES
 ********************************************************************/
+var unTitulo = new Title("Isla de Tom Sawyer", 1600, "orange", 300, 800, 1500, 3000, 4500);
 window.addEventListener("load", () => {
   if (ACTUAL_LOCATION.includes("index.html")) {
     if (typeof localStorage.gameSaved !== "undefined") {
       location.href = "./principal.html";
     }
-
     console.log("No existen datos de guardado");
     document.getElementById('index__button').addEventListener('click', createBanker);
   } else {
