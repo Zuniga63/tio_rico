@@ -70,6 +70,8 @@ class Player {
   }
 }
 
+
+
 /********************************************************************
  **    A PARTIR DE AQUI SE DEFINEN LAS FUNCIONES GLOBALES          **
  *********************************************************************/
@@ -88,12 +90,22 @@ function createBanker(e){
 }
 
 function loadState1(){
-    document.body.innerHTML = `<h1> Bienvenido ${localStorage.bankerName} </h1>
-    <input type="button" value="Reiniciar" id="reiniciar"/>`;
-    document.getElementById("reiniciar").addEventListener('click', ()=>{
-        localStorage.clear();
-        location.href = "./index.html";
-    })
+    //Primero habilito el boton para reiniciar
+    document.getElementById('restar').addEventListener('click', ()=>{
+      localStorage.clear();
+      location.href = "./index.html";
+    });
+
+    //Escribo el nombre del banquero
+    document.getElementById('bankerName').innerText="Banquero: " + localStorage.bankerName;
+
+
+    // document.body.innerHTML = `<h1> Bienvenido ${localStorage.bankerName} </h1>
+    // <input type="button" value="Reiniciar" id="reiniciar"/>`;
+    // document.getElementById("reiniciar").addEventListener('click', ()=>{
+    //     localStorage.clear();
+    //     location.href = "./index.html";
+    // })
 }
 
 /******************************************************************

@@ -1,12 +1,159 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Banco Mac Pato</title>
+    <!-- CDN de bootstrap -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="./css/principalstyle.css">
+  </head>
+  <body>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+      <a href="principal.html" class="navbar-brand">Banco Mac pato</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#"
+              >Home <span class="sr-only">(current)</span></a
+            >
+          </li>
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Jugadores
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="#">Consignar</a>
+              <a class="dropdown-item" href="#">Retirar</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Libro maestro</a>
+            </div>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Propiedades
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="#">Títulos</a>
+              <a class="dropdown-item" href="#">Líneas</a>
+              <a class="dropdown-item" href="#">Pasos</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Libro inmobiliario</a>
+            </div>
+          </li>
+          
+        </ul>
+
+        <button class="btn btn-outline-danger my-2 my-lg-0" id="restar">
+            Reiniciar
+          </button>
+    </nav>
+
+    <div class="alert alert-primary bankerName">
+        <h1 id="bankerName">Bienvenido Andrés</h1>
+        <div class="container">
+            <div class="row">
+                <div class="col"><p id="bankerMoney">Dinero: $270,000</p></div>
+                <div class="col"><p id="bankerHouses">Casas: 30</p></div>
+                <div class="col"><p id="bankerCastles">Castillos: 10</p></div>
+            </div>
+        </div>
+        <div class="container p-0 pr-1">
+            <div class="row">
+                <div class="col-5"><p id="bankerTitles">Titulos: 30</p></div>
+                <div class="col"><p id="bankerCustomsPost">Pasos: 4</p></div>
+                <div class="col"><p id="bankerLines">Lineas: 4</p></div>
+            </div>
+        </div>
+    </div>
+
+    <section id="titlesView" class="titlesView">
+        <div class="title-card">
+            <img src="img/titles/Aldea caníbal.jpg" alt="Aldea canibal" class="title-card__img">
+            <div class="title-card__body">
+                <h2 class="title-card__title">Aldea canibal</h2>
+                <p>Propietario: <span>Banco</span></p>
+                <p>Precio: <span>$ 1600</span></p>
+                <p>Casas: <span>0</span></p>
+                <p>Castillo: <span>0</span></p>
+                <p>Alquiler: <span>$300</span></p>
+                <div class="button">
+                    <button type="button" class="btn btn-success">Vender</button>
+                    <button type="button" class="btn btn-primary">Subastar</button>
+                    <button type="button" class="btn btn-warning">Hipotecar</button>
+                </div>
+            </div>
+        </div>
+        <div class="title-card">
+            <img src="img/titles/Altos del monoriel.jpg" alt="Aldea canibal" class="title-card__img">
+            <div class="title-card__body">
+                <h2 class="title-card__title">Altos del monoriel</h2>
+                <p>Propietario: <span>Banco</span></p>
+                <p>Precio: <span>$ 1600</span></p>
+                <p>Casas: <span>0</span></p>
+                <p>Castillo: <span>0</span></p>
+                <p>Alquiler: <span>$300</span></p>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+    <!-- script de bootstrap -->
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
+
     <script src="./js/app.js"></script>
-</body>
+  </body>
 </html>

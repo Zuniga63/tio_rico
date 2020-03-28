@@ -1,0 +1,45 @@
+
+.bankerName{
+    margin-top: 56px;
+    margin-bottom: 0;
+    text-align: center;
+    padding: 12px 0;
+}
+
+.bankerName h1{
+    font-size: 2rem;
+    width: 100%;
+}
+
+.title-card{
+    width: 95%;
+    margin: 0 auto 20px auto;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    background: #E87923;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.title-card__img{
+    width: 100%;
+    padding: 2px;
+    border: 1px solid black;
+    box-shadow: 2px 2px 10px #666;
+}
+
+.title-card__body{
+    padding-left: 10px;
+}
+
+.title-card:first-child{
+    margin-top: 20px;
+}
+
+.title-card__body p{
+    margin: 0;
+}
+
+.title-card__body button{
+    margin: 5px;
+}
