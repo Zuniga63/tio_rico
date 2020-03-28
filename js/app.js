@@ -83,7 +83,7 @@ function createBanker(e){
     if(bankerName.length!==0){
         localStorage.bankerName = bankerName;
         localStorage.gameSaved = true;
-        location.href = "../principal.html";
+        location.href = "./principal.html";
     }
 }
 
