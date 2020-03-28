@@ -92,7 +92,7 @@ function loadState1(){
     <input type="button" value="Reiniciar" id="reiniciar"/>`;
     document.getElementById("reiniciar").addEventListener('click', ()=>{
         localStorage.clear();
-        location.href = "index.html";
+        location.href = "./index.html";
     })
 }
 
@@ -102,7 +102,7 @@ function loadState1(){
 window.addEventListener("load", () => {
   if (ACTUAL_LOCATION.includes("index.html")) {
     if (typeof localStorage.gameSaved !== "undefined") {
-      location.href = "../principal.html";
+      location.href = "./principal.html";
     }
 
     console.log("No existen datos de guardado");
