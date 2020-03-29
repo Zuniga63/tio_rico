@@ -32,6 +32,7 @@
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
             <a class="nav-link" href="#"
+                id="showHome"
               >Home <span class="sr-only">(current)</span></a
             >
           </li>
@@ -48,10 +49,10 @@
               Jugadores
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">Consignar</a>
-              <a class="dropdown-item" href="#">Retirar</a>
+              <a class="dropdown-item" href="#" id="showConsig">Consignar</a>
+              <a class="dropdown-item" href="#" id="showRetiros">Retirar</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Libro maestro</a>
+              <a class="dropdown-item" href="#" id="showPlayers">Libro maestro</a>
             </div>
           </li>
 
@@ -68,9 +69,9 @@
               Propiedades
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">Títulos</a>
-              <a class="dropdown-item" href="#">Líneas</a>
-              <a class="dropdown-item" href="#">Pasos</a>
+              <a class="dropdown-item" href="#" id="showTitles">Títulos</a>
+              <a class="dropdown-item" href="#" id="showLines">Líneas</a>
+              <a class="dropdown-item" href="#" id="showCustoms">Pasos</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="#">Libro inmobiliario</a>
             </div>
@@ -101,7 +102,19 @@
         </div>
     </div>
 
-    <section id="titlesView" class="titlesView">
+    <section id="home">
+        <h1>Estas en la seccion principal</h1>
+        <p>Actualmente en construccion</p>
+    </section>
+
+    
+
+    <section id="playersView" class="playersView ocultar">
+        <h1>Estas en la seccion de jugadores</h1>
+        <p>Seccion en construccion</p>
+    </section>
+
+    <section id="titlesView" class="titlesView ocultar">
         <!-- <div class="title-card" style="background-color: red;">
             <img src="img/titles/Aldea caníbal.jpg" alt="Aldea canibal" class="title-card__img">
             <div class="title-card__body">
@@ -131,7 +144,25 @@
         </div> -->
     </section>
 
+    <section id="linesView" class="linesView ocultar">
+        <h1>Estas en la seccion de lineas de transporte</h1>
+        <p>Seccion en construccion</p>
+    </section>
 
+    <section id="customsView" class="customView ocultar">
+        <h1>Estas en la seccion de pasos aduaneros</h1>
+        <p>Seccion en construccion</p>
+    </section>
+
+    <section id="consignationView" class="consignationView ocultar">
+        <h1>Estas en la seccion para hacer consignaciones</h1>
+        <p>Seccion en construccion</p>
+    </section>
+
+    <section id="retirosView" class="retirosView ocultar">
+        <h1>Estas en la seccion para hacer retiros</h1>
+        <p>Seccion en construccion</p>
+    </section>
 
 
 
