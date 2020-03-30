@@ -104,13 +104,17 @@
 
     <section id="home">
         <h2>Home</h1>
-          <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Nombre del nuevo juagdor" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0">Agregar</button>
-          </form>
+          <div class="form-inline my-2 my-lg-0">
+            <input id="homeNewPlayerName" class="form-control mr-sm-2" type="search" placeholder="Nombre del nuevo juagdor" aria-label="Search">
+            <button id="homeAddPlayer" class="btn btn-outline-success my-2 my-sm-0">Agregar</button>
+          </div>
+          <div id="homeMessage"></div>
         <div id="players-cards">
           <div class="player-card">
-            <h3 class="player-card__name">Nombre del jugador</h3>
+            <div class="player-card__title">
+              <h3>Nombre del jugador</h3>
+              <p>Numero de cuenta: 0000</p>
+            </div>
             <div class="player-card__money">
               <p class="player-card__money-label">Dinero</p>
               <p class="player-card__money-money">$ 0.00</p>
@@ -127,7 +131,10 @@
           </div>
   
           <div class="player-card">
-            <h3 class="player-card__name">Nombre del jugador</h3>
+            <div class="player-card__title">
+              <h3>Nombre del jugador</h3>
+              <p>Numero de cuenta: 0000</p>
+            </div>
             <div class="player-card__money">
               <p class="player-card__money-label">Dinero</p>
               <p class="player-card__money-money">$ 0.00</p>

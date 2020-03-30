@@ -72,13 +72,15 @@
     padding: 0;
 }
 
-.player-card__name{
+.player-card__title{
     grid-column: 1/-1;
     text-align: center;
     padding-bottom: 10px;
     border-bottom: 3px solid black;
     margin-bottom: 20px;
 }
+
+
 
 .player-card__money{
     grid-column: span 4;

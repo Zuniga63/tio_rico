@@ -23,6 +23,8 @@ class Player {
     this.titles = [];
     this.customsPosts = [];
     this.lines = [];
+    this.houses = [];
+    this.castles = [];
   }
 
   cashDeposit(money) {
@@ -137,20 +139,20 @@ class Bank {
     this.houses = [];
     this.castles = [];
     this.createObjets();
-    
-    if(typeof bankerName !== 'undefined'){
+
+    if (typeof bankerName !== 'undefined') {
       this.money = BASE_MONEY;
       this.bankerName = bankerName;
       console.log(this.players);
       this.newPlayer(bankerName);
 
-    }else if(typeof localStorage.miBank !== 'undefined'){
+    } else if (typeof localStorage.miBank !== 'undefined') {
       let temporal = JSON.parse(localStorage.miBank);
       this.money = temporal.money;
       this.bankerName = temporal.bankerName;
 
       //Se cargan en memoria los jugadores
-      for(let i = 0; i < temporal.players.length; i++){
+      for (let i = 0; i < temporal.players.length; i++) {
         let newPlayer = new Player(i, temporal.players[i].name, temporal.players[i].acount);
         newPlayer.money = temporal.players[i].money;
         newPlayer.mortgage = temporal.players[i].mortgage;
@@ -163,7 +165,7 @@ class Bank {
       //TODO: hacer efectivas las hipotecas
 
     }
-    
+
   }
 
   createObjets() {
@@ -413,15 +415,15 @@ class Bank {
     this.customsPosts.push(new CustomsPost(0, "Paso Dominios de Pedro el malo", 1000, 200, 'customs_1.jpg'));
     this.customsPosts.push(new CustomsPost(1, "Paso Caverna del Arco Iris", 2000, 400, 'customs_2.jpg'));
     this.customsPosts.push(new CustomsPost(2, "Paso el Matterhorn", 3000, 600, 'customs_3.jpg'));
-    this.customsPosts.push(new CustomsPost(3,"Paso Aduanas del rio", 4000, 800, 'customs_4.jpg'));
+    this.customsPosts.push(new CustomsPost(3, "Paso Aduanas del rio", 4000, 800, 'customs_4.jpg'));
 
   }
 
-  createBuildings(){
+  createBuildings() {
     this.houses = [];
     this.castles = [];
-    for(let i = 0; i<30; i++){
-      if(i<10){
+    for (let i = 0; i < 30; i++) {
+      if (i < 10) {
         this.castles.push(new Castle(i, 3500));
       }
       this.houses.push(new House(i, 1000));
@@ -429,11 +431,11 @@ class Bank {
 
   }
 
-  newPlayer(playerName){
+  newPlayer(playerName) {
     //Lo primero es definir que el nombre del jugador sea unico
     let uniqueName = true;
-    for(let i = 0; i < this.players.length; i++){
-      if(this.players[i].name.toUpperCase()===playerName.toUpperCase()){
+    for (let i = 0; i < this.players.length; i++) {
+      if (this.players[i].name.toUpperCase() === playerName.toUpperCase()) {
         uniqueName = false;
         return false;
       }
@@ -483,7 +485,7 @@ function createBanker(e) {
   bankerName = bankerName.trim();
   console.log(bankerName)
   if (bankerName.length !== 0) {
-    
+
     console.log(bankerName);
     miBank = new Bank(bankerName);
 
@@ -585,6 +587,90 @@ function printCustomsPots() {
   document.getElementById("customsView").innerHTML = result;
 }
 
+function updateMainCard(){
+  document.getElementById("bankerName").innerText = `Banquero: ${miBank.bankerName}`;
+  document.getElementById("bankerMoney").innerHTML = `Dinero: $ ${miBank.money}`;
+  document.getElementById("bankerHouses").innerHTML = `Casas: ${miBank.houses.length}`;
+  document.getElementById("bankerCastles").innerHTML = `Castillos: ${miBank.castles.length}`;
+  document.getElementById("bankerTitles").innerHTML = `Titulos: ${miBank.titles.length}`;
+  document.getElementById("bankerCustomsPost").innerHTML = `Pasos: ${miBank.customsPosts.length}`;
+  document.getElementById("bankerLines").innerHTML = `Lineas: ${miBank.lines.length}`;
+}
+
+function updateHomePlayersCard(){
+  let htmlCode = ``;
+  for(let i = 0; i < miBank.players.length; i++){
+    let player = miBank.players[i];
+
+    htmlCode += `<div class="player-card">
+                  <div class="player-card__title">
+                    <h3>${player.name}</h3>
+                    <p>Numero de cuenta: ${player.acount}</p>
+                  </div>
+
+                  <div class="player-card__money">
+                    <p class="player-card__money-label">Dinero</p>
+                    <p class="player-card__money-money">$ ${player.money}</p>
+                  </div>
+
+                  <div class="player-card__objects">
+                    <p>Titulos: ${player.titles.length}</p>
+                    <p>Casas: ${player.houses.length}</p>
+                    <p>Castillos: ${player.castles.length}</p>
+                  </div>
+
+                  <button name="${player.name}" class="payment-salary btn btn-primary">Pagar salario</button>
+                  <button name="${player.name}" class="cashDesposit btn btn-success">Hacer Deposito</button>
+                  <button name="${player.name}" class="cashWithdrawal btn btn-danger">Hacer Retiro</button>
+                </div>`;
+  }
+
+  document.getElementById('players-cards').innerHTML = htmlCode;
+}
+
+/*Esta función se debe ejecutar cuando el usuario desde la vista de home 
+  le da clic al botón agregar y entonces se procede a hacer todas las validaciones 
+  necesarias para agregar al nuevo jugador y hacer las actualizaciones pertinentes */
+function createNewPlayer() {
+  let playerName = document.getElementById('homeNewPlayerName').value.trim();
+  let message = ``; //Mensaje que aparecerá en la página
+
+  if (typeof playerName === 'undefined' || playerName.length === 0) {
+    message = createAlertMessage("Se debe ingresar un nombre valido", "alert-danger");
+  } else {
+    //Al intentar crear el nuevo jugador si el nombre está repetido retorna false
+    if (miBank.newPlayer(playerName)) {
+      //Se limpia el campo de ingreso de nuevo jugador
+      document.getElementById('homeNewPlayerName').value = '';
+      //Actualizo el localstorage concerniente al banco
+      localStorage.miBank = JSON.stringify(miBank);
+      //Actualizo la tarje principal
+      updateMainCard();
+      updateHomePlayersCard();
+      //Creo el mensaje de que todo va correcto
+      let textTemporal = `El jugador <strong>${playerName}</strong> fue gregado`;
+      message = createAlertMessage(textTemporal, "alert-success");
+
+    } else {
+      let textTemporal = `El nombre <strong>${playerName}</strong> ya está en uso`;
+      message = createAlertMessage(textTemporal, "alert-warning");
+    }
+  }
+  //A partir de aqí se encuntan lo metodos que actualizan la vista
+  document.getElementById('homeMessage').innerHTML = message;
+}
+
+function createAlertMessage(message, type){
+  let result =  `<div class="alert ${type} alert-dismissible fade show" role="alert">
+                  ${message} 
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>`;
+
+  return result;
+}
+
 function loadState1() {
   //Primero habilito el boton para reiniciar
   document.getElementById("restar").addEventListener("click", () => {
@@ -592,19 +678,14 @@ function loadState1() {
     location.href = "./index.html";
   });
 
+  document.getElementById('homeAddPlayer').addEventListener('click', createNewPlayer);
+
   //Lo siguiente es codigo temporal
   //Primero rescato el objeto del local storage
   miBank = new Bank();
 
-  document.getElementById("bankerName").innerText =
-    "Banquero: " + miBank.bankerName;
-  document.getElementById("bankerMoney").innerHTML = `Dinero: $ ${miBank.money}`;
-  document.getElementById("bankerHouses").innerHTML = `Casas: ${miBank.houses.length}`;
-  document.getElementById("bankerCastles").innerHTML = `Castillos: ${miBank.castles.length}`;
-  document.getElementById("bankerTitles").innerHTML = `Titulos: ${miBank.titles.length}`;
-  document.getElementById("bankerCustomsPost").innerHTML = `Pasos: ${miBank.customsPosts.length}`;
-  document.getElementById("bankerLines").innerHTML = `Lineas: ${miBank.lines.length}`;
-  
+  updateMainCard();
+  updateHomePlayersCard();
   printTitles();
   printLines();
   printCustomsPots();
@@ -646,9 +727,9 @@ window.addEventListener("load", () => {
     document.getElementById("index__button").addEventListener("click", createBanker);
 
   } else {
-    if(typeof localStorage.miBank !== 'undefined'){
+    if (typeof localStorage.miBank !== 'undefined') {
       loadState1();
-    } else{
+    } else {
       localStorage.clear();
       location.href = "./index.html";
     }
