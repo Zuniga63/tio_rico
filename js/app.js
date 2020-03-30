@@ -1,25 +1,14 @@
 //Constantes que se guardan al cargar la pagina
-const ACTUAL_LOCATION = location.href;          //La utilizo para saber en que pagina estoy en cada momento
-const BASE_MONEY = 300000;                      //Es todo el dinero que puede estar en circulacion
-const SALARY = 2000;                            //Es el dinero que se le paga a un jugador cuando llega a la estacion
-const INITIAL_BALANCE = 26400;                  //Es el dinero que se le entrega al jugador cuando es creado
+const ACTUAL_LOCATION = location.href;    //La utilizo para saber en que pagina estoy en cada momento
+const BASE_MONEY = 300000;                //Es todo el dinero que puede estar en circulacion
+const SALARY = 2000;                      //Es el dinero que se le paga a un jugador cuando llega a la estacion
+const INITIAL_BALANCE = 26400;            //Es el dinero que se le entrega al jugador cuando es creado
 
 //Se declaran las variables que estan relacionadas con las vista en la seccion principal
 var actualView;
 
 //Se declaran las variables que se van a estar utilizando en el juego
 var miBank;
-// var money,                //Es el dinero que el banco posee para poder comprar casas, titulos y pagar sueldos.
-//   players = [],         //Es el listado de jugadores, en su interior debe poseer objetos de tipo Player
-//   titles = [],          //Es el listado con todos los titulos a los cuales se les pueden edificar casas y castillos
-//   customsPosts = [],     //Es el listado con todos los pasos aduaneros que en total son cuatro y cobran pejaes
-//   lines = [],           //Es el listado con todas las lineas de transporte del juego
-//   houses = [],          //Cada casa posee un identificador unico, un propietario y una propiedad
-//   castles = [];         //Igual que con las casas solo que con castillos
-
-/*  customs: son pasos de aduana del juego en total son cuatro
-    lines: sistema de trasporte del tablero
-*/
 
 /********************************************************************
  **    A PARTIR DE AQUI DECLARO LOS OBJETOS DE LA APLICACION       **
@@ -494,24 +483,10 @@ function createBanker(e) {
   bankerName = bankerName.trim();
   console.log(bankerName)
   if (bankerName.length !== 0) {
-    // createTitles();
-    // createLines();
-    // createCustomsPost();
+    
     console.log(bankerName);
     miBank = new Bank(bankerName);
-    
 
-    // let player = new Player(bankerName);
-    // player.cashDeposit(INITIAL_BALANCE);
-    // players.push(player);
-    // money -= INITIAL_BALANCE;
-
-    // localStorage.bankerName = bankerName;
-    // localStorage.titles = JSON.stringify(titles);
-    // localStorage.lines = JSON.stringify(lines);
-    // localStorage.customsPost = JSON.stringify(customsPots);
-    // localStorage.money = money;
-    // localStorage.players = JSON.stringify(players);
     localStorage.miBank = JSON.stringify(miBank);
     localStorage.gameSaved = true;
 
@@ -519,400 +494,6 @@ function createBanker(e) {
   }
 }
 
-//Este metodo solo se ejecuta al cear al banquero
-function createTitles() {
-  titles = [];
-  /* Titulos de la zona amarilla */
-  titles.push(new Title("Tierra de la Fantasía", 400, "#FFF228", 100, 200, 300, 600, 900, "title_1.jpg"));
-  titles.push(
-    new Title(
-      "Cielos de Dumbo",
-      600,
-      "#FFF228",
-      100,
-      200,
-      300,
-      600,
-      900,
-      "title_2.jpg"
-    )
-  );
-  titles.push(
-    new Title(
-      "Villa de Pinocho",
-      800,
-      "#FFF228",
-      100,
-      300,
-      600,
-      1200,
-      1800,
-      "title_3.jpg"
-    )
-  );
-
-  /*Titulos de la zona roja */
-  titles.push(
-    new Title(
-      "Lagos de Peter Pan",
-      1000,
-      "#FF0901",
-      100,
-      500,
-      900,
-      1800,
-      2700,
-      "title_4.jpg"
-    )
-  );
-  titles.push(
-    new Title(
-      "País de las Maravillas",
-      1200,
-      "#FF0901",
-      100,
-      500,
-      900,
-      1800,
-      2700,
-      "title_5.jpg"
-    )
-  );
-  titles.push(
-    new Title(
-      "Mina de los siete enanitos",
-      1200,
-      "#FF0901",
-      200,
-      600,
-      1200,
-      2400,
-      3600,
-      "title_6.jpg"
-    )
-  );
-
-  /*Titulos de la zona ocre */
-  titles.push(
-    new Title(
-      "Desierto Apache",
-      1400,
-      "#FFBA20",
-      300,
-      800,
-      1500,
-      3000,
-      4500,
-      "title_7.jpg"
-    )
-  );
-  titles.push(
-    new Title(
-      "Isla de Tom Sawyer",
-      1600,
-      "#FFBA20",
-      300,
-      800,
-      1500,
-      3000,
-      4500,
-      "title_8.jpg"
-    )
-  );
-  titles.push(
-    new Title(
-      "Pobaldo indio",
-      1800,
-      "#FFBA20",
-      300,
-      900,
-      1800,
-      3600,
-      5400,
-      "title_9.jpg"
-    )
-  );
-
-  /*Titulos de la zona verde*/
-  titles.push(
-    new Title(
-      "Desiertos de la diligencia",
-      1800,
-      "#2C8000",
-      400,
-      1100,
-      2100,
-      4200,
-      6300,
-      "title_10.jpg"
-    )
-  );
-  titles.push(
-    new Title(
-      "Rutas del tren Santa Fe",
-      2000,
-      "#2C8000",
-      400,
-      1100,
-      2100,
-      4200,
-      6300,
-      "title_11.jpg"
-    )
-  );
-  titles.push(
-    new Title(
-      "Región Cabañas",
-      2200,
-      "#2C8000",
-      400,
-      1200,
-      2400,
-      4800,
-      7200,
-      "title_12.jpg"
-    )
-  );
-
-  /* Titulos de la zona morada*/
-  titles.push(
-    new Title(
-      "Altos del monorriel",
-      2200,
-      "#5113AD",
-      500,
-      1400,
-      2700,
-      5400,
-      8100,
-      "title_13.jpg"
-    )
-  );
-  titles.push(
-    new Title(
-      "Glaciares del teleferico",
-      2400,
-      "#5113AD",
-      500,
-      1400,
-      2700,
-      5400,
-      8100,
-      "title_14.jpg"
-    )
-  );
-  titles.push(
-    new Title(
-      "Parques de los Astrojet",
-      2600,
-      "#5113AD",
-      500,
-      1500,
-      3000,
-      6000,
-      9000,
-      "title_15.jpg"
-    )
-  );
-
-  /* Titulos de la zona naranja*/
-  titles.push(
-    new Title(
-      "Playa de los botes del futuro",
-      2800,
-      "#FFB012",
-      600,
-      1700,
-      3300,
-      6600,
-      9900,
-      "title_16.jpg"
-    )
-  );
-  titles.push(
-    new Title(
-      "Puentes de la autopista",
-      3000,
-      "#FFB012",
-      600,
-      1700,
-      3300,
-      6600,
-      9900,
-      "title_17.jpg"
-    )
-  );
-  titles.push(
-    new Title(
-      "Imperio del Nautilus",
-      3000,
-      "#FFB012",
-      600,
-      1800,
-      3600,
-      7200,
-      10800,
-      "title_18.jpg"
-    )
-  );
-
-  /* Titulos de la zona azul marino*/
-  titles.push(
-    new Title(
-      "Muelle jungla",
-      3200,
-      "#36DEF0",
-      700,
-      2000,
-      3900,
-      7800,
-      11700,
-      "title_19.jpg"
-    )
-  );
-  titles.push(
-    new Title(
-      "Valle de los leones",
-      3400,
-      "#36DEF0",
-      700,
-      2000,
-      3900,
-      7800,
-      11700,
-      "title_20.jpg"
-    )
-  );
-  titles.push(
-    new Title(
-      "Ciénaga de los hipopotamos",
-      3600,
-      "#36DEF0",
-      700,
-      2100,
-      4200,
-      8400,
-      12600,
-      "title_21.jpg"
-    )
-  );
-
-  /* Titulos de la zona rosada */
-  titles.push(
-    new Title(
-      "Valle de las jirafas",
-      3600,
-      "pink",
-      800,
-      2300,
-      4500,
-      9000,
-      13500,
-      "title_22.jpg"
-    )
-  );
-  titles.push(
-    new Title(
-      "Valle de los elefantes",
-      3800,
-      "pink",
-      800,
-      2300,
-      4500,
-      9000,
-      13500,
-      "title_23.jpg"
-    )
-  );
-  titles.push(
-    new Title(
-      "Aldea Caníbal",
-      3600,
-      "pink",
-      800,
-      2400,
-      4800,
-      9600,
-      14400,
-      "title_24.jpg"
-    )
-  );
-}
-
-// function createLines() {
-//   lines = [];
-
-//   lines.push(new Line('Línea Tierra de la fantasía', 2000, 300, 'line_1.jpg'));
-//   lines.push(new Line('Línea Tierra de la frontera', 2000, 300, 'line_2.jpg'));
-//   lines.push(new Line('Línea Tierra del futuro', 2000, 300, 'line_3.jpg'));
-//   lines.push(new Line('Línea Tierra de la aventura', 2000, 300, 'line_4.jpg'));
-// }
-
-// function createCustomsPost() {
-//   customsPots = [];
-
-//   customsPots.push(new CustomsPost("Paso Dominios de Pedro el malo", 1000, 200, 'customs_1.jpg'));
-//   customsPots.push(new CustomsPost("Paso Caverna del Arco Iris", 2000, 400, 'customs_2.jpg'));
-//   customsPots.push(new CustomsPost("Paso el Matterhorn", 3000, 600, 'customs_3.jpg'));
-//   customsPots.push(new CustomsPost("Paso Aduanas del rio", 4000, 800, 'customs_4.jpg'));
-
-// }
-
-function loadTitles() {
-  titles = [];
-  let temporal = JSON.parse(localStorage.titles);
-
-  for (let i = 0; i < temporal.length; i++) {
-    let item = temporal[i];
-    titles.push(
-      new Title(
-        item.name,
-        item.price,
-        item.color,
-        item.baseRent,
-        item.rentWithAHouse,
-        item.rentWithTwoHouses,
-        item.rentWhitTreeHouses,
-        item.rentWhitACastle,
-        item.image
-      )
-    );
-  }
-}
-
-function loadLines() {
-  lines = [];
-  let temporal = JSON.parse(localStorage.lines);
-
-  for (let i = 0; i < temporal.length; i++) {
-    let item = temporal[i];
-    lines.push(
-      new Line(
-        item.name,
-        item.price,
-        item.basePassage,
-        item.image
-      )
-    );
-  }
-}
-
-function loadCustomsPots() {
-  customsPost = [];
-  let temporal = JSON.parse(localStorage.customsPost);
-
-  for (let i = 0; i < temporal.length; i++) {
-    let item = temporal[i];
-    customsPost.push(
-      new CustomsPost(
-        item.name,
-        item.price,
-        item.baseToll,
-        item.image
-      )
-    );
-  }
-}
 
 function printTitles() {
   // loadTitles();
@@ -1048,9 +629,10 @@ function buildNavigationHelper(navigatorButton, viewShow) {
     actualView = document.getElementById(viewShow);
     //Finalmente le digo que se muestre
     actualView.classList.remove("ocultar");
-    console.log("mensaje");
   });
 }
+
+
 
 /******************************************************************
     A PARTIR DE AQUI SE EMPIEZAN A EJECUTAR LAS FUNCIONES
@@ -1058,15 +640,16 @@ function buildNavigationHelper(navigatorButton, viewShow) {
 
 window.addEventListener("load", () => {
   if (ACTUAL_LOCATION.includes("index.html")) {
-    if (typeof localStorage.gameSaved !== "undefined") {
+    if (typeof localStorage.miBank !== "undefined") {
       location.href = "./principal.html";
     }
-    console.log("No existen datos de guardado");
     document.getElementById("index__button").addEventListener("click", createBanker);
+
   } else {
-    if(typeof localStorage !== 'undefined'){
+    if(typeof localStorage.miBank !== 'undefined'){
       loadState1();
     } else{
+      localStorage.clear();
       location.href = "./index.html";
     }
   }
