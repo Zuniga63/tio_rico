@@ -472,6 +472,20 @@ class Bank {
 
     return acount;
   }
+
+  paySalary(playerName){
+    let player;
+    for(let i = 0; i < this.players.length; i++){
+      if(this.players[i].name === playerName){
+        player = this.players[i];
+        break;
+      }
+    }
+
+    player.cashDeposit(SALARY);
+    this.money -= SALARY;
+    return true;
+  }
 }
 
 /********************************************************************
@@ -602,7 +616,7 @@ function updateHomePlayersCard(){
   for(let i = 0; i < miBank.players.length; i++){
     let player = miBank.players[i];
 
-    htmlCode += `<div class="player-card">
+    htmlCode += `<div name = "${player.name}" class="player-card">
                   <div class="player-card__title">
                     <h3>${player.name}</h3>
                     <p>Numero de cuenta: ${player.acount}</p>
@@ -619,13 +633,19 @@ function updateHomePlayersCard(){
                     <p>Castillos: ${player.castles.length}</p>
                   </div>
 
-                  <button name="${player.name}" class="payment-salary btn btn-primary">Pagar salario</button>
-                  <button name="${player.name}" class="cashDesposit btn btn-success">Hacer Deposito</button>
-                  <button name="${player.name}" class="cashWithdrawal btn btn-danger">Hacer Retiro</button>
+                  <button class="paymentSalary btn btn-primary" data-toggle="modal" data-target="#salaryModal">Pagar salario</button>
+                  <button class="cashDesposit btn btn-success">Hacer Deposito</button>
+                  <button class="cashWithdrawal btn btn-danger">Hacer Retiro</button>
                 </div>`;
   }
 
   document.getElementById('players-cards').innerHTML = htmlCode;
+
+  //Agrego los eventos de los botones para pagar los sueldos
+  let buttons = document.querySelectorAll('.player-card .paymentSalary');
+  for(let i = 0; i < buttons.length; i++){
+    buttons[i].addEventListener('click', paySalary);
+  }
 }
 
 /*Esta función se debe ejecutar cuando el usuario desde la vista de home 
@@ -671,6 +691,21 @@ function createAlertMessage(message, type){
   return result;
 }
 
+//Esta funcion se ejecuta cuando el usuario da click en el boton pagar salario
+function paySalary(e){
+  //Se recupera el nombre del jugador al que se le va a pagar el salrio
+  let playerName = e.target.parentNode.getAttribute('name');
+  
+  if(miBank.paySalary(playerName)){
+    document.getElementById('salaryModalBody').innerHTML = `Se pagó el sueldo a ${playerName}`;
+    updateHomePlayersCard();
+    updateMainCard();
+    localStorage.miBank = JSON.stringify(miBank);
+  }else{
+    document.getElementById('salaryModalBody').innerHTML = `No se pudo pagar el salario al jugador ${playerName}`;
+  }
+}
+
 function loadState1() {
   //Primero habilito el boton para reiniciar
   document.getElementById("restar").addEventListener("click", () => {
@@ -684,6 +719,7 @@ function loadState1() {
   //Primero rescato el objeto del local storage
   miBank = new Bank();
 
+  //Actualizo o imprimo los datos en pantallas
   updateMainCard();
   updateHomePlayersCard();
   printTitles();
@@ -692,6 +728,8 @@ function loadState1() {
 
   actualView = document.getElementById("home");
   buildNavigation();
+
+  
 }
 
 function buildNavigation() {
