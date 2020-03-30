@@ -1,20 +1,22 @@
-//Conatastes que se guardan al cargar la pagina
-const ACTUAL_LOCATION = location.href;
-const BASE_MONEY = 300000;
-const SALARY = 2000;
-const INITIAL_BALANCE = 30000;
+//Constantes que se guardan al cargar la pagina
+const ACTUAL_LOCATION = location.href;          //La utilizo para saber en que pagina estoy en cada momento
+const BASE_MONEY = 300000;                      //Es todo el dinero que puede estar en circulacion
+const SALARY = 2000;                            //Es el dinero que se le paga a un jugador cuando llega a la estacion
+const INITIAL_BALANCE = 26400;                  //Es el dinero que se le entrega al jugador cuando es creado
 
-//Las siguientes son varibales con las vistas
-var actualView, home, viewTitles;
+//Se declaran las variables que estan relacionadas con las vista en la seccion principal
+var actualView;
 
-//a partir de aquí se empiezan a definir las variables globales
-var money,
-  players = [],
-  titles = [],
-  customsPots = [],
-  lines = [],
-  houses = [],
-  castles = [];
+//Se declaran las variables que se van a estar utilizando en el juego
+var miBank;
+// var money,                //Es el dinero que el banco posee para poder comprar casas, titulos y pagar sueldos.
+//   players = [],         //Es el listado de jugadores, en su interior debe poseer objetos de tipo Player
+//   titles = [],          //Es el listado con todos los titulos a los cuales se les pueden edificar casas y castillos
+//   customsPosts = [],     //Es el listado con todos los pasos aduaneros que en total son cuatro y cobran pejaes
+//   lines = [],           //Es el listado con todas las lineas de transporte del juego
+//   houses = [],          //Cada casa posee un identificador unico, un propietario y una propiedad
+//   castles = [];         //Igual que con las casas solo que con castillos
+
 /*  customs: son pasos de aduana del juego en total son cuatro
     lines: sistema de trasporte del tablero
 */
@@ -23,39 +25,15 @@ var money,
  **    A PARTIR DE AQUI DECLARO LOS OBJETOS DE LA APLICACION       **
  *********************************************************************/
 class Player {
-  constructor(name) {
-    this.id = players.length;
+  constructor(id, name, acount) {
+    this.id = id;
     this.name = name;
-    this.acount = this.generateAcount();
+    this.acount = acount;
     this.money = 0;
     this.mortgage = 0;
     this.titles = [];
-    this.customsPost = [];
+    this.customsPosts = [];
     this.lines = [];
-  }
-
-  //Este codigo genera un numero de cuenta con 4 numeros
-  generateAcount() {
-    //Lo primero que se hace es crear una secuencia de 4 numeors
-    let unico = true;
-    let acount = "";
-
-    do {
-      unico = true;
-      for (let i = 0; i < 4; i++) {
-        acount += Math.floor(Math.random() * 10);
-      }
-
-      //Ahora compruebo que el numero de cuenta es unico, al recorrer players
-      for (let i = 0; i < players.length; i++) {
-        if (players[i].acount === acount) {
-          unico = false;
-          break;
-        }
-      }
-    } while (!unico);
-
-    return acount;
   }
 
   cashDeposit(money) {
@@ -73,8 +51,9 @@ class Player {
   }
 }
 
-class Estate {
-  constructor(name, price, image) {
+class EstateProperty {
+  constructor(id, name, price, image) {
+    this.id = id;
     this.name = name;
     this.owner = undefined;
     this.price = price;
@@ -83,19 +62,21 @@ class Estate {
   }
 
   mortgage() {
-    console.log("Se realizó la hipoteca");
+    this.isMortgage = true;
+    console.log(`Se hipotecó la propiedad: ${this.name}`);
+    return Math.floor(this.price / 2);
   }
 
   withdrawMortgage() {
-    //TODO
-    console.log("Se levantó la hipoteca");
+    this.isMortgage = false;
+    console.log(`Se levantó la hipoteca de: ${this.name}`);
   }
 }
 
-class Title extends Estate {
-  constructor(name, price, color, baseRent, rentWithAHouse, rentWithTwoHouses,
+class Title extends EstateProperty {
+  constructor(id, name, price, color, baseRent, rentWithAHouse, rentWithTwoHouses,
     rentWhitTreeHouses, rentWhitACastle, image) {
-    super(name, price, image);
+    super(id, name, price, image);
     this.color = color;
     this.rent = 0;
     this.baseRent = baseRent;
@@ -107,24 +88,398 @@ class Title extends Estate {
     this.castle = undefined;
   }
 
+  //Este elemento es diferente a la base porque aplica hipoteca a las casas o castillos
   mortgage() {
     console.log("Montando hipoteca desde titulo");
   }
 }
 
-class Line extends Estate{
-  constructor(name, price, basePassage, image){
-    super(name, price, image);
+class Line extends EstateProperty {
+  constructor(id, name, price, basePassage, image) {
+    super(id, name, price, image);
     this.basePassage = basePassage;
     this.passage = 0;
   }
 }
 
-class CustomsPost extends Estate{
-  constructor(name, price, baseToll, image){
-    super(name, price, image);
+class CustomsPost extends EstateProperty {
+  constructor(id, name, price, baseToll, image) {
+    super(id, name, price, image);
     this.baseToll = baseToll;
     this.toll = 0;
+  }
+}
+
+class Building {
+  constructor(id, price) {
+    this.id = id;
+    this.owner = undefined;
+    this.title = undefined;
+    this.price = price;
+  }
+
+  buildingOn(title) {
+    this.title = title;
+  }
+
+  buildingOf(title) {
+    this.title = undefined;
+  }
+}
+
+class House extends Building {
+  constructor(id, price) {
+    super(id, price);
+  }
+}
+
+class Castle extends Building {
+  constructor(id, price) {
+    super(id, price);
+  }
+}
+
+class Bank {
+  constructor(bankerName) {
+    this.players = [];
+    this.titles = [];
+    this.customsPosts = [];
+    this.lines = [];
+    this.houses = [];
+    this.castles = [];
+    this.createObjets();
+    
+    if(typeof bankerName !== 'undefined'){
+      this.money = BASE_MONEY;
+      this.bankerName = bankerName;
+      console.log(this.players);
+      this.newPlayer(bankerName);
+
+    }else if(typeof localStorage.miBank !== 'undefined'){
+      let temporal = JSON.parse(localStorage.miBank);
+      this.money = temporal.money;
+      this.bankerName = temporal.bankerName;
+
+      //Se cargan en memoria los jugadores
+      for(let i = 0; i < temporal.players.length; i++){
+        let newPlayer = new Player(i, temporal.players[i].name, temporal.players[i].acount);
+        newPlayer.money = temporal.players[i].money;
+        newPlayer.mortgage = temporal.players[i].mortgage;
+        this.players.push(newPlayer);
+      }
+
+      //TODO: Asignar las propiedades a los jugadores
+      //TODO: asignar las casas a los jugadores y las propiedades
+      //TODO: asignar los castillos a los jugadores y las propiedades
+      //TODO: hacer efectivas las hipotecas
+
+    }
+    
+  }
+
+  createObjets() {
+    this.createTitles();
+    this.createCustomsPost();
+    this.createLines();
+    this.createBuildings();
+  }
+
+  createTitles() {
+    this.titles = [];
+    /* Titulos de la zona amarilla */
+    this.titles.push(new Title(0, "Tierra de la Fantasía", 400, "#FFF228", 100, 200, 300, 600, 900, "title_1.jpg"));
+    this.titles.push(new Title(1, "Cielos de Dumbo", 600, "#FFF228", 100, 200, 300, 600, 900, "title_2.jpg"));
+    this.titles.push(new Title(2, "Villa de Pinocho", 800, "#FFF228", 100, 300, 600, 1200, 1800, "title_3.jpg"));
+
+    /*Titulos de la zona roja */
+    this.titles.push(new Title(3, "Lagos de Peter Pan", 1000, "#FF0901", 100, 500, 900, 1800, 2700, "title_4.jpg"));
+    this.titles.push(new Title(4, "País de las Maravillas", 1200, "#FF0901", 100, 500, 900, 1800, 2700, "title_5.jpg"));
+    this.titles.push(new Title(5, "Mina de los siete enanitos", 1200, "#FF0901", 200, 600, 1200, 2400, 3600, "title_6.jpg"));
+
+    /*Titulos de la zona ocre */
+    this.titles.push(new Title(6, "Desierto Apache", 1400, "#FFBA20", 300, 800, 1500, 3000, 4500, "title_7.jpg"));
+    this.titles.push(new Title(7, "Isla de Tom Sawyer", 1600, "#FFBA20", 300, 800, 1500, 3000, 4500, "title_8.jpg"));
+    this.titles.push(new Title(8, "Pobaldo indio", 1800, "#FFBA20", 300, 900, 1800, 3600, 5400, "title_9.jpg"));
+
+    /*Titulos de la zona verde*/
+    this.titles.push(new Title(9, "Desiertos de la diligencia", 1800, "#2C8000", 400, 1100, 2100, 4200, 6300, "title_10.jpg"));
+    this.titles.push(
+      new Title(
+        10,
+        "Rutas del tren Santa Fe",
+        2000,
+        "#2C8000",
+        400,
+        1100,
+        2100,
+        4200,
+        6300,
+        "title_11.jpg"
+      )
+    );
+    this.titles.push(
+      new Title(
+        11,
+        "Región Cabañas",
+        2200,
+        "#2C8000",
+        400,
+        1200,
+        2400,
+        4800,
+        7200,
+        "title_12.jpg"
+      )
+    );
+
+    /* Titulos de la zona morada*/
+    this.titles.push(
+      new Title(
+        12,
+        "Altos del monorriel",
+        2200,
+        "#5113AD",
+        500,
+        1400,
+        2700,
+        5400,
+        8100,
+        "title_13.jpg"
+      )
+    );
+    this.titles.push(
+      new Title(
+        13,
+        "Glaciares del teleferico",
+        2400,
+        "#5113AD",
+        500,
+        1400,
+        2700,
+        5400,
+        8100,
+        "title_14.jpg"
+      )
+    );
+    this.titles.push(
+      new Title(
+        14,
+        "Parques de los Astrojet",
+        2600,
+        "#5113AD",
+        500,
+        1500,
+        3000,
+        6000,
+        9000,
+        "title_15.jpg"
+      )
+    );
+
+    /* Titulos de la zona naranja*/
+    this.titles.push(
+      new Title(
+        15,
+        "Playa de los botes del futuro",
+        2800,
+        "#FFB012",
+        600,
+        1700,
+        3300,
+        6600,
+        9900,
+        "title_16.jpg"
+      )
+    );
+    this.titles.push(
+      new Title(
+        16,
+        "Puentes de la autopista",
+        3000,
+        "#FFB012",
+        600,
+        1700,
+        3300,
+        6600,
+        9900,
+        "title_17.jpg"
+      )
+    );
+    this.titles.push(
+      new Title(
+        17,
+        "Imperio del Nautilus",
+        3000,
+        "#FFB012",
+        600,
+        1800,
+        3600,
+        7200,
+        10800,
+        "title_18.jpg"
+      )
+    );
+
+    /* Titulos de la zona azul marino*/
+    this.titles.push(
+      new Title(
+        18,
+        "Muelle jungla",
+        3200,
+        "#36DEF0",
+        700,
+        2000,
+        3900,
+        7800,
+        11700,
+        "title_19.jpg"
+      )
+    );
+    this.titles.push(
+      new Title(
+        19,
+        "Valle de los leones",
+        3400,
+        "#36DEF0",
+        700,
+        2000,
+        3900,
+        7800,
+        11700,
+        "title_20.jpg"
+      )
+    );
+    this.titles.push(
+      new Title(
+        20,
+        "Ciénaga de los hipopotamos",
+        3600,
+        "#36DEF0",
+        700,
+        2100,
+        4200,
+        8400,
+        12600,
+        "title_21.jpg"
+      )
+    );
+
+    /* Titulos de la zona rosada */
+    this.titles.push(
+      new Title(
+        21,
+        "Valle de las jirafas",
+        3600,
+        "pink",
+        800,
+        2300,
+        4500,
+        9000,
+        13500,
+        "title_22.jpg"
+      )
+    );
+    this.titles.push(
+      new Title(
+        22,
+        "Valle de los elefantes",
+        3800,
+        "pink",
+        800,
+        2300,
+        4500,
+        9000,
+        13500,
+        "title_23.jpg"
+      )
+    );
+    this.titles.push(
+      new Title(
+        23,
+        "Aldea Caníbal",
+        3600,
+        "pink",
+        800,
+        2400,
+        4800,
+        9600,
+        14400,
+        "title_24.jpg"
+      )
+    );
+  }
+
+  createLines() {
+    this.lines = [];
+
+    this.lines.push(new Line(0, 'Línea Tierra de la fantasía', 2000, 300, 'line_1.jpg'));
+    this.lines.push(new Line(1, 'Línea Tierra de la frontera', 2000, 300, 'line_2.jpg'));
+    this.lines.push(new Line(2, 'Línea Tierra del futuro', 2000, 300, 'line_3.jpg'));
+    this.lines.push(new Line(3, 'Línea Tierra de la aventura', 2000, 300, 'line_4.jpg'));
+  }
+
+  createCustomsPost() {
+    this.customsPosts = [];
+
+    this.customsPosts.push(new CustomsPost(0, "Paso Dominios de Pedro el malo", 1000, 200, 'customs_1.jpg'));
+    this.customsPosts.push(new CustomsPost(1, "Paso Caverna del Arco Iris", 2000, 400, 'customs_2.jpg'));
+    this.customsPosts.push(new CustomsPost(2, "Paso el Matterhorn", 3000, 600, 'customs_3.jpg'));
+    this.customsPosts.push(new CustomsPost(3,"Paso Aduanas del rio", 4000, 800, 'customs_4.jpg'));
+
+  }
+
+  createBuildings(){
+    this.houses = [];
+    this.castles = [];
+    for(let i = 0; i<30; i++){
+      if(i<10){
+        this.castles.push(new Castle(i, 3500));
+      }
+      this.houses.push(new House(i, 1000));
+    }
+
+  }
+
+  newPlayer(playerName){
+    //Lo primero es definir que el nombre del jugador sea unico
+    let uniqueName = true;
+    for(let i = 0; i < this.players.length; i++){
+      if(this.players[i].name.toUpperCase()===playerName.toUpperCase()){
+        uniqueName = false;
+        return false;
+      }
+    }
+
+    let player = new Player(this.players.length, playerName, this.generateAcount());
+    player.cashDeposit(INITIAL_BALANCE);
+    this.money -= INITIAL_BALANCE;
+    this.players.push(player);
+
+    return true;
+  }
+
+  //Este codigo genera un numero de cuenta con 4 numeros
+  generateAcount() {
+    //Lo primero que se hace es crear una secuencia de 4 numeors
+    let unico = true;
+    let acount = "";
+
+    do {
+      unico = true;
+      for (let i = 0; i < 4; i++) {
+        acount += Math.floor(Math.random() * 10);
+      }
+
+      //Ahora compruebo que el numero de cuenta es unico, al recorrer players
+      for (let i = 0; i < this.players.length; i++) {
+        if (this.players[i].acount === acount) {
+          unico = false;
+          break;
+        }
+      }
+    } while (!unico);
+
+    return acount;
   }
 }
 
@@ -137,23 +492,27 @@ class CustomsPost extends Estate{
 function createBanker(e) {
   let bankerName = document.getElementById("bankerName").value;
   bankerName = bankerName.trim();
-
+  console.log(bankerName)
   if (bankerName.length !== 0) {
-    createTitles();
-    createLines();
-    createCustomsPost();
+    // createTitles();
+    // createLines();
+    // createCustomsPost();
+    console.log(bankerName);
+    miBank = new Bank(bankerName);
+    
 
-    let player = new Player(bankerName);
-    player.cashDeposit(INITIAL_BALANCE);
-    players.push(player);
-    money -= INITIAL_BALANCE;
+    // let player = new Player(bankerName);
+    // player.cashDeposit(INITIAL_BALANCE);
+    // players.push(player);
+    // money -= INITIAL_BALANCE;
 
-    localStorage.bankerName = bankerName;
-    localStorage.titles = JSON.stringify(titles);
-    localStorage.lines = JSON.stringify(lines);
-    localStorage.customsPost = JSON.stringify(customsPots);
-    localStorage.money = money;
-    localStorage.players = JSON.stringify(players);
+    // localStorage.bankerName = bankerName;
+    // localStorage.titles = JSON.stringify(titles);
+    // localStorage.lines = JSON.stringify(lines);
+    // localStorage.customsPost = JSON.stringify(customsPots);
+    // localStorage.money = money;
+    // localStorage.players = JSON.stringify(players);
+    localStorage.miBank = JSON.stringify(miBank);
     localStorage.gameSaved = true;
 
     location.href = "./principal.html";
@@ -480,24 +839,24 @@ function createTitles() {
   );
 }
 
-function createLines() {
-  lines = [];
+// function createLines() {
+//   lines = [];
 
-  lines.push(new Line('Línea Tierra de la fantasía', 2000, 300, 'line_1.jpg'));
-  lines.push(new Line('Línea Tierra de la frontera', 2000, 300, 'line_2.jpg'));
-  lines.push(new Line('Línea Tierra del futuro', 2000, 300, 'line_3.jpg'));
-  lines.push(new Line('Línea Tierra de la aventura', 2000, 300, 'line_4.jpg'));
-}
+//   lines.push(new Line('Línea Tierra de la fantasía', 2000, 300, 'line_1.jpg'));
+//   lines.push(new Line('Línea Tierra de la frontera', 2000, 300, 'line_2.jpg'));
+//   lines.push(new Line('Línea Tierra del futuro', 2000, 300, 'line_3.jpg'));
+//   lines.push(new Line('Línea Tierra de la aventura', 2000, 300, 'line_4.jpg'));
+// }
 
-function createCustomsPost(){
-  customsPots = [];
+// function createCustomsPost() {
+//   customsPots = [];
 
-  customsPots.push(new CustomsPost("Paso Dominios de Pedro el malo", 1000, 200, 'customs_1.jpg'));
-  customsPots.push(new CustomsPost("Paso Caverna del Arco Iris", 2000, 400, 'customs_2.jpg'));
-  customsPots.push(new CustomsPost("Paso el Matterhorn", 3000, 600, 'customs_3.jpg'));
-  customsPots.push(new CustomsPost("Paso Aduanas del rio", 4000, 800, 'customs_4.jpg'));
+//   customsPots.push(new CustomsPost("Paso Dominios de Pedro el malo", 1000, 200, 'customs_1.jpg'));
+//   customsPots.push(new CustomsPost("Paso Caverna del Arco Iris", 2000, 400, 'customs_2.jpg'));
+//   customsPots.push(new CustomsPost("Paso el Matterhorn", 3000, 600, 'customs_3.jpg'));
+//   customsPots.push(new CustomsPost("Paso Aduanas del rio", 4000, 800, 'customs_4.jpg'));
 
-}
+// }
 
 function loadTitles() {
   titles = [];
@@ -521,11 +880,11 @@ function loadTitles() {
   }
 }
 
-function loadLines(){
+function loadLines() {
   lines = [];
   let temporal = JSON.parse(localStorage.lines);
 
-  for(let i = 0; i < temporal.length; i++){
+  for (let i = 0; i < temporal.length; i++) {
     let item = temporal[i];
     lines.push(
       new Line(
@@ -538,11 +897,11 @@ function loadLines(){
   }
 }
 
-function loadCustomsPots(){
+function loadCustomsPots() {
   customsPost = [];
   let temporal = JSON.parse(localStorage.customsPost);
 
-  for(let i = 0; i < temporal.length; i++){
+  for (let i = 0; i < temporal.length; i++) {
     let item = temporal[i];
     customsPost.push(
       new CustomsPost(
@@ -556,10 +915,10 @@ function loadCustomsPots(){
 }
 
 function printTitles() {
-  loadTitles();
+  // loadTitles();
   let result = ``;
-  for (let i = 0; i < titles.length; i++) {
-    let t = titles[i];
+  for (let i = 0; i < miBank.titles.length; i++) {
+    let t = miBank.titles[i];
     let owner = typeof t.owner === "undefined" ? "Banco" : t.owner.name;
     let castle = typeof t.castle === "undefined" ? 0 : 1;
     let foreground = "black";
@@ -590,10 +949,10 @@ function printTitles() {
 }
 
 function printLines() {
-  loadLines();
+  // loadLines();
   let result = ``;
-  for (let i = 0; i < lines.length; i++) {
-    let l = lines[i];
+  for (let i = 0; i < miBank.lines.length; i++) {
+    let l = miBank.lines[i];
     let owner = typeof l.owner === "undefined" ? "Banco" : l.owner.name;
     let foreground = "black";
 
@@ -618,10 +977,10 @@ function printLines() {
 }
 
 function printCustomsPots() {
-  loadCustomsPots();
+  // loadCustomsPots();
   let result = ``;
-  for (let i = 0; i < customsPost.length; i++) {
-    let l = customsPost[i];
+  for (let i = 0; i < miBank.customsPosts.length; i++) {
+    let l = miBank.customsPosts[i];
     let owner = typeof l.owner === "undefined" ? "Banco" : l.owner.name;
     let foreground = "black";
 
@@ -652,10 +1011,19 @@ function loadState1() {
     location.href = "./index.html";
   });
 
-  //Escribo el nombre del banquero
-  document.getElementById("bankerName").innerText =
-    "Banquero: " + localStorage.bankerName;
+  //Lo siguiente es codigo temporal
+  //Primero rescato el objeto del local storage
+  miBank = new Bank();
 
+  document.getElementById("bankerName").innerText =
+    "Banquero: " + miBank.bankerName;
+  document.getElementById("bankerMoney").innerHTML = `Dinero: $ ${miBank.money}`;
+  document.getElementById("bankerHouses").innerHTML = `Casas: ${miBank.houses.length}`;
+  document.getElementById("bankerCastles").innerHTML = `Castillos: ${miBank.castles.length}`;
+  document.getElementById("bankerTitles").innerHTML = `Titulos: ${miBank.titles.length}`;
+  document.getElementById("bankerCustomsPost").innerHTML = `Pasos: ${miBank.customsPosts.length}`;
+  document.getElementById("bankerLines").innerHTML = `Lineas: ${miBank.lines.length}`;
+  
   printTitles();
   printLines();
   printCustomsPots();
@@ -694,12 +1062,12 @@ window.addEventListener("load", () => {
       location.href = "./principal.html";
     }
     console.log("No existen datos de guardado");
-    document
-      .getElementById("index__button")
-      .addEventListener("click", createBanker);
+    document.getElementById("index__button").addEventListener("click", createBanker);
   } else {
-    console.log("Estas en la siguiente direccion: " + ACTUAL_LOCATION);
-    //En este punto lo que el programa debe hacer es cargar los datos guardados en localstorage
-    loadState1();
+    if(typeof localStorage !== 'undefined'){
+      loadState1();
+    } else{
+      location.href = "./index.html";
+    }
   }
 });
