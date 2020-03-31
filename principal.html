@@ -142,12 +142,12 @@
               </div>
               <div class="modal-body">
                 <p>Cliente: <span>Nombre de cliente</span></p>
-                <input type="search" placeholder="Ingresar monto a consignar">
+                <input type="search" placeholder="Ingresar monto a consignar" id="cashDepositModalAmount">
                 <div id="cashDepositModalAlert"></div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Hacer deposito</button>
+                <button type="button" class="btn btn-primary" id="makeCashDeposit">Hacer deposito</button>
               </div>
             </div>
           </div>
@@ -164,12 +164,13 @@
                 </button>
               </div>
               <div class="modal-body">
-                <input type="search" placeholder="Ingresar monto a retirar">
+                <p>Cliente: <span>Nombre de cliente</span></p>
+                <input type="search" placeholder="Ingresar monto a retirar" id="cashWithdrawalModalAmount">
                 <div id="cashWithdrawalModalAlert"></div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Hacer retiro</button>
+                <button type="button" class="btn btn-primary" id="makeCashWithdrawal">Hacer retiro</button>
               </div>
             </div>
           </div>

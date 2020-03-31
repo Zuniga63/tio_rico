@@ -41,7 +41,9 @@ class Player {
     return false;
   }
 }
-
+/***************************************/
+/*****     CLASES DE PROPIEDADES   *****/
+/***************************************/
 class EstateProperty {
   constructor(id, name, price, image) {
     this.id = id;
@@ -101,6 +103,9 @@ class CustomsPost extends EstateProperty {
   }
 }
 
+/***************************************/
+/*****     CLASES DE EDIFICIOS     *****/
+/***************************************/
 class Building {
   constructor(id, price) {
     this.id = id;
@@ -130,6 +135,9 @@ class Castle extends Building {
   }
 }
 
+/***************************************/
+/*****        EL BANCO             *****/
+/***************************************/
 class Bank {
   constructor(bankerName) {
     this.players = [];
@@ -490,6 +498,7 @@ class Bank {
   cashDeposit(playerName, amount){
     //Este metodo lo que hace es validar que el balance no supere en ingun momento
     //el dinero total que puede estar en circulacion
+    console.log("Metodo llamado con los parametros (" + playerName + ", " + amount);
     let balance = this.money + amount;
     let player;
     if(balance <= BASE_MONEY){
@@ -553,6 +562,148 @@ function createBanker(e) {
   }
 }
 
+  /*Esta función se debe ejecutar cuando el usuario desde la vista de home 
+  le da clic al botón agregar y entonces se procede a hacer todas las validaciones 
+  necesarias para agregar al nuevo jugador y hacer las actualizaciones pertinentes */
+function createNewPlayer() {
+    let playerName = document.getElementById('homeNewPlayerName').value.trim();
+    let message = ``; //Mensaje que aparecerá en la página
+  
+    if (typeof playerName === 'undefined' || playerName.length === 0) {
+      message = createAlertMessage("Se debe ingresar un nombre valido", "alert-danger");
+    } else {
+      //Al intentar crear el nuevo jugador si el nombre está repetido retorna false
+      if (miBank.newPlayer(playerName)) {
+        //Se limpia el campo de ingreso de nuevo jugador
+        document.getElementById('homeNewPlayerName').value = '';
+        //Actualizo el localstorage concerniente al banco
+        localStorage.miBank = JSON.stringify(miBank);
+        //Actualizo la tarje principal
+        updateMainCard();
+        updateHomePlayersCard();
+        //Creo el mensaje de que todo va correcto
+        let textTemporal = `El jugador <strong>${playerName}</strong> fue gregado`;
+        message = createAlertMessage(textTemporal, "alert-success");
+  
+      } else {
+        let textTemporal = `El nombre <strong>${playerName}</strong> ya está en uso`;
+        message = createAlertMessage(textTemporal, "alert-warning");
+      }
+    }
+    //A partir de aqí se encuntan lo metodos que actualizan la vista
+    document.getElementById('homeMessage').innerHTML = message;
+}
+  
+function createAlertMessage(message, type){
+    let result =  `<div class="alert ${type} alert-dismissible fade show" role="alert">
+                    ${message} 
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>`;
+  
+    return result;
+}
+  
+  //Esta funcion se ejecuta cuando el usuario da click en el boton pagar salario
+function paySalary(e){
+    /*Se recupera el nombre del jugador al que se le va a pagar el salrio
+      Que se encuentra en el padre del elemento que lanza el evento*/
+    let playerName = e.target.parentNode.getAttribute('name');
+    
+    if(miBank.paySalary(playerName)){
+      document.getElementById('salaryModalBody').innerHTML = `Se pagó el sueldo a ${playerName}`;
+      updateHomePlayersCard();
+      updateMainCard();
+      localStorage.miBank = JSON.stringify(miBank);
+    }else{
+      document.getElementById('salaryModalBody').innerHTML = `No se pudo pagar el salario al jugador ${playerName}`;
+    }
+}
+  
+function makeCashDeposit(e){
+    let message = '';
+    document.getElementById('cashDepositModalAlert').innerHTML = '';
+    //Primero recupero el valor a consignar y el nombre del cliente
+    let amount = document.getElementById('cashDepositModalAmount').value;
+    let playerName = document.querySelector('#cashDepositModal .modal-body p span').textContent;
+    console.log(playerName)
+    //ahora verifico que sea un numero
+    amount = amount.trim();
+    if(amount.length>0){
+      //Ahora trato de convertir amount en un numero
+      if(/^([0-9])*$/.test(amount)){
+        amount = parseInt(amount);
+        //Ahora se intenta hacer el deposito
+        if(amount > 0 && miBank.cashDeposit(playerName, amount)){
+          localStorage.miBank = JSON.stringify(miBank);
+          message = createAlertMessage("Deposito reaizado correctamente", "alert-success")
+          updateHomePlayersCard();
+        }else{
+          if(amount === 0){
+            message = createAlertMessage("No puede ser cero", "alert-danger");
+          }else{
+            message = createAlertMessage("Ojo: Dinero Falso. Transaccion cancelada", "alert-warning");
+          } 
+          
+        }
+  
+      }
+      else{
+        message = createAlertMessage("No es un numero valido", "alert-danger");
+      }
+    }else{
+      message = createAlertMessage("Este campo es obligatorio", "alert-danger");
+    }
+  
+    document.getElementById('cashDepositModalAlert').innerHTML = message;
+    document.getElementById('cashDepositModalAmount').value = '';
+}
+  
+function makeCashWithdrawal(){
+    console.log("Se accedio a la interfaz para retirar dinero");
+    document.getElementById('cashWithdrawalModalAlert').innerHTML = '';
+    let message = '';
+    //Primero recupero el monto a retirar y el jugador que solicita el retiro
+    let playerName = document.querySelector('#cashWithdrawalModal .modal-body p span').textContent;
+    let amount = document.getElementById('cashWithdrawalModalAmount').value;
+    console.log(`Los datos recolectados son: ${playerName} y ${amount}`);
+  
+    amount = amount.trim();
+    console.log(/^([0-9])*$/.test(amount));
+  
+    if(amount.length>0){
+      //Ahora trato de convertir amount en un numero
+      if(/^([0-9])*$/.test(amount)){
+        amount = parseInt(amount,10);
+        //Ahora se intenta hacer el retiro
+        if(amount>0 && miBank.cashWithdrawal(playerName, amount)){
+          localStorage.miBank = JSON.stringify(miBank);
+          message = createAlertMessage("Transaccion exitosa", "alert-success");
+          updateHomePlayersCard();
+        }else{
+          if(amount === 0){
+            message = createAlertMessage("No puede ser cero", "alert-danger");
+          }else{
+            message = createAlertMessage("Saldo insuficientes", "alert-danger");
+          }        
+        }
+  
+      }
+      else{
+        message = createAlertMessage("No es un numero valido", "alert-danger");
+      }
+    }else{
+      message = createAlertMessage("Este campo es obligatorio", "alert-danger");
+    }
+  
+    document.getElementById('cashWithdrawalModalAlert').innerHTML = message;
+    document.getElementById('cashWithdrawalModalAmount').value = '';
+}
+
+/***********************************************************************/
+/*****    LAS SIGUIENTES SON FUNCIONES PARA PINTAR EN PANTALLA     *****/
+/***********************************************************************/
 
 function printTitles() {
   // loadTitles();
@@ -690,68 +841,32 @@ function updateHomePlayersCard(){
     buttons[i].addEventListener('click', paySalary);
   }
 
-  //Agrego los eventos de los botones para hacer depositos
-  buttons = document.querySelectorAll('.player-card .paymentSalary');
-}
-
-/*Esta función se debe ejecutar cuando el usuario desde la vista de home 
-  le da clic al botón agregar y entonces se procede a hacer todas las validaciones 
-  necesarias para agregar al nuevo jugador y hacer las actualizaciones pertinentes */
-function createNewPlayer() {
-  let playerName = document.getElementById('homeNewPlayerName').value.trim();
-  let message = ``; //Mensaje que aparecerá en la página
-
-  if (typeof playerName === 'undefined' || playerName.length === 0) {
-    message = createAlertMessage("Se debe ingresar un nombre valido", "alert-danger");
-  } else {
-    //Al intentar crear el nuevo jugador si el nombre está repetido retorna false
-    if (miBank.newPlayer(playerName)) {
-      //Se limpia el campo de ingreso de nuevo jugador
-      document.getElementById('homeNewPlayerName').value = '';
-      //Actualizo el localstorage concerniente al banco
-      localStorage.miBank = JSON.stringify(miBank);
-      //Actualizo la tarje principal
-      updateMainCard();
-      updateHomePlayersCard();
-      //Creo el mensaje de que todo va correcto
-      let textTemporal = `El jugador <strong>${playerName}</strong> fue gregado`;
-      message = createAlertMessage(textTemporal, "alert-success");
-
-    } else {
-      let textTemporal = `El nombre <strong>${playerName}</strong> ya está en uso`;
-      message = createAlertMessage(textTemporal, "alert-warning");
-    }
+  //Agrego los eventos de los botones para hacer depositos, como esto abre es una ventana modal
+  //lo que hace es pasarle el nombre del cliente a la ventana modal
+  buttons = document.querySelectorAll('.player-card .cashDesposit');
+  for(let i = 0; i < buttons.length; i++){
+    buttons[i].addEventListener('click', (e)=>{
+      //Primero recupero el nombre del cliente
+      let playerName = e.target.parentNode.getAttribute('name');
+      //Ahora lo imrpimo en la etiqueta nombre cliente
+      document.querySelector('#cashDepositModal .modal-body p span').innerText = playerName;
+    });
   }
-  //A partir de aqí se encuntan lo metodos que actualizan la vista
-  document.getElementById('homeMessage').innerHTML = message;
-}
 
-function createAlertMessage(message, type){
-  let result =  `<div class="alert ${type} alert-dismissible fade show" role="alert">
-                  ${message} 
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>`;
-
-  return result;
-}
-
-//Esta funcion se ejecuta cuando el usuario da click en el boton pagar salario
-function paySalary(e){
-  /*Se recupera el nombre del jugador al que se le va a pagar el salrio
-    Que se encuentra en el padre del elemento que lanza el evento*/
-  let playerName = e.target.parentNode.getAttribute('name');
-  
-  if(miBank.paySalary(playerName)){
-    document.getElementById('salaryModalBody').innerHTML = `Se pagó el sueldo a ${playerName}`;
-    updateHomePlayersCard();
-    updateMainCard();
-    localStorage.miBank = JSON.stringify(miBank);
-  }else{
-    document.getElementById('salaryModalBody').innerHTML = `No se pudo pagar el salario al jugador ${playerName}`;
+  //Igual que lo anterior solo que este para hacer retiros
+  buttons = document.querySelectorAll('.player-card .cashWithdrawal');
+  for(let i = 0; i < buttons.length; i++){
+    buttons[i].addEventListener('click', (e)=>{
+      //Primero recupero el nombre del cliente
+      let playerName = e.target.parentNode.getAttribute('name');
+      //Ahora lo imrpimo en la etiqueta nombre cliente
+      document.querySelector('#cashWithdrawalModal .modal-body p span').innerText = playerName;
+    });
   }
 }
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 function loadState1() {
   //Primero habilito el boton para reiniciar
@@ -776,7 +891,9 @@ function loadState1() {
   actualView = document.getElementById("home");
   buildNavigation();
 
-  
+  //Agrego la funcionalidad a los modales para agregar o retirar dinero
+  document.getElementById('makeCashDeposit').addEventListener('click', makeCashDeposit);
+  document.getElementById('makeCashWithdrawal').addEventListener('click', makeCashWithdrawal);
 }
 
 function buildNavigation() {
