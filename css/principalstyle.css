@@ -117,7 +117,7 @@
     grid-column: span 2;
 }
 
-.modal-body input[type = "search"]{
+.modal-body input[type = "number"]{
     display: block;
     width: 100%;
     text-align: center;
