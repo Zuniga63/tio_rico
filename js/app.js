@@ -486,6 +486,49 @@ class Bank {
     this.money -= SALARY;
     return true;
   }
+
+  cashDeposit(playerName, amount){
+    //Este metodo lo que hace es validar que el balance no supere en ingun momento
+    //el dinero total que puede estar en circulacion
+    let balance = this.money + amount;
+    let player;
+    if(balance <= BASE_MONEY){
+      console.log("El balance no ha sido superado");
+
+      for(let i = 0; i < this.players.length; i++){
+        balance += this.players[i].money;
+        if(this.players[i].name === playerName){
+          player = this.players[i];
+        }
+      }
+
+      if(balance <= BASE_MONEY){
+        console.log("El balance es: " + balance)
+        if(typeof player !== 'undefined'){
+          player.cashDeposit(amount);
+          return true;
+        }
+      }
+    }
+
+    console.log("El balance supera el monto maximo: " + balance);
+    return false;
+  }
+
+  cashWithdrawal(playerName, amount){
+    let player;
+    for(let i = 0; i < this.players.length; i++){
+      if(this.players[i].name === playerName){
+        player = this.players[i];
+        if(player.money >= amount){
+          player.cashWithdrawal(amount);
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
 }
 
 /********************************************************************
@@ -603,7 +646,7 @@ function printCustomsPots() {
 
 function updateMainCard(){
   document.getElementById("bankerName").innerText = `Banquero: ${miBank.bankerName}`;
-  document.getElementById("bankerMoney").innerHTML = `Dinero: $ ${miBank.money}`;
+  document.getElementById("bankerMoney").innerHTML = `Dinero: ${formatCurrencyLite(miBank.money)}`;
   document.getElementById("bankerHouses").innerHTML = `Casas: ${miBank.houses.length}`;
   document.getElementById("bankerCastles").innerHTML = `Castillos: ${miBank.castles.length}`;
   document.getElementById("bankerTitles").innerHTML = `Titulos: ${miBank.titles.length}`;
@@ -624,7 +667,7 @@ function updateHomePlayersCard(){
 
                   <div class="player-card__money">
                     <p class="player-card__money-label">Dinero</p>
-                    <p class="player-card__money-money">$ ${player.money}</p>
+                    <p class="player-card__money-money"> ${formatCurrencyLite(player.money)}</p>
                   </div>
 
                   <div class="player-card__objects">
@@ -634,8 +677,8 @@ function updateHomePlayersCard(){
                   </div>
 
                   <button class="paymentSalary btn btn-primary" data-toggle="modal" data-target="#salaryModal">Pagar salario</button>
-                  <button class="cashDesposit btn btn-success">Hacer Deposito</button>
-                  <button class="cashWithdrawal btn btn-danger">Hacer Retiro</button>
+                  <button class="cashDesposit btn btn-success" data-toggle="modal" data-target="#cashDepositModal">Hacer Deposito</button>
+                  <button class="cashWithdrawal btn btn-danger" data-toggle="modal" data-target="#cashWithdrawalModal">Hacer Retiro</button>
                 </div>`;
   }
 
@@ -646,6 +689,9 @@ function updateHomePlayersCard(){
   for(let i = 0; i < buttons.length; i++){
     buttons[i].addEventListener('click', paySalary);
   }
+
+  //Agrego los eventos de los botones para hacer depositos
+  buttons = document.querySelectorAll('.player-card .paymentSalary');
 }
 
 /*Esta función se debe ejecutar cuando el usuario desde la vista de home 
@@ -693,7 +739,8 @@ function createAlertMessage(message, type){
 
 //Esta funcion se ejecuta cuando el usuario da click en el boton pagar salario
 function paySalary(e){
-  //Se recupera el nombre del jugador al que se le va a pagar el salrio
+  /*Se recupera el nombre del jugador al que se le va a pagar el salrio
+    Que se encuentra en el padre del elemento que lanza el evento*/
   let playerName = e.target.parentNode.getAttribute('name');
   
   if(miBank.paySalary(playerName)){
@@ -773,3 +820,17 @@ window.addEventListener("load", () => {
     }
   }
 });
+
+/* Esta es una funcion que entrega fromato a los numeros segunel pais y la moneda */
+function formatCurrency(locales, currency, fractionDigits, number){
+  var formatted = new Intl.NumberFormat(locales, {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: fractionDigits
+  }).format(number);
+  return formatted;
+}
+
+function formatCurrencyLite(number){
+  return formatCurrency('es-CO', 'COP', 2, number);
+}

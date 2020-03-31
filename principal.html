@@ -129,6 +129,51 @@
             </div>
           </div>
         </div>
+
+        <!-- Modal para pode depositar dinero -->
+        <div class="modal fade" id="cashDepositModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="cashDepositModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="cashDepositModalLabel">Deposito de efectivo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Cliente: <span>Nombre de cliente</span></p>
+                <input type="search" placeholder="Ingresar monto a consignar">
+                <div id="cashDepositModalAlert"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Hacer deposito</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal para pode retirar dinero -->
+        <div class="modal fade" id="cashWithdrawalModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="cashWithdrawalModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="cashWithdrawalModalLabel">Retiro de efectivo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <input type="search" placeholder="Ingresar monto a retirar">
+                <div id="cashWithdrawalModalAlert"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Hacer retiro</button>
+              </div>
+            </div>
+          </div>
+        </div>
     </section>
 
     

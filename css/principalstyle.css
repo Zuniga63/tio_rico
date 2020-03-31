@@ -104,7 +104,7 @@
     grid-column: span 2;
 }
 
-.payment-salary{
+.paymentSalary{
     grid-column: span 2;
 }
 
@@ -115,4 +115,10 @@
 
 .cashWithdrawal{
     grid-column: span 2;
+}
+
+.modal-body input[type = "search"]{
+    display: block;
+    width: 100%;
+    text-align: center;
 }
