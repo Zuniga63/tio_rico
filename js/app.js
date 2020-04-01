@@ -889,10 +889,6 @@ function loadState1() {
   printLines();
   printCustomsPots();
 
-  actualView = document.getElementById("home");
-  //COdigo temporal
-  actualView.classList.add("ocultar");
-  actualView = document.getElementById("titlesView");
   actualView.classList.remove("ocultar");
   //Fin del codigo temporal
   buildNavigation();
@@ -916,6 +912,7 @@ function buildNavigationHelper(navigatorButton, viewShow) {
     actualView.classList.add("ocultar");
     //Actulizo la actual view
     actualView = document.getElementById(viewShow);
+    localStorage.actualView = viewShow;
     //Finalmente le digo que se muestre
     actualView.classList.remove("ocultar");
   });
@@ -936,6 +933,14 @@ window.addEventListener("load", () => {
 
   } else {
     if (typeof localStorage.miBank !== 'undefined') {
+      
+      if(typeof localStorage.actualView === 'undefined'){
+        actualView = document.getElementById("home");
+        localStorage.actualView = "home";
+      }else{
+        actualView = document.getElementById(localStorage.actualView);
+      }
+      
       loadState1();
     } else {
       localStorage.clear();
