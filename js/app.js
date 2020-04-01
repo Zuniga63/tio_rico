@@ -718,20 +718,23 @@ function printTitles() {
       foreground = "white";
 
     let division = `<div class="property_card" style="background-color: ${t.color}; color: ${foreground};">
+                      <h2 class="property_card__title">${t.name}</h2>
                       <img src="img/titles/${t.image}" alt="${t.name}" class="property_card__img">
                       <div class="property_card__body">
-                        <h2 class="property_card__title">${t.name}</h2>
                         <p>Propietario: <span>${owner}</span></p>
                         <p>Precio: <span>$ ${t.price}</span></p>
                         <p>Casas: <span>${t.houses.length}</span></p>
                         <p>Castillo: <span>${castle}</span></p>
                         <p>Alquiler: <span>$ ${t.rent}</span></p>
-                        <div class="button">
-                          <button type="button" class="btn btn-success">Vender</button>
-                          <button type="button" class="btn btn-primary">Subastar</button>
-                          <button type="button" class="btn btn-warning">Hipotecar</button>
-                        </div>
+                        <p>Hipoteca: <span>$ ${t.rent}</span></p>
                       </div>
+
+                      <button type="button" class="btn btn-primary property_card__btn-sell">Vender</button>
+                      <button type="button" class="btn btn-success property_card__btn-auction">Subastar</button>
+                      <button type="button" class="btn btn-dark property_card__btn-mortgage">Hipotecar</button>
+                      <button type="button" class="btn btn-success property_card__btn-build">Edificar</button>
+                      <button type="button" class="btn btn-danger property_card__btn-demolish">Demoler</button>
+                      <button type="button" class="btn btn-dark property_card__btn-rental">Cobrar alquiler</button>
                     </div>`;
     result += division;
   }
@@ -748,18 +751,17 @@ function printLines() {
     let foreground = "black";
 
     let division = `<div class="property_card" style="background-color: white; color: ${foreground};">
+                      <h2 class="property_card__title">${l.name}</h2>
                       <img src="img/titles/${l.image}" alt="${l.name}" class="property_card__img">
                       <div class="property_card__body">
-                        <h2 class="property_card__title">${l.name}</h2>
                         <p>Propietario: <span>${owner}</span></p>
                         <p>Precio: <span>$ ${l.price}</span></p>
-                        <p>Peaje: <span>$ ${l.passage}</span></p>
-                        <div class="button">
-                          <button type="button" class="btn btn-success">Vender</button>
-                          <button type="button" class="btn btn-primary">Subastar</button>
-                          <button type="button" class="btn btn-warning">Hipotecar</button>
-                        </div>
+                        <p>Pasaje: <span>$ ${l.passage}</span></p>
                       </div>
+                      <button type="button" class="btn btn-primary property_card__btn-sell">Vender</button>
+                      <button type="button" class="btn btn-success property_card__btn-auction">Subastar</button>
+                      <button type="button" class="btn btn-dark property_card__btn-mortgage">Hipotecar</button>
+                      <button type="button" class="btn btn-dark property_card__btn-payPassage">Cobrar pasaje</button>
                     </div>`;
     result += division;
   }
@@ -776,18 +778,17 @@ function printCustomsPots() {
     let foreground = "black";
 
     let division = `<div class="property_card" style="background-color: white; color: ${foreground};">
+                      <h2 class="property_card__title">${l.name}</h2>
                       <img src="img/titles/${l.image}" alt="${l.name}" class="property_card__img">
                       <div class="property_card__body">
-                        <h2 class="property_card__title">${l.name}</h2>
                         <p>Propietario: <span>${owner}</span></p>
                         <p>Precio: <span>$ ${l.price}</span></p>
-                        <p>Peaje: <span>$ ${l.passage}</span></p>
-                        <div class="button">
-                          <button type="button" class="btn btn-success">Vender</button>
-                          <button type="button" class="btn btn-primary">Subastar</button>
-                          <button type="button" class="btn btn-warning">Hipotecar</button>
-                        </div>
+                        <p>Peaje: <span>$ ${l.toll}</span></p>
                       </div>
+                      <button type="button" class="btn btn-primary property_card__btn-sell">Vender</button>
+                      <button type="button" class="btn btn-success property_card__btn-auction">Subastar</button>
+                      <button type="button" class="btn btn-dark property_card__btn-mortgage">Hipotecar</button>
+                      <button type="button" class="btn btn-dark property_card__btn-payToll">Cobrar peaje</button>
                     </div>`;
     result += division;
   }
@@ -889,6 +890,11 @@ function loadState1() {
   printCustomsPots();
 
   actualView = document.getElementById("home");
+  //COdigo temporal
+  actualView.classList.add("ocultar");
+  actualView = document.getElementById("titlesView");
+  actualView.classList.remove("ocultar");
+  //Fin del codigo temporal
   buildNavigation();
 
   //Agrego la funcionalidad a los modales para agregar o retirar dinero
