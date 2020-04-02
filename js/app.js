@@ -198,7 +198,7 @@ class Bank {
     /*Titulos de la zona ocre */
     this.titles.push(new Title(6, "Desierto Apache", 1400, "#FFBA20", 300, 800, 1500, 3000, 4500, "title_7.jpg"));
     this.titles.push(new Title(7, "Isla de Tom Sawyer", 1600, "#FFBA20", 300, 800, 1500, 3000, 4500, "title_8.jpg"));
-    this.titles.push(new Title(8, "Pobaldo indio", 1800, "#FFBA20", 300, 900, 1800, 3600, 5400, "title_9.jpg"));
+    this.titles.push(new Title(8, "Poblado indio", 1800, "#FFBA20", 300, 900, 1800, 3600, 5400, "title_9.jpg"));
 
     /*Titulos de la zona verde*/
     this.titles.push(new Title(9, "Desiertos de la diligencia", 1800, "#2C8000", 400, 1100, 2100, 4200, 6300, "title_10.jpg"));
@@ -711,13 +711,14 @@ function printTitles() {
   for (let i = 0; i < miBank.titles.length; i++) {
     let t = miBank.titles[i];
     let owner = typeof t.owner === "undefined" ? "Banco" : t.owner.name;
+    let disableSale = owner !== "Banco" ? 'disabled="true"' : "";
     let castle = typeof t.castle === "undefined" ? 0 : 1;
     let foreground = "black";
 
     if (t.color === "#FF0901" || t.color === "#2C8000" || t.color === "#5113AD")
       foreground = "white";
 
-    let division = `<div class="property_card" style="background-color: ${t.color}; color: ${foreground};">
+    let division = `<div name = "${t.name}" class="property_card" style="background-color: ${t.color}; color: ${foreground};">
                       <h2 class="property_card__title">${t.name}</h2>
                       <img src="img/titles/${t.image}" alt="${t.name}" class="property_card__img">
                       <div class="property_card__body">
@@ -729,17 +730,51 @@ function printTitles() {
                         <p>Hipoteca: <span>$ ${t.rent}</span></p>
                       </div>
 
-                      <button type="button" class="btn btn-primary property_card__btn-sell">Vender</button>
-                      <button type="button" class="btn btn-success property_card__btn-auction">Subastar</button>
-                      <button type="button" class="btn btn-dark property_card__btn-mortgage">Hipotecar</button>
-                      <button type="button" class="btn btn-success property_card__btn-build">Edificar</button>
-                      <button type="button" class="btn btn-danger property_card__btn-demolish">Demoler</button>
-                      <button type="button" class="btn btn-dark property_card__btn-rental">Cobrar alquiler</button>
+                      <button type="button" class="btn btn-primary property_card__btn-sell" data-toggle="modal" data-target="#bankPropertySale" ${disableSale}>Vender</button>
+                      <button type="button" class="btn btn-success property_card__btn-auction" disabled="true">Subastar</button>
+                      <button type="button" class="btn btn-dark property_card__btn-mortgage" disabled="true">Hipotecar</button>
+                      <button type="button" class="btn btn-success property_card__btn-build" disabled="true">Edificar</button>
+                      <button type="button" class="btn btn-danger property_card__btn-demolish" disabled="true">Demoler</button>
+                      <button type="button" class="btn btn-dark property_card__btn-rental" disabled="true">Cobrar alquiler</button>
                     </div>`;
     result += division;
   }
 
   document.getElementById("titlesView").innerHTML = result;
+
+  //Agrego las funciones que dehe hacerse al dar click en el boton vender
+  let buttons = document.querySelectorAll("#titlesView .property_card__btn-sell")
+  for(let i = 0; i < buttons.length; i++){
+    buttons[i].addEventListener('click', (e)=>{
+      //Se recupera el nombre del titulo que se quiere vender
+      let titleName = e.target.parentNode.getAttribute('name')
+      //Se recupera la informacion del titulo
+      let titlePrice, actualOwner;
+      for(let index2 = 0; index2 < miBank.titles.length; index2++){
+        let title = miBank.titles[index2];
+        if(title.name === titleName){
+          titlePrice = title.price;
+          actualOwner = typeof title.owner === 'undefined' ? 'Banco' : title.owner;
+          break;
+        }
+      }
+
+      //Ahora lo escribo en el modal
+      document.getElementById('bankPropertySaleTitle').innerText = titleName;
+      document.getElementById('bankPropertySaleActualOwner').innerText = actualOwner;
+      document.getElementById('bankPropertySalePrice').innerText = formatCurrencyLite(titlePrice);
+
+      //Ahora escribo los nombre de los jugadores
+      let players = ``;
+      for(let index3 = 0; index3 < miBank.players.length; index3++){
+        players += `<option value="${miBank.players[index3].name}">${miBank.players[index3].name}</option>`
+      }
+
+      document.getElementById('bankPropertySaleBuyer').innerHTML = players;
+
+      console.log(titleName + actualOwner + titlePrice);
+    })
+  }
 }
 
 function printLines() {
@@ -758,10 +793,10 @@ function printLines() {
                         <p>Precio: <span>$ ${l.price}</span></p>
                         <p>Pasaje: <span>$ ${l.passage}</span></p>
                       </div>
-                      <button type="button" class="btn btn-primary property_card__btn-sell">Vender</button>
-                      <button type="button" class="btn btn-success property_card__btn-auction">Subastar</button>
-                      <button type="button" class="btn btn-dark property_card__btn-mortgage">Hipotecar</button>
-                      <button type="button" class="btn btn-dark property_card__btn-payPassage">Cobrar pasaje</button>
+                      <button type="button" class="btn btn-primary property_card__btn-sell" disabled="true">Vender</button>
+                      <button type="button" class="btn btn-success property_card__btn-auction" disabled="true">Subastar</button>
+                      <button type="button" class="btn btn-dark property_card__btn-mortgage" disabled="true">Hipotecar</button>
+                      <button type="button" class="btn btn-dark property_card__btn-payPassage" disabled="true">Cobrar pasaje</button>
                     </div>`;
     result += division;
   }
@@ -785,10 +820,10 @@ function printCustomsPots() {
                         <p>Precio: <span>$ ${l.price}</span></p>
                         <p>Peaje: <span>$ ${l.toll}</span></p>
                       </div>
-                      <button type="button" class="btn btn-primary property_card__btn-sell">Vender</button>
-                      <button type="button" class="btn btn-success property_card__btn-auction">Subastar</button>
-                      <button type="button" class="btn btn-dark property_card__btn-mortgage">Hipotecar</button>
-                      <button type="button" class="btn btn-dark property_card__btn-payToll">Cobrar peaje</button>
+                      <button type="button" class="btn btn-primary property_card__btn-sell" disabled="true">Vender</button>
+                      <button type="button" class="btn btn-success property_card__btn-auction" disabled="true">Subastar</button>
+                      <button type="button" class="btn btn-dark property_card__btn-mortgage" disabled="true">Hipotecar</button>
+                      <button type="button" class="btn btn-dark property_card__btn-payToll" disabled="true">Cobrar peaje</button>
                     </div>`;
     result += division;
   }
@@ -917,8 +952,6 @@ function buildNavigationHelper(navigatorButton, viewShow) {
     actualView.classList.remove("ocultar");
   });
 }
-
-
 
 /******************************************************************
     A PARTIR DE AQUI SE EMPIEZAN A EJECUTAR LAS FUNCIONES

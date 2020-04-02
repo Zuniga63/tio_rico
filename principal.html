@@ -185,43 +185,15 @@
     </section>
 
     <section id="titlesView" class="titlesView ocultar">
-        <!-- <div class="title-card" style="background-color: red;">
-            <img src="img/titles/Aldea caníbal.jpg" alt="Aldea canibal" class="title-card__img">
-            <div class="title-card__body">
-                <h2 class="title-card__title">Aldea canibal</h2>
-                <p>Propietario: <span>Banco</span></p>
-                <p>Precio: <span>$ 1600</span></p>
-                <p>Casas: <span>0</span></p>
-                <p>Castillo: <span>0</span></p>
-                <p>Alquiler: <span>$300</span></p>
-                <div class="button">
-                    <button type="button" class="btn btn-success">Vender</button>
-                    <button type="button" class="btn btn-primary">Subastar</button>
-                    <button type="button" class="btn btn-warning">Hipotecar</button>
-                </div>
-            </div>
-        </div>
-        <div class="title-card">
-            <img src="img/titles/Altos del monoriel.jpg" alt="Aldea canibal" class="title-card__img">
-            <div class="title-card__body">
-                <h2 class="title-card__title">Altos del monoriel</h2>
-                <p>Propietario: <span>Banco</span></p>
-                <p>Precio: <span>$ 1600</span></p>
-                <p>Casas: <span>0</span></p>
-                <p>Castillo: <span>0</span></p>
-                <p>Alquiler: <span>$300</span></p>
-            </div>
-        </div> -->
+        <!-- Esta seccion se construye dinamicamente con javascript -->
     </section>
 
     <section id="linesView" class="linesView ocultar">
-        <h1>Estas en la seccion de lineas de transporte</h1>
-        <p>Seccion en construccion</p>
+        <!-- Esta seccion se construye dinamicamente con javascript -->
     </section>
 
     <section id="customsView" class="customView ocultar">
-        <h1>Estas en la seccion de pasos aduaneros</h1>
-        <p>Seccion en construccion</p>
+        <!-- Esta seccion se construye dinamicamente con javascript -->
     </section>
 
     <section id="consignationView" class="consignationView ocultar">
@@ -234,8 +206,32 @@
         <p>Seccion en construccion</p>
     </section>
 
+    <!-- A PARTIR DE ESTE PUNTO ESTAN LOS MODALES PARA VENDER, SUBASTAR, COBRAR ALQUILER ETC -->
 
-
+    <!-- Modal para vender propiedades del banco -->
+    <div class="modal fade" id="bankPropertySale" tabindex="-1" role="dialog" aria-labelledby="bankPropertySaleTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="bankPropertySaleTitle">Cielos de Dumbo</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Propietario actual: <span id="bankPropertySaleActualOwner">Banco</span></p>
+            <p>Precio de venta: <span id="bankPropertySalePrice">$ 600.00</span></p>
+            <p>Comprador: 
+              <select id="bankPropertySaleBuyer"><option value="Andres">Seleccionar jugador</option><option value="Andres">Seleccionar jugador</option>
+            </select></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Salir</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Vender</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
 
     <!-- script de bootstrap -->
