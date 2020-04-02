@@ -3,12 +3,20 @@ const ACTUAL_LOCATION = location.href;    //La utilizo para saber en que pagina 
 const BASE_MONEY = 300000;                //Es todo el dinero que puede estar en circulacion
 const SALARY = 2000;                      //Es el dinero que se le paga a un jugador cuando llega a la estacion
 const INITIAL_BALANCE = 26400;            //Es el dinero que se le entrega al jugador cuando es creado
-
-//Se declaran las variables que estan relacionadas con las vista en la seccion principal
-var actualView;
-
-//Se declaran las variables que se van a estar utilizando en el juego
-var miBank;
+const HOUSE_PRICE = 1000;
+const CASTLE_PRICE = 5000;
+const MAX_HOUSES = 30;
+const MAX_CASTLES = 10;
+const TAX_OF_LAND_OF_DE_FUTURE_BASE = 1500;
+const TAX_OF_LAND_OF_DE_FUTURE_PER_CASTLE = 200;
+const TAX_OF_ADVENTURE_LAND = 1800;
+const TAX_OF_LAND_OF_THE_BORDER = 2000;
+const BAMBI_AWARD = 3000;
+const PINOCCHIO_AWARD = 6000;
+const DAISY_AWARD = 4000;
+const CINDERELLA_AWARD = 5000;
+//Se declaran las variables globales del juego
+var actualView, miBank;
 
 /********************************************************************
  **    A PARTIR DE AQUI DECLARO LOS OBJETOS DE LA APLICACION       **
@@ -40,6 +48,21 @@ class Player {
 
     return false;
   }
+
+  payMortgages(amount){
+    //TODO
+    return false;
+  }
+
+  addEstateProperty(property, propertyType){
+    //TODO
+    return false;
+  }
+
+  removeEstaeProperty(property, propertyType){
+    //TODO
+    return false;
+  }
 }
 /***************************************/
 /*****     CLASES DE PROPIEDADES   *****/
@@ -48,21 +71,28 @@ class EstateProperty {
   constructor(id, name, price, image) {
     this.id = id;
     this.name = name;
-    this.owner = undefined;
     this.price = price;
     this.image = image;
+    this.owner = undefined;
+    this.hasOwner = false;
     this.isMortgage = false;
+    this.mortgage = 0;
   }
 
-  mortgage() {
+  makeMortgage() {
     this.isMortgage = true;
     console.log(`Se hipotecó la propiedad: ${this.name}`);
     return Math.floor(this.price / 2);
   }
 
-  withdrawMortgage() {
+  withdrawalMortgage() {
     this.isMortgage = false;
     console.log(`Se levantó la hipoteca de: ${this.name}`);
+  }
+
+  makeDeed(newOwner){
+    //TODO
+    return false;
   }
 }
 
@@ -71,20 +101,46 @@ class Title extends EstateProperty {
     rentWhitTreeHouses, rentWhitACastle, image) {
     super(id, name, price, image);
     this.color = color;
-    this.rent = 0;
-    this.baseRent = baseRent;
-    this.rentWithAHouse = rentWithAHouse;
-    this.rentWithTwoHouses = rentWithTwoHouses;
-    this.rentWhitTreeHouses = rentWhitTreeHouses;
-    this.rentWhitACastle = rentWhitACastle;
+    this.rental = 0;
+    this.baseRental = baseRent;
+    this.rentalWithAHouse = rentWithAHouse;
+    this.rentalWithTwoHouses = rentWithTwoHouses;
+    this.rentalWhitTreeHouses = rentWhitTreeHouses;
+    this.rentalWhitACastle = rentWhitACastle;
     this.houses = [];
     this.castle = undefined;
+    this.hasACastle = false;
   }
 
   //Este elemento es diferente a la base porque aplica hipoteca a las casas o castillos
-  mortgage() {
+  makeMortgage() {
     console.log("Montando hipoteca desde titulo");
   }
+
+  buildHouse(house){
+    //TODO
+  }
+
+  buildCastle(castle){
+    //TODO
+  }
+
+  demolishHouse(){
+    //TODO
+  }
+
+  demolishCastle(){
+    //TODO
+  }
+
+  defineRental(id){
+    //TODO
+  }
+
+  defineDoubleRental(){
+    //TODO
+  }
+
 }
 
 class Line extends EstateProperty {
@@ -93,6 +149,10 @@ class Line extends EstateProperty {
     this.basePassage = basePassage;
     this.passage = 0;
   }
+
+  definePassage(passageValue){
+    this.passage = passageValue;
+  }
 }
 
 class CustomsPost extends EstateProperty {
@@ -100,6 +160,10 @@ class CustomsPost extends EstateProperty {
     super(id, name, price, image);
     this.baseToll = baseToll;
     this.toll = 0;
+  }
+
+  defineToll(tollValue){
+    this.toll = tollValue;
   }
 }
 
@@ -118,8 +182,8 @@ class Building {
     this.title = title;
   }
 
-  buildingOf(title) {
-    this.title = undefined;
+  makeDeed(newOwner){
+    this.owner = newOwner;
   }
 }
 
@@ -430,8 +494,8 @@ class Bank {
   createBuildings() {
     this.houses = [];
     this.castles = [];
-    for (let i = 0; i < 30; i++) {
-      if (i < 10) {
+    for (let i = 0; i < MAX_HOUSES; i++) {
+      if (i < MAX_CASTLES) {
         this.castles.push(new Castle(i, 3500));
       }
       this.houses.push(new House(i, 1000));
@@ -440,19 +504,28 @@ class Bank {
   }
 
   newPlayer(playerName) {
-    //Lo primero es definir que el nombre del jugador sea unico
-    let uniqueName = true;
+    
+    if(this.isUniqueName(playerName)){
+      let id = this.players.length,
+      acount = this.generateAcount();
+
+      let player = new Player(id, playerName, acount);
+      player.cashDeposit(INITIAL_BALANCE);
+      this.money -= INITIAL_BALANCE;
+      this.players.push(player);
+  
+      return true;
+    }
+
+    return false;    
+  }
+
+  isUniqueName(playerName){
     for (let i = 0; i < this.players.length; i++) {
       if (this.players[i].name.toUpperCase() === playerName.toUpperCase()) {
-        uniqueName = false;
         return false;
       }
     }
-
-    let player = new Player(this.players.length, playerName, this.generateAcount());
-    player.cashDeposit(INITIAL_BALANCE);
-    this.money -= INITIAL_BALANCE;
-    this.players.push(player);
 
     return true;
   }
@@ -482,14 +555,7 @@ class Bank {
   }
 
   paySalary(playerName){
-    let player;
-    for(let i = 0; i < this.players.length; i++){
-      if(this.players[i].name === playerName){
-        player = this.players[i];
-        break;
-      }
-    }
-
+    let player = recoveryPlayer(playerName);
     player.cashDeposit(SALARY);
     this.money -= SALARY;
     return true;
@@ -500,15 +566,13 @@ class Bank {
     //el dinero total que puede estar en circulacion
     console.log("Metodo llamado con los parametros (" + playerName + ", " + amount);
     let balance = this.money + amount;
-    let player;
+    let player = recoveryPlayer(playerName);
+
     if(balance <= BASE_MONEY){
       console.log("El balance no ha sido superado");
 
       for(let i = 0; i < this.players.length; i++){
         balance += this.players[i].money;
-        if(this.players[i].name === playerName){
-          player = this.players[i];
-        }
       }
 
       if(balance <= BASE_MONEY){
@@ -525,20 +589,132 @@ class Bank {
   }
 
   cashWithdrawal(playerName, amount){
-    let player;
-    for(let i = 0; i < this.players.length; i++){
-      if(this.players[i].name === playerName){
-        player = this.players[i];
-        if(player.money >= amount){
-          player.cashWithdrawal(amount);
-          return true;
-        }
-      }
+    let player = recoveryPlayer(playerName);
+
+    if(player.money >= amount){
+      player.cashWithdrawal(amount);
+      return true;
     }
 
     return false;
   }
-}
+
+  sellProperty(propertyName, newOwner){
+    //TODO
+  }
+
+  mortgageProperty(propertyName){
+    //TODO
+  }
+
+  withdrawalMortgage(propertyName){
+    //TODO
+  }
+
+  buildHouse(titleName){
+    //TODO
+  }
+
+  buildCastle(titleName){
+    //TODO
+  }
+
+  demolishHouse(titleName){
+    //TODO
+  }
+
+  demolishCastle(titleName){
+    //TODO
+  }
+  //Este metodo verifica el bloque de color pasado como parametros y define los alquileres
+  //Este metodo debe ser llamado cuando se venda un titulo, se edifique o destruya un edificio o se hipoteque
+  //o des hipoteque una propiedad
+  defineRentals(color){
+    //TODO
+  }
+
+  definePassages(){
+    //TODO
+  }
+
+  defineTolls(){
+    //TODO
+  }
+
+  cashTransfer(playerSender, playerAddressee, amount){
+    let player1 = recoveryPlayer(playerSender);
+    let player2 = recoveryPlayer(playerAddressee);
+    let e = new Object();
+
+    if(player1.money>=amount){
+      player1.cashWithdrawal(amount);
+      player2.cashDeposit(amount);
+      e.result = true;
+      e.message = "Transferencia exitosa";
+    }
+    else{
+      e.result = false;
+      e.message = `El jugador ${player1.name} tiene saldo insuficiente`;
+    }
+
+    return e;
+
+  }//Fin del metodo
+
+  reloadState(){
+    //TODO
+  }
+
+  recoveryPlayer(playerName){
+    let player;
+
+    for(let index = 0; index < this.players.length; index++){
+      if(this.players[index].name === playerName){
+        player = this.players[index];
+        break;
+      }//Fin de if
+    }//Fin de for
+
+    return player;
+  }//Fin del metodo
+
+  recoveryTitle(titleName){
+    let title;
+    for(let index = 0; index < this.titles.length; index++){
+      if(this.titles[index].name === titleName){
+        title = this.titles[index];
+        break;
+      }//Fin de if
+    }//Fin de for
+
+    return title;
+  }//Fin del metodo
+
+  recoveryLine(lineName){
+    let line;
+    for(let index = 0; index < this.lines.length; index++){
+      if(this.lines[index].name === lineName){
+        line = this.lines[index];
+        break;
+      }//Fin de if
+    }//Fin de for
+
+    return line;
+  }//Fin del metodo
+
+  recoveryCustomsPots(customsName){
+    let customs;
+    for(let index = 0; index < this.customsPosts.length; index++){
+      if(this.customsPosts[index].name === customsName){
+        customs = this.customsPosts[index];
+        break;
+      }
+    }
+
+    return customs;
+
+  }//Fin del metodo
+}//Fin de la clase
 
 /********************************************************************
  **    A PARTIR DE AQUI SE DEFINEN LAS FUNCIONES GLOBALES          **
@@ -726,7 +902,7 @@ function printTitles() {
                         <p>Precio: <span>$ ${t.price}</span></p>
                         <p>Casas: <span>${t.houses.length}</span></p>
                         <p>Castillo: <span>${castle}</span></p>
-                        <p>Alquiler: <span>$ ${t.rent}</span></p>
+                        <p>Alquiler: <span>$ ${t.rental}</span></p>
                         <p>Hipoteca: <span>$ ${t.rent}</span></p>
                       </div>
 
