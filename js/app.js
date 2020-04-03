@@ -31,18 +31,21 @@ class Player {
     this.titles = [];
     this.customsPosts = [];
     this.lines = [];
-    this.houses = [];
-    this.castles = [];
+    this.houses = 0;
+    this.castles = 0;
+    this.netFortune = 0;
   }
 
   cashDeposit(money) {
     this.money += money;
+    this.calculateNetFortune();
     return true;
   }
 
   cashWithdrawal(money) {
     if (this.money >= money) {
       this.money -= money;
+      this.calculateNetFortune();
       return true;
     }
 
@@ -50,18 +53,170 @@ class Player {
   }
 
   payMortgages(amount){
-    //TODO
+    e = new Object();
+    if(this.mortgage > 0 && this.mortgage >= amount){
+      this.mortgage += amount;
+      return true;
+    }
+
     return false;
   }
 
   addEstateProperty(property, propertyType){
-    //TODO
-    return false;
+    switch(propertyType){
+      case "Title":{
+        let repetido = false;
+        for(let index = 0; index < this.titles.length; index++){
+          if(property.id === this.titles[index].id){
+            repetido = true;
+            break;
+          }
+        }
+
+        if(!repetido){
+          this.titles.push(property);
+          this.titles.sort((a,b)=>a.id-b.id);
+          this.countBuilding();
+          this.calculateNetFortune();
+          return true;
+        }
+
+        return false;
+      }
+      case "Line":{
+        let repetido = false;
+        for(let index = 0; index < this.lines.length; index++){
+          if(property.id === this.lines[index].id){
+            repetido = true;
+            break;
+          }
+        }
+
+        if(!repetido){
+          this.lines.push(property);
+          this.lines.sort((a,b)=>a.id-b.id);
+          this.calculateNetFortune();
+          return true;
+        }
+
+        return false;
+      }
+      case "CustomsPost":{
+        let repetido = false;
+        for(let index = 0; index < this.customsPosts.length; index++){
+          if(property.id === this.customsPosts[index].id){
+            repetido = true;
+            break;
+          }
+        }
+
+        if(!repetido){
+          this.customsPosts.push(property);
+          this.customsPosts.sort((a,b)=>a.id-b.id);
+          this.calculateNetFortune();
+          return true;
+        }
+
+        return false;
+      }
+
+    }
   }
 
   removeEstaeProperty(property, propertyType){
-    //TODO
-    return false;
+    let position;
+    let encontrado = false;
+    
+    switch(propertyType){
+      case "Title":{
+        for(let index = 0; index < this.titles.length; index++){
+          if(this.titles[index].id === property.id){
+            position = index;
+            encontrado = true;
+            break;
+          }
+        }
+
+        if(encontrado){
+          this.titles.slice(position, position);
+          this.countBuilding();
+          this.calculateNetFortune();
+          return true;
+        }
+
+        return false;
+      }
+      case "Line":{
+        for(let index = 0; index < this.lines.length; index++){
+          if(this.lines[index].id === property.id){
+            position = index;
+            encontrado = true;
+            break;
+          }
+        }
+
+        if(encontrado){
+          this.lines.slice(position, position);
+          return true;
+        }
+
+        return false;
+      }
+      case "CustomsPost":{
+        for(let index = 0; index < this.customsPosts.length; index++){
+          if(this.customsPosts[index].id === property.id){
+            position = index;
+            encontrado = true;
+            this.calculateNetFortune();
+            break;
+          }
+        }
+
+        if(encontrado){
+          this.lines.slice(position, position);
+          this.calculateNetFortune();
+          return true;
+        }
+
+        return false;
+      }
+    }
+  }
+
+  countBuilding(){
+    let temporalHouses = 0;
+    let temporalCastles = 0;
+    for(let index = 0; index < this.titles.length; index++){
+      if(this.titles[index].hasACastle){
+        temporalCastles++;
+      }else {
+        temporalHouses += this.titles[index].houses.length;
+      }
+    }
+
+    this.castles = temporalCastles;
+    this.houses = temporalHouses;
+  }
+
+  calculateNetFortune(){
+    let fortune = 0;
+    fortune += this.money;
+    fortune += this.houses * HOUSE_PRICE;
+    fortune += this.castles * CASTLE_PRICE;
+    fortune -= this.mortgage;
+    for(let index = 0; index < this.titles.length; index++){
+      fortune += this.titles[index].price;
+    }
+
+    for(let index = 0; index < this.lines; index++){
+      fortune += this.lines[index].price;
+    }
+
+    for(let index = 0; index < this.customsPosts.length; index++){
+      fortune += this.customsPosts[index].price;
+    }
+
+    this.netFortune = fortune;
   }
 }
 /***************************************/
