@@ -16,8 +16,7 @@ const PINOCCHIO_AWARD = 6000;
 const DAISY_AWARD = 4000;
 const CINDERELLA_AWARD = 5000;
 const MORTGAGE_INTEREST = 200;
-//Se declaran las variables globales del juego
-var actualView, miBank;
+
 
 /********************************************************************
  **    A PARTIR DE AQUI DECLARO LOS OBJETOS DE LA APLICACION       **
@@ -977,6 +976,10 @@ class Bank {
     }//Fin del metodo
 
     sellProperty(propertyName, newOwner) {
+        let e = new Object();
+        e.log = [];
+        e.log.push(`Se recibieron los parametros "${propertyName}" y "${newOwner}"`);
+
         //Primero recupero la propiedad que se está tratando de vender y el jugador que quiere
         //comprarla
         let property = this.recoveryProperty(propertyName);
@@ -985,29 +988,49 @@ class Bank {
 
 
         if (typeof property.owner !== 'undefined') {
-            console.log("La propiedad es de otro jugador");
+            e.log.push("La propiedad es de otro jugador");
             seller = property.owner;
-            console.log("No hay soporte para ventas entre jugadores");
+
+            if(seller.name !== buyer.name){
+                e.result = false;
+                e.message = "No hay soporte para ventas entre jugadores";
+                e.log.push(e.message);
+            }else{
+                e.result = false;
+                e.message = "Se está intentando vender una propiedad al mismo jugador";
+                e.log.push(e.message);
+            }
+
+            
         } else {
-            console.log("La propiedad es del banco");
+            e.log.push("La propiedad es del banco");
             if (buyer.money >= property.price) {
-                console.log("Se tiene dinero para comprar la propiedad");
+                e.log.push("Se tiene dinero para comprar la propiedad");
 
                 let price = property.price;
                 buyer.cashWithdrawal(price);
                 this.money += price;
 
-                console.log("Se descontó el dinero del jugador");
+                e.log.push("Se descontó el dinero del jugador");
 
-                property.makeDeed(property);
+                property.makeDeed(buyer);
                 buyer.addEstateProperty(property);
+                e.log.push("Se escritura la propiedad al jugador");
+
+                this.defineRentals(property.color);
+
+                e.result = true;
+                e.message = "Proceso satisfactorio";
+                e.log.push(e.message);
 
             } else {
-                console.log("El jugador no posee dinero suficiente");
+                e.message = "El jugador no posee dinero suficiente";
+                e.log.push(e.message);
+                e.result = false;
             }
         }
 
-
+        return e;
 
     }
 
@@ -1038,7 +1061,35 @@ class Bank {
     //Este metodo debe ser llamado cuando se venda un titulo, se edifique o destruya un edificio o se hipoteque
     //o des hipoteque una propiedad
     defineRentals(color) {
-        //TODO
+        let zone = [];
+        let owners = 0;
+        //En primer lugar debo recuperar los titulos de la zona
+        for(let index = 0; index < this.titles.length; index++){
+            let title = this.titles[index];
+
+            if(title.color === color){
+                zone.push(title)
+
+                if(typeof title.owner !== 'undefined'){
+                    owners++;
+                }
+
+                if(zone.length === 3){
+                    break;
+                }
+            }
+        }
+
+        console.log(owners);
+        if(owners === 3 &&  zone[0].owner.id === zone[1].owner.id && zone[0].owner.id === zone[2].owner.id ){
+            zone[0].establishBenefits();
+            zone[1].establishBenefits();
+            zone[2].establishBenefits();
+        }else{
+            zone[0].removeBenefits();
+            zone[1].removeBenefits();
+            zone[2].removeBenefits();
+        }
     }
 
     definePassages() {
