@@ -827,7 +827,7 @@ class Bank {
 
   newPlayer(playerName) {
     
-    if(this.isUniqueName(playerName)){
+    if(this.isUniqueName(playerName) && this.money >= (INITIAL_BALANCE + this.players.length * SALARY)){
       let id = this.players.length,
       acount = this.generateAcount();
 
@@ -877,10 +877,14 @@ class Bank {
   }
 
   paySalary(playerName){
-    let player = recoveryPlayer(playerName);
-    player.cashDeposit(SALARY);
-    this.money -= SALARY;
-    return true;
+    if(this.money >= SALARY){
+      let player = recoveryPlayer(playerName);
+      player.cashDeposit(SALARY);
+      this.money -= SALARY;
+      return true;
+    }
+
+    return false;
   }
 
   cashDeposit(playerName, amount){
@@ -920,6 +924,26 @@ class Bank {
 
     return false;
   }
+
+  cashTransfer(playerSender, playerAddressee, amount){
+    let player1 = recoveryPlayer(playerSender);
+    let player2 = recoveryPlayer(playerAddressee);
+    let e = new Object();
+
+    if(player1.money>=amount){
+      player1.cashWithdrawal(amount);
+      player2.cashDeposit(amount);
+      e.result = true;
+      e.message = "Transferencia exitosa";
+    }
+    else{
+      e.result = false;
+      e.message = `El jugador ${player1.name} tiene saldo insuficiente`;
+    }
+
+    return e;
+
+  }//Fin del metodo
 
   sellProperty(propertyName, newOwner){
     //TODO
@@ -963,25 +987,7 @@ class Bank {
     //TODO
   }
 
-  cashTransfer(playerSender, playerAddressee, amount){
-    let player1 = recoveryPlayer(playerSender);
-    let player2 = recoveryPlayer(playerAddressee);
-    let e = new Object();
-
-    if(player1.money>=amount){
-      player1.cashWithdrawal(amount);
-      player2.cashDeposit(amount);
-      e.result = true;
-      e.message = "Transferencia exitosa";
-    }
-    else{
-      e.result = false;
-      e.message = `El jugador ${player1.name} tiene saldo insuficiente`;
-    }
-
-    return e;
-
-  }//Fin del metodo
+  
 
   reloadState(){
     //TODO
