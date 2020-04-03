@@ -267,35 +267,200 @@ class Title extends EstateProperty {
     this.houses = [];
     this.castle = undefined;
     this.hasACastle = false;
+    this.zoneBenefits = false;
   }
 
   //Este elemento es diferente a la base porque aplica hipoteca a las casas o castillos
   makeMortgage() {
-    console.log("Montando hipoteca desde titulo");
+    this.isMortgage = true;
+    this.mortgage = Math.floor((this.price / 2) + this.houses.length * HOUSE_PRICE);
+    this.mortgage += this.hasACastle ? (CASTLE_PRICE / 2) : 0;
+    this.defineRental();
+    return true; 
+  }
+
+  withdrawalMortgage() {
+    this.isMortgage = false;
+    this.mortgage = 0;
+    this.defineRental();
+    console.log(`Se levantó la hipoteca de: ${this.name}`);
+  }
+
+  makeDeed(newOwner){
+    this.owner = newOwner;
+    this.defineRental();
   }
 
   buildHouse(house){
-    //TODO
+    let e = new Object();
+
+    if(typeof this.owner !== 'undefined'){
+      if(!this.isMortgage){
+        if(this.zoneBenefits){
+          if(this.houses.length < 3){
+            house.makeDeed(this.owner);
+            house.buildingOn(this);
+            this.houses.push(house);
+            this.defineRental();
+            e.result = true;
+          }
+          else{
+            e.result = false;
+            e.message = "No se pueden construir mas de tres casas";
+          }
+        }else{
+          e.result = false;
+          e.message = "No se puede construir si no tienes las tres propiedades del mismo color"
+        }
+      }else{
+        e.result = false;
+        e.message = "No se puede construir en propiedades hipotecadas"
+      }
+    }else {
+      e.result = false;
+      e.message = "No se puede construir casas en propiedades del banco";
+    }
+
+    return e;
   }
 
   buildCastle(castle){
-    //TODO
+    let e = new Object();
+
+    if(typeof this.owner !== 'undefined'){
+      if(!this.hasACastle){
+        if(!this.isMortgage){
+          if(this.houses.length === 3){
+            this.demolishHouse();
+            this.demolishHouse();
+            this.demolishHouse();
+            
+            castle.makeDeed(this.owner);
+            castle.buildingOn(this);
+            this.castle = castle;
+            this.hasACastle = true;
+            this.defineRental();
+            e.result = true;
+          }else{
+            e.result = false;
+            e.message = "Deben haber tres casas en esta propiedad";
+          }
+        }else{
+          e.result = false;
+          e.message = "No se puede edificar en propiedades hipotecadas";
+        }
+      }else{
+        e.result = false;
+        e.message = "Ya existe un castillo en esta propiedad";
+      }
+    }else{
+      e.result = false;
+      e.message = "No se puede construir castillos en propiedades del banco";
+    }
+
+    return e;
   }
 
   demolishHouse(){
-    //TODO
+    let e = new Object();
+
+    if(this.houses.length>0){
+      if(!this.isMortgage){
+        this.houses[0].makeDeed(undefined);
+        this.houses[0].buildingOn(undefined);
+        this.houses.shift();
+        this.defineRental();
+        e.result = true;
+      }else{
+        e.result = false;
+        e.message = "No se puede demoler en propiedades hipotecadas"
+      }
+    }else{
+      e.result = false;
+      e.message = "No hay casas para demoler"
+    }
+
+    return e;
   }
 
   demolishCastle(){
-    //TODO
+    let e = new Object();
+
+    if(this.hasACastle){
+      if(!this.isMortgage){
+        this.castle.makeDeed(undefined);
+        this.castle.buildingOn(undefined);
+        this.castle = undefined;
+        this.hasACastle = false;
+        this.defineRental();
+      }else{
+        e.result = false;
+        e.message = "No se puede demoler en propiedades hipotecadas"
+      }
+    }
+    else{
+      e.result = false;
+      e.message = "No hay castillo para demoler";
+    }
+
+    return e;
   }
 
-  defineRental(id){
-    //TODO
+  defineRental(){
+    if(typeof this.owner !== 'undefined'){
+      if(this.hasACastle){
+        this.establisRental(4);
+      }else{
+        this.establisRental(this.houses.length);
+      }
+    }else{
+      this.establisRental(-1);
+    }
   }
 
-  defineDoubleRental(){
-    //TODO
+  establisRental(id){
+    switch(id){
+      case -1: 
+        this.rental = 0;
+      break;
+
+      case 0: 
+        if(this.zoneBenefits && !this.isMortgage){
+          this.rental = this.baseRental * 2;
+        }else{
+          this.rental = this.baseRental;
+        }
+      break;
+
+      case 1: 
+        this.rental = this.rentalWithAHouse;
+      break;
+
+      case 2: 
+        this.rental = this.rentalWithTwoHouses;
+      break;
+
+      case 3: 
+        this.rental = this.rentalWhitTreeHouses;
+      break;   
+      
+      case 4:
+        if(this.zoneBenefits && !this.isMortgage){
+          this.rental = this.rentalWhitACastle * 2;
+        }else{
+          this.rental = this.rentalWhitACastle;
+        }
+    }
+  }
+
+  establishBenefits(){
+    this.zoneBenefits = true;
+    this.defineRental();
+  }
+
+  removeBenefits(){
+    this.zoneBenefits = false;
+    this.defineRental();
   }
 
 }
