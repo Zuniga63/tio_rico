@@ -15,6 +15,7 @@ const BAMBI_AWARD = 3000;
 const PINOCCHIO_AWARD = 6000;
 const DAISY_AWARD = 4000;
 const CINDERELLA_AWARD = 5000;
+const MORTGAGE_INTEREST = 200;
 //Se declaran las variables globales del juego
 var actualView, miBank;
 
@@ -237,17 +238,18 @@ class EstateProperty {
   makeMortgage() {
     this.isMortgage = true;
     console.log(`Se hipotecó la propiedad: ${this.name}`);
+    this.mortgage = Math.floor(this.price / 2) + MORTGAGE_INTEREST;
     return Math.floor(this.price / 2);
   }
 
   withdrawalMortgage() {
     this.isMortgage = false;
+    this.mortgage = 0;
     console.log(`Se levantó la hipoteca de: ${this.name}`);
   }
 
   makeDeed(newOwner){
-    //TODO
-    return false;
+    this.owner = newOwner;
   }
 }
 
