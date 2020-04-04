@@ -1017,7 +1017,22 @@ class Bank {
                 buyer.addEstateProperty(property);
                 e.log.push("Se escritura la propiedad al jugador");
 
-                this.defineRentals(property.color);
+                switch(property.toString()){
+                    case "Title":
+                        this.verifyZone(property.color);
+                        break;
+                    case "Line":
+                        this.definePassages();
+                        break;
+                    case "CustomsPost":
+                        this.defineTolls();
+                        break;
+                    default:
+                    throw "Existe un error en los casos";
+                    
+                }
+
+                this.verifyZone(property.color);
 
                 e.result = true;
                 e.message = "Proceso satisfactorio";
@@ -1060,7 +1075,7 @@ class Bank {
     //Este metodo verifica el bloque de color pasado como parametros y define los alquileres
     //Este metodo debe ser llamado cuando se venda un titulo, se edifique o destruya un edificio o se hipoteque
     //o des hipoteque una propiedad
-    defineRentals(color) {
+    verifyZone(color) {
         let zone = [];
         let owners = 0;
         //En primer lugar debo recuperar los titulos de la zona
@@ -1093,11 +1108,151 @@ class Bank {
     }
 
     definePassages() {
-        //TODO
+        let owners = [];
+
+        //Para que el proceso funcione se debe recolectar cuantos propietarios distintos hay
+        for(let indexLine = 0; indexLine < 4; indexLine++){
+            let line = this.lines[indexLine];
+
+            if(typeof line.owner !== 'undefined'){
+                let unico = true;
+                for(let indexOwner = 0; indexOwner < owners.length; indexOwner++){
+                    if(line.owner.id === owners[indexOwner].id){
+                        unico = false;
+                        break;
+                    }
+                }
+
+                if(unico){
+                    owners.push(line.owner);
+                }
+            }
+        }//Fin del bucle for
+
+        switch(owners.length){
+            case 0: {
+                this.lines[0].definePassage(0);
+                this.lines[1].definePassage(0);
+                this.lines[2].definePassage(0);
+                this.lines[3].definePassage(0);
+            }
+            break;
+            case 4: {
+                this.lines[0].definePassage(this.lines[0].basePassage);
+                this.lines[1].definePassage(this.lines[1].basePassage);
+                this.lines[2].definePassage(this.lines[2].basePassage);
+                this.lines[3].definePassage(this.lines[3].basePassage);
+            }
+            break;
+            default:{
+                for(let indexOwner = 0; indexOwner < owners.length; indexOwner++){
+                    let temporalOwner = owners[indexOwner];
+                    let temporalLines = [];
+                    for(let indexLine = 0; indexLine < 4; indexLine++){
+                        let line = this.lines[indexLine];
+                        if(typeof line.owner !== 'undefined' && line.owner.id === temporalOwner.id){
+                            temporalLines.push(line);
+                        }
+                    }
+
+                    switch(temporalLines.length){
+                        case 1: {
+                            temporalLines[0].definePassage(300);
+                        }break;
+                        case 2: {
+                            temporalLines[0].definePassage(500);
+                            temporalLines[1].definePassage(500);
+                        }break;
+                        case 3: {
+                            temporalLines[0].definePassage(1000);
+                            temporalLines[1].definePassage(1000);
+                            temporalLines[2].definePassage(1000);
+                        }break;
+                        case 4: {
+                            temporalLines[0].definePassage(2000);
+                            temporalLines[1].definePassage(2000);
+                            temporalLines[2].definePassage(2000);
+                            temporalLines[3].definePassage(2000);
+                        }break;
+                    }
+                }
+            }
+        }
     }
 
     defineTolls() {
-        //TODO
+        let owners = [];
+        let customsActive = [];
+
+        for(let indexCustoms = 0; indexCustoms < 4; indexCustoms++){
+            let customs = this.customsPosts[indexCustoms];
+            if(typeof customs.owner !== 'undefined'){
+                customsActive.push(customs);
+                let unique = true;
+
+                for(let indexOwner = 0; indexOwner < owners.length; indexOwner++){
+                    let owner = owners[indexOwner];
+                    if(customs.owner.id === owner.id){
+                        unique = false;
+                        break;
+                    }
+                }
+
+                if(unique){
+                    owners.push(customs.owner);
+                }
+            }
+        }
+
+        switch(owners.length){
+            case 0:{
+                this.customsPosts[0].defineToll(0)
+                this.customsPosts[1].defineToll(0)
+                this.customsPosts[2].defineToll(0)
+                this.customsPosts[3].defineToll(0)
+            }break;
+            case 4:{
+                this.customsPosts[0].defineToll(this.customsPosts[0].baseToll);
+                this.customsPosts[1].defineToll(this.customsPosts[1].baseToll);
+                this.customsPosts[2].defineToll(this.customsPosts[2].baseToll);
+                this.customsPosts[3].defineToll(this.customsPosts[3].baseToll);
+            }break;
+            default: {
+                for(let indexOwner = 0; indexOwner < owners.length; indexOwner++){
+                    let totalToll = 0;
+                    let temporalCustoms = [];
+                    let owner = owners[indexOwner];
+                    for(let indexCustoms = 0; indexCustoms < customsActive.length; indexCustoms++){
+                        let customs = customsActive[indexCustoms];
+                        if(customs.owner.id = owner.id){
+                            totalToll += customs.baseToll;
+                            temporalCustoms.push(customs);
+                        }
+                    }
+
+                    switch(temporalCustoms.length){
+                        case 1: {
+                            temporalCustoms[0].defineToll(totalToll);
+                        }break;
+                        case 2:{
+                            temporalCustoms[0].defineToll(totalToll);
+                            temporalCustoms[1].defineToll(totalToll);
+                        }break;
+                        case 3:{
+                            temporalCustoms[0].defineToll(totalToll);
+                            temporalCustoms[1].defineToll(totalToll);
+                            temporalCustoms[2].defineToll(totalToll);
+                        }break;
+                        case 4:{
+                            temporalCustoms[0].defineToll(totalToll);
+                            temporalCustoms[1].defineToll(totalToll);
+                            temporalCustoms[2].defineToll(totalToll);
+                            temporalCustoms[3].defineToll(totalToll);
+                        }
+                    }
+                }
+            }break;
+        }
     }
 
     reloadState() {
