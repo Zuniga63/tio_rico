@@ -218,6 +218,10 @@ class Player {
 
         this.netFortune = fortune;
     }
+
+    toString(){
+        return this.name;
+    }
 }
 /***************************************/
 /*****     CLASES DE PROPIEDADES   *****/
@@ -267,6 +271,7 @@ class Title extends EstateProperty {
         this.castle = undefined;
         this.hasACastle = false;
         this.zoneBenefits = false;
+        this.imperialZone = false;
     }
 
     //Este elemento es diferente a la base porque aplica hipoteca a las casas o castillos
@@ -444,7 +449,7 @@ class Title extends EstateProperty {
                 break;
 
             case 4:
-                if (this.zoneBenefits && !this.isMortgage) {
+                if (this.imperialZone && !this.isMortgage) {
                     this.rental = this.rentalWhitACastle * 2;
                 } else {
                     this.rental = this.rentalWhitACastle;
@@ -459,6 +464,16 @@ class Title extends EstateProperty {
 
     removeBenefits() {
         this.zoneBenefits = false;
+        this.defineRental();
+    }
+
+    establishImperialBenefits(){
+        this.imperialZone = true;
+        this.defineRental();
+    }
+
+    removeImperialBenefits(){
+        this.imperialZone = false;
         this.defineRental();
     }
 
@@ -549,7 +564,6 @@ class Bank {
         if (typeof bankerName !== 'undefined') {
             this.money = BASE_MONEY;
             this.bankerName = bankerName;
-            console.log(this.players);
             this.newPlayer(bankerName);
 
         } else if (typeof localStorage.miBank !== 'undefined') {
@@ -847,7 +861,7 @@ class Bank {
             player.cashDeposit(INITIAL_BALANCE);
             this.money -= INITIAL_BALANCE;
             this.players.push(player);
-
+            
             return true;
         }
 
@@ -1032,8 +1046,6 @@ class Bank {
                     
                 }
 
-                this.verifyZone(property.color);
-
                 e.result = true;
                 e.message = "Proceso satisfactorio";
                 e.log.push(e.message);
@@ -1058,19 +1070,162 @@ class Bank {
     }
 
     buildHouse(titleName) {
-        //TODO
+        let house;
+        let title = this.recoveryTitle(titleName);
+        let owner = title.owner;
+        let e = new Object();
+        let hasAHouse = false;
+
+        //Primero busco una casa vacía
+        for(let i = 0; i < this.houses.length; i++){
+            if(typeof this.houses[i].owner === 'undefined'){
+                house = this.houses[i];
+                hasAHouse = true;
+                break;
+            }
+        }
+
+        if(hasAHouse){
+            if(typeof owner !== 'undefined'){
+                if(owner.money >= HOUSE_PRICE){
+                    if(!title.isMortgage){
+                        if(title.houses.length<3){
+                            owner.cashWithdrawal(HOUSE_PRICE);
+                            this.money += HOUSE_PRICE;
+                            e = title.buildHouse(house);
+                            owner.countBuilding();
+                            owner.calculateNetFortune();
+                        }else{
+                            e.result = false;
+                            e.message = "No se puede construir mas de tres casas"
+                        }                        
+                    }else{
+                        e.result = false;
+                        e.message = "No se puede construir en casas hipotecadas";
+                    }
+                }else{
+                    e.result = false;
+                    e.message = "El jugador presenta saldo insuficiente";
+                }
+            }else{
+                e.result = false;
+                e.message = "No se puede edificar en propiedades del banco";
+            }
+        }else{
+            e.result = false;
+            e.message = "No hay casas disponibles";
+        }
+
+        return e;
     }
 
     buildCastle(titleName) {
-        //TODO
+        let castle;
+        let title = this.recoveryTitle(titleName);
+        let owner = title.owner;
+        let hasACastle = false;
+        let e = new Object();
+
+        //Primero elijo uno de los castillos disponibles
+        console.log(this.castles);
+        for(let i = 0; i < this.castles.length; i++){
+            if(typeof this.castles[i].owner === 'undefined'){
+                hasACastle = true;
+                castle = this.castles[i];
+                break;
+            }
+        }
+
+        if(hasACastle){
+            if(typeof owner !== 'undefined'){
+                if(!title.hasACastle){
+                    if(!title.isMortgage){
+                        if(title.houses.length === 3){
+                            if(owner.money >= CASTLE_PRICE - HOUSE_PRICE * 3){
+                                let money = CASTLE_PRICE - HOUSE_PRICE * 3;
+                                owner.cashWithdrawal(money);
+                                this.money += money;
+                                e = title.buildCastle(castle);
+                                owner.countBuilding();
+                                owner.calculateNetFortune();
+                            }else{
+                                e.result = false;
+                                e.message = "Saldo insuficiente";
+                            }
+                        }else{
+                            e.result = false;
+                            e.message = "La propiedad debe tener las tres casas";
+                        }
+                    }else{
+                        e.result = false;
+                        e.message = "No se puede edificar en propiedades hipotecadas";
+                    }
+                }else{
+                    e.result = false;
+                    e.message = "En esta propiedad ya existe un castillo";
+                }
+            }else{
+                e.result = false;
+                e.message = "No se puede edificar en propiedades del banco";
+            }
+        }else{
+            e.result = false;
+            e.message = "No hay castillos disponibles";
+        }
+
+        return e;
     }
 
-    demolishHouse(titleName) {
-        //TODO
+    buyHouse(titleName) {
+        let title = this.recoveryTitle(titleName);
+        let owner = title.owner;
+        let e = new Object();
+
+        if(title.houses.length>0 && typeof owner !== 'undefined'){
+            if(!title.isMortgage){
+                title.demolishHouse();
+                owner.cashDeposit(HOUSE_PRICE / 2);
+                this.money -= HOUSE_PRICE / 2;
+                owner.countBuilding();
+                owner.calculateNetFortune();
+                e.result = true;
+                e.message = "La casa fue comprada"
+            }else{
+                e.result = false;
+                e.message = "No se puede comprar casas de propiedades hipotecadas"
+            }
+        }else{
+            e.result = false;
+            e.message = "No hay casas en esta propiedad";
+        }
+
+        return e;
     }
 
-    demolishCastle(titleName) {
-        //TODO
+    buyCastle(titleName) {
+        let title = this.recoveryTitle(titleName);
+        let owner = title.owner;
+        let e = new Object();
+
+        if(title.hasACastle && typeof owner !== 'undefined'){
+            if(!title.isMortgage){
+                title.demolishCastle();
+                owner.cashDeposit(CASTLE_PRICE / 2);
+                this.money -= CASTLE_PRICE / 2;
+                owner.countBuilding();
+                owner.calculateNetFortune();
+                e.result = true;
+                e.message = "El castillo fue demolido y pagado"
+            }else{
+                e.result = false;
+                e.message = "No se pueden comprar castillos de propiedades hipotecadas"
+            }
+        }else{
+            e.result = false;
+            e.message = "No hay castillos en esta propiedad";
+        }
+
+        return e;
     }
     //Este metodo verifica el bloque de color pasado como parametros y define los alquileres
     //Este metodo debe ser llamado cuando se venda un titulo, se edifique o destruya un edificio o se hipoteque
@@ -1095,11 +1250,19 @@ class Bank {
             }
         }
 
-        console.log(owners);
         if(owners === 3 &&  zone[0].owner.id === zone[1].owner.id && zone[0].owner.id === zone[2].owner.id ){
             zone[0].establishBenefits();
             zone[1].establishBenefits();
             zone[2].establishBenefits();
+            if(zone[0].hasACastle && zone[1].hasACastle && zone[2].hasACastle){
+                zone[0].establishImperialBenefits();
+                zone[1].establishImperialBenefits();
+                zone[2].establishImperialBenefits();
+            }else{
+                zone[0].removeImperialBenefits();
+                zone[1].removeImperialBenefits();
+                zone[2].removeImperialBenefits();
+            }
         }else{
             zone[0].removeBenefits();
             zone[1].removeBenefits();
@@ -1203,7 +1366,6 @@ class Bank {
                 }
             }
         }
-
         switch(owners.length){
             case 0:{
                 this.customsPosts[0].defineToll(0)
@@ -1224,7 +1386,7 @@ class Bank {
                     let owner = owners[indexOwner];
                     for(let indexCustoms = 0; indexCustoms < customsActive.length; indexCustoms++){
                         let customs = customsActive[indexCustoms];
-                        if(customs.owner.id = owner.id){
+                        if(customs.owner.id === owner.id){
                             totalToll += customs.baseToll;
                             temporalCustoms.push(customs);
                         }
