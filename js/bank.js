@@ -1482,3 +1482,174 @@ class Bank {
     }//Fin del metodo
 }//Fin de la clase
 
+/**A continuacion se encuentran los metodos de persistencias, que guardan la informacion en localstorages */
+
+function SaveState(bank){
+    _saveBank(bank);
+    _savePlayers(bank);
+    _saveTitles(bank);
+    _saveLines(bank);
+    _saveCustomsPots(bank);
+    _saveBuilding(bank);
+}
+
+function _saveBank(bank){
+    let theBank = new Object();
+    theBank.bankerName = bank.bankerName;
+    theBank.money = bank.money;
+    theBank.mortgage = 0;
+    theBank.players = bank.players.length;
+    theBank.houses = 0;
+    theBank.castles = 0;
+    theBank.titles = 0;
+    theBank.lines = 0;
+    theBank.customsPosts = 0;
+    theBank.netFortune = bank.money;
+    
+    //Se rcorren los jugadores para agrupar las hipotecas
+    for(let i = 0; i < bank.players.length; i++){
+        theBank.mortgage += bank.players[i].mortgage;
+    }
+
+    //Se recorren las propiedades
+    for(let i = 0; i < bank.titles.length; i++){
+        if(i<4){
+            if(typeof bank.lines[i].owner === 'undefined'){
+                theBank.lines++;
+                theBank.netFortune += bank.lines[i].price;
+            }
+
+            if(typeof bank.customsPosts[i].owner === 'undefined'){
+                theBank.customsPosts++;
+                theBank.netFortune += bank.customsPosts[i].price;
+            }
+        }
+
+        if(typeof bank.titles[i].owner === 'undefined'){
+            theBank.titles++;
+            theBank.netFortune += bank.titles[i].price;
+        }
+    }
+
+    //Se recorren los edificios
+    for(let i = 0; i < bank.houses.length; i++){
+        if(i < MAX_CASTLES){
+            if(typeof bank.castles[i].owner === 'undefined'){
+                theBank.castles++;
+            }
+        }
+
+        if(typeof bank.houses[i].owner === 'undefined'){
+            theBank.houses++;
+        }
+    }
+
+    theBank.netFortune += theBank.houses * HOUSE_PRICE;
+    theBank.netFortune += theBank.castles * CASTLE_PRICE;
+    localStorage.theBank = JSON.stringify(theBank);
+}
+
+function _savePlayers(bank){
+    let playersBook = [];
+    for(let i = 0; i < bank.players.length; i++){
+        let item = bank.players[i];
+        let player = new Object();
+        player.id = item.id;
+        player.name = item.name;
+        player.acount = item.acount;
+        player.money = item.money;
+        player.mortgage= item.mortgage;
+        player.titles = item.titles.length;
+        player.customsPosts = item.customsPosts.length;
+        player.houses = item.houses;
+        player.castles = item.castles;
+        player.netFortune = item.netFortune;
+        playersBook.push(player);
+    }
+
+    localStorage.playersBook = JSON.stringify(playersBook);
+}
+
+function _saveTitles(bank){
+    let titlesBook = [];
+    for(let i = 0; i < bank.titles.length; i++){
+        let item = bank.titles[i];
+        let title =new Object();
+        title.id = item.id;
+        title.name = item.name;
+        title.bankIsPropietary = typeof item.owner === 'undefined';
+        title.owner = title.bankIsPropietary ? undefined : item.owner.name;
+        title.mortgage = item.mortgage;
+        title.houses = item.houses.length;
+        title.castles = item.hasACastle ? 1 : 0;
+        title.zoneBenefits = item.zoneBenefits;
+        title.imperialZone = item.imperialZone;
+
+        titlesBook.push(title);
+    }
+
+    localStorage.titlesBook = JSON.stringify(titlesBook);
+}
+
+function _saveLines(bank){
+    let linesBook = [];
+    for(let i = 0; i < bank.lines.length; i++){
+        let item = bank.lines[i];
+        let line = new Object();
+        line.id = item.id;
+        line.name = item.name;
+        line.bankIsPropietary = typeof item.owner === 'undefined';
+        line.owner = line.bankIsPropietary ? undefined : item.owner.name;
+        line.passage = item.passage;
+        line.mortgage = item.mortgage;
+
+        linesBook.push(line);
+    }
+
+    localStorage.linesBook = JSON.stringify(linesBook);
+}
+
+function _saveCustomsPots(bank){
+    let customsPostsBook = [];
+    for(let i = 0; i < bank.customsPosts.length; i++){
+        let item = bank.customsPosts[i];
+        let customs = new Object();
+        customs.id = item.id;
+        customs.name = item.name;
+        customs.bankIsPropietary = typeof item.owner === 'undefined';
+        customs.owner = customs.bankIsPropietary ? undefined : item.owner.name;
+        customs.toll = item.toll;
+        customs.mortgage = item.mortgage;
+
+        customsPostsBook.push(customs);
+    }
+
+    localStorage.customsPostsBook = JSON.stringify(customsPostsBook);
+}
+
+function _saveBuilding(bank){
+    let housesBook = [];
+    let castlesBook = [];
+    for(let i = 0; i < bank.houses.length; i++){
+        if(i < MAX_CASTLES){
+            let castle = new Object();
+            castle.id = bank.castles[i].id;
+            castle.bankIsPropietary = typeof bank.castles[i].owner === 'undefined';
+            castle.owner = castle.bankIsPropietary ? undefined : bank.castles[i].owner.name;
+            castle.title = castle.bankIsPropietary ? undefined : bank.castles[i].title.name;
+            castlesBook.push(castle);
+        }
+
+        let item = bank.houses[i];
+        let house = new Object();
+        house.id = item.id;
+        house.bankIsPropietary = typeof bank.houses[i].owner === 'undefined';
+        house.owner = house.bankIsPropietary ? undefined : item.owner.name;
+        house.title = house.bankIsPropietary ? undefined : item.title.name;
+        housesBook.push(house);
+    }
+
+    localStorage.housesBook = JSON.stringify(housesBook);
+    localStorage.castlesBook = JSON.stringify(castlesBook);
+}
+
