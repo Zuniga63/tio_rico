@@ -904,7 +904,7 @@ class Bank {
 
     paySalary(playerName) {
         if (this.money >= SALARY) {
-            let player = recoveryPlayer(playerName);
+            let player = this.recoveryPlayer(playerName);
             player.cashDeposit(SALARY);
             this.money -= SALARY;
             return true;
@@ -1228,14 +1228,14 @@ class Bank {
         return e;
     }
 
-    auctionProperty(propertyName, playerName, amount){
+    auctionProperty(propertyName, playerName, amount) {
         let property = this.recoveryProperty(propertyName);
         let player = this.recoveryPlayer(playerName);
         let e = new Object();
 
-        if(typeof property.owner === 'undefined'){
-            if(amount >= property.price - 200){
-                if(player.money >= amount){
+        if (typeof property.owner === 'undefined') {
+            if (amount >= property.price - 200) {
+                if (player.money >= amount) {
                     player.cashWithdrawal(amount);
                     this.money += amount;
 
@@ -1254,22 +1254,58 @@ class Bank {
                             break;
                         default:
                             throw "Existe un error en los casos";
-    
+
                     }
 
                     e.result = true;
                     e.message = `Se subastó la propiedad ${property.name} al jugador "${player.name}"`;
-                }else{
+                } else {
                     e.result = false;
                     e.message = "Saldo insuficiente";
                 }
-            }else{
+            } else {
                 e.result = false;
                 e.message = "El monto a pagar es inferior al valor minimo";
             }
-        }else{
+        } else {
             e.result = false;
             e.message = "No se puede subastar propiedades de otros jugadores";
+        }
+
+        return e;
+    }
+
+    collectRent(titleName, renterName) {
+        let title = this.recoveryTitle(titleName);
+        let renter = this.recoveryPlayer(renterName);
+        let e = new Object();
+
+        if ( typeof title !== 'undefined' && title.toString() === 'Title') {
+            let owner = title.owner;
+            let rental = title.rental;
+
+            if (typeof owner !== 'undefined') {
+                if (owner.id !== renter.id) {
+                    if (renter.money >= rental) {
+                        renter.cashWithdrawal(rental);
+                        owner.cashDeposit(rental);
+                        e.result = true;
+                        e.message = "El cobro se realizó correctamente";
+                    } else {
+                        e.result = false;
+                        e.message = "El inquilino no posee suficiente dinero";
+                    }
+                } else {
+                    e.result = false;
+                    e.message = "El inquilino es el mismo propietario"
+                }
+            } else {
+                e.message = "Las propiedades del banco no cobran alquiler";
+                e.result = false;
+            }
+        } else {
+            e.result = false;
+            e.message = "No es un titulo de propiedad";
         }
 
         return e;
@@ -1789,18 +1825,18 @@ function _loadCustomsPost(bank, book) {
     }
 }
 
-function _loadTitles(bank, book){
+function _loadTitles(bank, book) {
     let players = bank.players;
     let titles = bank.titles;
 
-    for(let index = 0; index < book.length; index++){
+    for (let index = 0; index < book.length; index++) {
         let itemBook = book[index];
         let title = titles[index];
 
-        if(!itemBook.bankIsPropietary){
+        if (!itemBook.bankIsPropietary) {
             let owner;
-            for(let indexPlayer = 0; indexPlayer < players.length; indexPlayer++){
-                if(players[indexPlayer].name === itemBook.owner){
+            for (let indexPlayer = 0; indexPlayer < players.length; indexPlayer++) {
+                if (players[indexPlayer].name === itemBook.owner) {
                     owner = players[indexPlayer];
                     break;
                 }
@@ -1816,7 +1852,7 @@ function _loadTitles(bank, book){
     }
 }
 
-function _loadBuilding(bank, book){
+function _loadBuilding(bank, book) {
     let players = bank.players;
     let titles = bank.titles;
     let houses = bank.houses;
@@ -1826,24 +1862,24 @@ function _loadBuilding(bank, book){
 
 
     //Primero asigno las casas
-    for(let indexHouse = 0; indexHouse < housesBook.length; indexHouse++){
+    for (let indexHouse = 0; indexHouse < housesBook.length; indexHouse++) {
         let itemBook = housesBook[indexHouse];
         let house = houses[indexHouse];
 
-        if(!itemBook.bankIsPropietary){
+        if (!itemBook.bankIsPropietary) {
             let owner, title;
 
             //Recupero al jugador
-            for(let indexPlayer = 0; indexPlayer < players.length; indexPlayer++){
-                if(players[indexPlayer].name === itemBook.owner){
+            for (let indexPlayer = 0; indexPlayer < players.length; indexPlayer++) {
+                if (players[indexPlayer].name === itemBook.owner) {
                     owner = players[indexPlayer];
                     break;
                 }
             }
 
             //Recupero la propiedad
-            for(let indexTitle = 0; indexTitle < titles.length; indexTitle++){
-                if(titles[indexTitle].name === itemBook.title){
+            for (let indexTitle = 0; indexTitle < titles.length; indexTitle++) {
+                if (titles[indexTitle].name === itemBook.title) {
                     title = titles[indexTitle];
                     break;
                 }
@@ -1856,47 +1892,47 @@ function _loadBuilding(bank, book){
     }
 
     //Ahora asigno los castillos
-    for(let indexCastle = 0; indexCastle < castlesBook.length; indexCastle++){
+    for (let indexCastle = 0; indexCastle < castlesBook.length; indexCastle++) {
         let itemBook = castlesBook[indexCastle];
         let castle = castles[indexCastle];
 
-        if(!itemBook.bankIsPropietary){
+        if (!itemBook.bankIsPropietary) {
             let owner, title;
 
             //Recupero al jugador
-            for(let indexPlayer = 0; indexPlayer < players.length; indexPlayer++){
-                if(players[indexPlayer].name === itemBook.owner){
+            for (let indexPlayer = 0; indexPlayer < players.length; indexPlayer++) {
+                if (players[indexPlayer].name === itemBook.owner) {
                     owner = players[indexPlayer];
                     break;
                 }
             }
 
             //Recupero la propiedad
-            for(let indexTitle = 0; indexTitle < titles.length; indexTitle++){
-                if(titles[indexTitle].name === itemBook.title){
+            for (let indexTitle = 0; indexTitle < titles.length; indexTitle++) {
+                if (titles[indexTitle].name === itemBook.title) {
                     title = titles[indexTitle];
                     break;
                 }
             }
-            
+
             castle.owner = owner;
             castle.title = title;
             title.castle = castle;
-            
+
         }
     }
 }
 
-function _updatingObject(bank){
+function _updatingObject(bank) {
     bank.definePassages();
     bank.defineTolls();
 
-    for(let i = 0; i < bank.players.length; i++){
+    for (let i = 0; i < bank.players.length; i++) {
         bank.players[i].countBuilding();
         bank.players[i].calculateNetFortune();
     }
 
-    for(let i = 0; i < bank.titles.length; i++){
+    for (let i = 0; i < bank.titles.length; i++) {
         bank.titles[i].defineRental();
     }
 }
