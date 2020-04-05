@@ -808,7 +808,7 @@ class Bank {
             new Title(
                 23,
                 "Aldea Caníbal",
-                3600,
+                4000,
                 "pink",
                 800,
                 2400,
@@ -1223,6 +1223,53 @@ class Bank {
         } else {
             e.result = false;
             e.message = "No hay castillos en esta propiedad";
+        }
+
+        return e;
+    }
+
+    auctionProperty(propertyName, playerName, amount){
+        let property = this.recoveryProperty(propertyName);
+        let player = this.recoveryPlayer(playerName);
+        let e = new Object();
+
+        if(typeof property.owner === 'undefined'){
+            if(amount >= property.price - 200){
+                if(player.money >= amount){
+                    player.cashWithdrawal(amount);
+                    this.money += amount;
+
+                    property.makeDeed(player);
+                    player.addEstateProperty(property);
+
+                    switch (property.toString()) {
+                        case "Title":
+                            this.verifyZone(property.color);
+                            break;
+                        case "Line":
+                            this.definePassages();
+                            break;
+                        case "CustomsPost":
+                            this.defineTolls();
+                            break;
+                        default:
+                            throw "Existe un error en los casos";
+    
+                    }
+
+                    e.result = true;
+                    e.message = `Se subastó la propiedad ${property.name} al jugador "${player.name}"`;
+                }else{
+                    e.result = false;
+                    e.message = "Saldo insuficiente";
+                }
+            }else{
+                e.result = false;
+                e.message = "El monto a pagar es inferior al valor minimo";
+            }
+        }else{
+            e.result = false;
+            e.message = "No se puede subastar propiedades de otros jugadores";
         }
 
         return e;
@@ -1834,7 +1881,6 @@ function _loadBuilding(bank, book){
             
             castle.owner = owner;
             castle.title = title;
-            console.log(itemBook);
             title.castle = castle;
             
         }
@@ -1846,7 +1892,6 @@ function _updatingObject(bank){
     bank.defineTolls();
 
     for(let i = 0; i < bank.players.length; i++){
-        console.log(bank.players[i]);
         bank.players[i].countBuilding();
         bank.players[i].calculateNetFortune();
     }
