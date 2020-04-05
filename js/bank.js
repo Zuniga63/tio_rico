@@ -219,7 +219,7 @@ class Player {
         this.netFortune = fortune;
     }
 
-    toString(){
+    toString() {
         return this.name;
     }
 }
@@ -467,12 +467,12 @@ class Title extends EstateProperty {
         this.defineRental();
     }
 
-    establishImperialBenefits(){
+    establishImperialBenefits() {
         this.imperialZone = true;
         this.defineRental();
     }
 
-    removeImperialBenefits(){
+    removeImperialBenefits() {
         this.imperialZone = false;
         this.defineRental();
     }
@@ -861,7 +861,7 @@ class Bank {
             player.cashDeposit(INITIAL_BALANCE);
             this.money -= INITIAL_BALANCE;
             this.players.push(player);
-            
+
             return true;
         }
 
@@ -958,8 +958,8 @@ class Bank {
         if (playerSender !== playerAddressee) {
             player1 = this.recoveryPlayer(playerSender);
             player2 = this.recoveryPlayer(playerAddressee);
-            if(typeof player1 !== 'undefined'){
-                if(typeof player2 !== 'undefined'){
+            if (typeof player1 !== 'undefined') {
+                if (typeof player2 !== 'undefined') {
                     if (player1.money >= amount) {
                         player1.cashWithdrawal(amount);
                         player2.cashDeposit(amount);
@@ -969,21 +969,21 @@ class Bank {
                     else {
                         e.result = false;
                         e.message = `El jugador ${player1.name} tiene saldo insuficiente`;
-                    }    
-                }else{
+                    }
+                } else {
                     e.result = false;
-                    e.message = "El destinatario no existe"; 
+                    e.message = "El destinatario no existe";
                 }
-            }else{
+            } else {
                 e.result = false;
-                e.message = "El remitente no existe";    
+                e.message = "El remitente no existe";
             }
         } else {
             e.result = false;
             e.message = "Tanto el emisor como el receptor son el mismo";
         }
 
-        
+
 
         return e;
 
@@ -1005,17 +1005,17 @@ class Bank {
             e.log.push("La propiedad es de otro jugador");
             seller = property.owner;
 
-            if(seller.name !== buyer.name){
+            if (seller.name !== buyer.name) {
                 e.result = false;
                 e.message = "No hay soporte para ventas entre jugadores";
                 e.log.push(e.message);
-            }else{
+            } else {
                 e.result = false;
                 e.message = "Se está intentando vender una propiedad al mismo jugador";
                 e.log.push(e.message);
             }
 
-            
+
         } else {
             e.log.push("La propiedad es del banco");
             if (buyer.money >= property.price) {
@@ -1031,7 +1031,7 @@ class Bank {
                 buyer.addEstateProperty(property);
                 e.log.push("Se escritura la propiedad al jugador");
 
-                switch(property.toString()){
+                switch (property.toString()) {
                     case "Title":
                         this.verifyZone(property.color);
                         break;
@@ -1042,8 +1042,8 @@ class Bank {
                         this.defineTolls();
                         break;
                     default:
-                    throw "Existe un error en los casos";
-                    
+                        throw "Existe un error en los casos";
+
                 }
 
                 e.result = true;
@@ -1077,41 +1077,41 @@ class Bank {
         let hasAHouse = false;
 
         //Primero busco una casa vacía
-        for(let i = 0; i < this.houses.length; i++){
-            if(typeof this.houses[i].owner === 'undefined'){
+        for (let i = 0; i < this.houses.length; i++) {
+            if (typeof this.houses[i].owner === 'undefined') {
                 house = this.houses[i];
                 hasAHouse = true;
                 break;
             }
         }
 
-        if(hasAHouse){
-            if(typeof owner !== 'undefined'){
-                if(owner.money >= HOUSE_PRICE){
-                    if(!title.isMortgage){
-                        if(title.houses.length<3){
+        if (hasAHouse) {
+            if (typeof owner !== 'undefined') {
+                if (owner.money >= HOUSE_PRICE) {
+                    if (!title.isMortgage) {
+                        if (title.houses.length < 3) {
                             owner.cashWithdrawal(HOUSE_PRICE);
                             this.money += HOUSE_PRICE;
                             e = title.buildHouse(house);
                             owner.countBuilding();
                             owner.calculateNetFortune();
-                        }else{
+                        } else {
                             e.result = false;
                             e.message = "No se puede construir mas de tres casas"
-                        }                        
-                    }else{
+                        }
+                    } else {
                         e.result = false;
                         e.message = "No se puede construir en casas hipotecadas";
                     }
-                }else{
+                } else {
                     e.result = false;
                     e.message = "El jugador presenta saldo insuficiente";
                 }
-            }else{
+            } else {
                 e.result = false;
                 e.message = "No se puede edificar en propiedades del banco";
             }
-        }else{
+        } else {
             e.result = false;
             e.message = "No hay casas disponibles";
         }
@@ -1128,47 +1128,47 @@ class Bank {
 
         //Primero elijo uno de los castillos disponibles
         console.log(this.castles);
-        for(let i = 0; i < this.castles.length; i++){
-            if(typeof this.castles[i].owner === 'undefined'){
+        for (let i = 0; i < this.castles.length; i++) {
+            if (typeof this.castles[i].owner === 'undefined') {
                 hasACastle = true;
                 castle = this.castles[i];
                 break;
             }
         }
 
-        if(hasACastle){
-            if(typeof owner !== 'undefined'){
-                if(!title.hasACastle){
-                    if(!title.isMortgage){
-                        if(title.houses.length === 3){
-                            if(owner.money >= CASTLE_PRICE - HOUSE_PRICE * 3){
+        if (hasACastle) {
+            if (typeof owner !== 'undefined') {
+                if (!title.hasACastle) {
+                    if (!title.isMortgage) {
+                        if (title.houses.length === 3) {
+                            if (owner.money >= CASTLE_PRICE - HOUSE_PRICE * 3) {
                                 let money = CASTLE_PRICE - HOUSE_PRICE * 3;
                                 owner.cashWithdrawal(money);
                                 this.money += money;
                                 e = title.buildCastle(castle);
                                 owner.countBuilding();
                                 owner.calculateNetFortune();
-                            }else{
+                            } else {
                                 e.result = false;
                                 e.message = "Saldo insuficiente";
                             }
-                        }else{
+                        } else {
                             e.result = false;
                             e.message = "La propiedad debe tener las tres casas";
                         }
-                    }else{
+                    } else {
                         e.result = false;
                         e.message = "No se puede edificar en propiedades hipotecadas";
                     }
-                }else{
+                } else {
                     e.result = false;
                     e.message = "En esta propiedad ya existe un castillo";
                 }
-            }else{
+            } else {
                 e.result = false;
                 e.message = "No se puede edificar en propiedades del banco";
             }
-        }else{
+        } else {
             e.result = false;
             e.message = "No hay castillos disponibles";
         }
@@ -1181,8 +1181,8 @@ class Bank {
         let owner = title.owner;
         let e = new Object();
 
-        if(title.houses.length>0 && typeof owner !== 'undefined'){
-            if(!title.isMortgage){
+        if (title.houses.length > 0 && typeof owner !== 'undefined') {
+            if (!title.isMortgage) {
                 title.demolishHouse();
                 owner.cashDeposit(HOUSE_PRICE / 2);
                 this.money -= HOUSE_PRICE / 2;
@@ -1190,11 +1190,11 @@ class Bank {
                 owner.calculateNetFortune();
                 e.result = true;
                 e.message = "La casa fue comprada"
-            }else{
+            } else {
                 e.result = false;
                 e.message = "No se puede comprar casas de propiedades hipotecadas"
             }
-        }else{
+        } else {
             e.result = false;
             e.message = "No hay casas en esta propiedad";
         }
@@ -1207,8 +1207,8 @@ class Bank {
         let owner = title.owner;
         let e = new Object();
 
-        if(title.hasACastle && typeof owner !== 'undefined'){
-            if(!title.isMortgage){
+        if (title.hasACastle && typeof owner !== 'undefined') {
+            if (!title.isMortgage) {
                 title.demolishCastle();
                 owner.cashDeposit(CASTLE_PRICE / 2);
                 this.money -= CASTLE_PRICE / 2;
@@ -1216,11 +1216,11 @@ class Bank {
                 owner.calculateNetFortune();
                 e.result = true;
                 e.message = "El castillo fue demolido y pagado"
-            }else{
+            } else {
                 e.result = false;
                 e.message = "No se pueden comprar castillos de propiedades hipotecadas"
             }
-        }else{
+        } else {
             e.result = false;
             e.message = "No hay castillos en esta propiedad";
         }
@@ -1234,36 +1234,36 @@ class Bank {
         let zone = [];
         let owners = 0;
         //En primer lugar debo recuperar los titulos de la zona
-        for(let index = 0; index < this.titles.length; index++){
+        for (let index = 0; index < this.titles.length; index++) {
             let title = this.titles[index];
 
-            if(title.color === color){
+            if (title.color === color) {
                 zone.push(title)
 
-                if(typeof title.owner !== 'undefined'){
+                if (typeof title.owner !== 'undefined') {
                     owners++;
                 }
 
-                if(zone.length === 3){
+                if (zone.length === 3) {
                     break;
                 }
             }
         }
 
-        if(owners === 3 &&  zone[0].owner.id === zone[1].owner.id && zone[0].owner.id === zone[2].owner.id ){
+        if (owners === 3 && zone[0].owner.id === zone[1].owner.id && zone[0].owner.id === zone[2].owner.id) {
             zone[0].establishBenefits();
             zone[1].establishBenefits();
             zone[2].establishBenefits();
-            if(zone[0].hasACastle && zone[1].hasACastle && zone[2].hasACastle){
+            if (zone[0].hasACastle && zone[1].hasACastle && zone[2].hasACastle) {
                 zone[0].establishImperialBenefits();
                 zone[1].establishImperialBenefits();
                 zone[2].establishImperialBenefits();
-            }else{
+            } else {
                 zone[0].removeImperialBenefits();
                 zone[1].removeImperialBenefits();
                 zone[2].removeImperialBenefits();
             }
-        }else{
+        } else {
             zone[0].removeBenefits();
             zone[1].removeBenefits();
             zone[2].removeBenefits();
@@ -1274,69 +1274,69 @@ class Bank {
         let owners = [];
 
         //Para que el proceso funcione se debe recolectar cuantos propietarios distintos hay
-        for(let indexLine = 0; indexLine < 4; indexLine++){
+        for (let indexLine = 0; indexLine < 4; indexLine++) {
             let line = this.lines[indexLine];
 
-            if(typeof line.owner !== 'undefined'){
+            if (typeof line.owner !== 'undefined') {
                 let unico = true;
-                for(let indexOwner = 0; indexOwner < owners.length; indexOwner++){
-                    if(line.owner.id === owners[indexOwner].id){
+                for (let indexOwner = 0; indexOwner < owners.length; indexOwner++) {
+                    if (line.owner.id === owners[indexOwner].id) {
                         unico = false;
                         break;
                     }
                 }
 
-                if(unico){
+                if (unico) {
                     owners.push(line.owner);
                 }
             }
         }//Fin del bucle for
 
-        switch(owners.length){
+        switch (owners.length) {
             case 0: {
                 this.lines[0].definePassage(0);
                 this.lines[1].definePassage(0);
                 this.lines[2].definePassage(0);
                 this.lines[3].definePassage(0);
             }
-            break;
+                break;
             case 4: {
                 this.lines[0].definePassage(this.lines[0].basePassage);
                 this.lines[1].definePassage(this.lines[1].basePassage);
                 this.lines[2].definePassage(this.lines[2].basePassage);
                 this.lines[3].definePassage(this.lines[3].basePassage);
             }
-            break;
-            default:{
-                for(let indexOwner = 0; indexOwner < owners.length; indexOwner++){
+                break;
+            default: {
+                for (let indexOwner = 0; indexOwner < owners.length; indexOwner++) {
                     let temporalOwner = owners[indexOwner];
                     let temporalLines = [];
-                    for(let indexLine = 0; indexLine < 4; indexLine++){
+                    for (let indexLine = 0; indexLine < 4; indexLine++) {
                         let line = this.lines[indexLine];
-                        if(typeof line.owner !== 'undefined' && line.owner.id === temporalOwner.id){
+                        if (typeof line.owner !== 'undefined' && line.owner.id === temporalOwner.id) {
                             temporalLines.push(line);
                         }
                     }
 
-                    switch(temporalLines.length){
+                    switch (temporalLines.length) {
                         case 1: {
                             temporalLines[0].definePassage(300);
-                        }break;
+                        } break;
                         case 2: {
                             temporalLines[0].definePassage(500);
                             temporalLines[1].definePassage(500);
-                        }break;
+                        } break;
                         case 3: {
                             temporalLines[0].definePassage(1000);
                             temporalLines[1].definePassage(1000);
                             temporalLines[2].definePassage(1000);
-                        }break;
+                        } break;
                         case 4: {
                             temporalLines[0].definePassage(2000);
                             temporalLines[1].definePassage(2000);
                             temporalLines[2].definePassage(2000);
                             temporalLines[3].definePassage(2000);
-                        }break;
+                        } break;
                     }
                 }
             }
@@ -1347,65 +1347,65 @@ class Bank {
         let owners = [];
         let customsActive = [];
 
-        for(let indexCustoms = 0; indexCustoms < 4; indexCustoms++){
+        for (let indexCustoms = 0; indexCustoms < 4; indexCustoms++) {
             let customs = this.customsPosts[indexCustoms];
-            if(typeof customs.owner !== 'undefined'){
+            if (typeof customs.owner !== 'undefined') {
                 customsActive.push(customs);
                 let unique = true;
 
-                for(let indexOwner = 0; indexOwner < owners.length; indexOwner++){
+                for (let indexOwner = 0; indexOwner < owners.length; indexOwner++) {
                     let owner = owners[indexOwner];
-                    if(customs.owner.id === owner.id){
+                    if (customs.owner.id === owner.id) {
                         unique = false;
                         break;
                     }
                 }
 
-                if(unique){
+                if (unique) {
                     owners.push(customs.owner);
                 }
             }
         }
-        switch(owners.length){
-            case 0:{
+        switch (owners.length) {
+            case 0: {
                 this.customsPosts[0].defineToll(0)
                 this.customsPosts[1].defineToll(0)
                 this.customsPosts[2].defineToll(0)
                 this.customsPosts[3].defineToll(0)
-            }break;
-            case 4:{
+            } break;
+            case 4: {
                 this.customsPosts[0].defineToll(this.customsPosts[0].baseToll);
                 this.customsPosts[1].defineToll(this.customsPosts[1].baseToll);
                 this.customsPosts[2].defineToll(this.customsPosts[2].baseToll);
                 this.customsPosts[3].defineToll(this.customsPosts[3].baseToll);
-            }break;
+            } break;
             default: {
-                for(let indexOwner = 0; indexOwner < owners.length; indexOwner++){
+                for (let indexOwner = 0; indexOwner < owners.length; indexOwner++) {
                     let totalToll = 0;
                     let temporalCustoms = [];
                     let owner = owners[indexOwner];
-                    for(let indexCustoms = 0; indexCustoms < customsActive.length; indexCustoms++){
+                    for (let indexCustoms = 0; indexCustoms < customsActive.length; indexCustoms++) {
                         let customs = customsActive[indexCustoms];
-                        if(customs.owner.id === owner.id){
+                        if (customs.owner.id === owner.id) {
                             totalToll += customs.baseToll;
                             temporalCustoms.push(customs);
                         }
                     }
 
-                    switch(temporalCustoms.length){
+                    switch (temporalCustoms.length) {
                         case 1: {
                             temporalCustoms[0].defineToll(totalToll);
-                        }break;
-                        case 2:{
+                        } break;
+                        case 2: {
                             temporalCustoms[0].defineToll(totalToll);
                             temporalCustoms[1].defineToll(totalToll);
-                        }break;
-                        case 3:{
+                        } break;
+                        case 3: {
                             temporalCustoms[0].defineToll(totalToll);
                             temporalCustoms[1].defineToll(totalToll);
                             temporalCustoms[2].defineToll(totalToll);
-                        }break;
-                        case 4:{
+                        } break;
+                        case 4: {
                             temporalCustoms[0].defineToll(totalToll);
                             temporalCustoms[1].defineToll(totalToll);
                             temporalCustoms[2].defineToll(totalToll);
@@ -1413,7 +1413,7 @@ class Bank {
                         }
                     }
                 }
-            }break;
+            } break;
         }
     }
 
@@ -1484,16 +1484,19 @@ class Bank {
 
 /**A continuacion se encuentran los metodos de persistencias, que guardan la informacion en localstorages */
 
-function SaveState(bank){
-    _saveBank(bank);
-    _savePlayers(bank);
-    _saveTitles(bank);
-    _saveLines(bank);
-    _saveCustomsPots(bank);
-    _saveBuilding(bank);
+function SaveState(bank) {
+    let books = new Object();
+    books.theBank = _saveBank(bank);
+    books.playersBook = _savePlayers(bank);
+    books.titlesBook = _saveTitles(bank);
+    books.linesBook = _saveLines(bank);
+    books.customsPostsBook = _saveCustomsPots(bank);
+    books.buildingBook = _saveBuilding(bank);
+
+    localStorage.books = JSON.stringify(books)
 }
 
-function _saveBank(bank){
+function _saveBank(bank) {
     let theBank = new Object();
     theBank.bankerName = bank.bankerName;
     theBank.money = bank.money;
@@ -1505,60 +1508,60 @@ function _saveBank(bank){
     theBank.lines = 0;
     theBank.customsPosts = 0;
     theBank.netFortune = bank.money;
-    
+
     //Se rcorren los jugadores para agrupar las hipotecas
-    for(let i = 0; i < bank.players.length; i++){
+    for (let i = 0; i < bank.players.length; i++) {
         theBank.mortgage += bank.players[i].mortgage;
     }
 
     //Se recorren las propiedades
-    for(let i = 0; i < bank.titles.length; i++){
-        if(i<4){
-            if(typeof bank.lines[i].owner === 'undefined'){
+    for (let i = 0; i < bank.titles.length; i++) {
+        if (i < 4) {
+            if (typeof bank.lines[i].owner === 'undefined') {
                 theBank.lines++;
                 theBank.netFortune += bank.lines[i].price;
             }
 
-            if(typeof bank.customsPosts[i].owner === 'undefined'){
+            if (typeof bank.customsPosts[i].owner === 'undefined') {
                 theBank.customsPosts++;
                 theBank.netFortune += bank.customsPosts[i].price;
             }
         }
 
-        if(typeof bank.titles[i].owner === 'undefined'){
+        if (typeof bank.titles[i].owner === 'undefined') {
             theBank.titles++;
             theBank.netFortune += bank.titles[i].price;
         }
     }
 
     //Se recorren los edificios
-    for(let i = 0; i < bank.houses.length; i++){
-        if(i < MAX_CASTLES){
-            if(typeof bank.castles[i].owner === 'undefined'){
+    for (let i = 0; i < bank.houses.length; i++) {
+        if (i < MAX_CASTLES) {
+            if (typeof bank.castles[i].owner === 'undefined') {
                 theBank.castles++;
             }
         }
 
-        if(typeof bank.houses[i].owner === 'undefined'){
+        if (typeof bank.houses[i].owner === 'undefined') {
             theBank.houses++;
         }
     }
 
     theBank.netFortune += theBank.houses * HOUSE_PRICE;
     theBank.netFortune += theBank.castles * CASTLE_PRICE;
-    localStorage.theBank = JSON.stringify(theBank);
+    return theBank;
 }
 
-function _savePlayers(bank){
+function _savePlayers(bank) {
     let playersBook = [];
-    for(let i = 0; i < bank.players.length; i++){
+    for (let i = 0; i < bank.players.length; i++) {
         let item = bank.players[i];
         let player = new Object();
         player.id = item.id;
         player.name = item.name;
         player.acount = item.acount;
         player.money = item.money;
-        player.mortgage= item.mortgage;
+        player.mortgage = item.mortgage;
         player.titles = item.titles.length;
         player.customsPosts = item.customsPosts.length;
         player.houses = item.houses;
@@ -1567,33 +1570,33 @@ function _savePlayers(bank){
         playersBook.push(player);
     }
 
-    localStorage.playersBook = JSON.stringify(playersBook);
+    return playersBook;
 }
 
-function _saveTitles(bank){
+function _saveTitles(bank) {
     let titlesBook = [];
-    for(let i = 0; i < bank.titles.length; i++){
+    for (let i = 0; i < bank.titles.length; i++) {
         let item = bank.titles[i];
-        let title =new Object();
+        let title = new Object();
         title.id = item.id;
         title.name = item.name;
         title.bankIsPropietary = typeof item.owner === 'undefined';
         title.owner = title.bankIsPropietary ? undefined : item.owner.name;
         title.mortgage = item.mortgage;
         title.houses = item.houses.length;
-        title.castles = item.hasACastle ? 1 : 0;
+        title.hasACastle = item.hasACastle;
         title.zoneBenefits = item.zoneBenefits;
         title.imperialZone = item.imperialZone;
 
         titlesBook.push(title);
     }
 
-    localStorage.titlesBook = JSON.stringify(titlesBook);
+    return titlesBook;
 }
 
-function _saveLines(bank){
+function _saveLines(bank) {
     let linesBook = [];
-    for(let i = 0; i < bank.lines.length; i++){
+    for (let i = 0; i < bank.lines.length; i++) {
         let item = bank.lines[i];
         let line = new Object();
         line.id = item.id;
@@ -1606,12 +1609,12 @@ function _saveLines(bank){
         linesBook.push(line);
     }
 
-    localStorage.linesBook = JSON.stringify(linesBook);
+    return linesBook;
 }
 
-function _saveCustomsPots(bank){
+function _saveCustomsPots(bank) {
     let customsPostsBook = [];
-    for(let i = 0; i < bank.customsPosts.length; i++){
+    for (let i = 0; i < bank.customsPosts.length; i++) {
         let item = bank.customsPosts[i];
         let customs = new Object();
         customs.id = item.id;
@@ -1624,14 +1627,15 @@ function _saveCustomsPots(bank){
         customsPostsBook.push(customs);
     }
 
-    localStorage.customsPostsBook = JSON.stringify(customsPostsBook);
+    return customsPostsBook;
 }
 
-function _saveBuilding(bank){
+function _saveBuilding(bank) {
+    let buildingBook = new Object();
     let housesBook = [];
     let castlesBook = [];
-    for(let i = 0; i < bank.houses.length; i++){
-        if(i < MAX_CASTLES){
+    for (let i = 0; i < bank.houses.length; i++) {
+        if (i < MAX_CASTLES) {
             let castle = new Object();
             castle.id = bank.castles[i].id;
             castle.bankIsPropietary = typeof bank.castles[i].owner === 'undefined';
@@ -1649,7 +1653,205 @@ function _saveBuilding(bank){
         housesBook.push(house);
     }
 
-    localStorage.housesBook = JSON.stringify(housesBook);
-    localStorage.castlesBook = JSON.stringify(castlesBook);
+    buildingBook.houses = housesBook;
+    buildingBook.castles = castlesBook;
+
+    return buildingBook;
+}
+//------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------
+
+function LoadState() {
+    let books = JSON.parse(localStorage.books);
+    let bank = new Bank(books.theBank.bankerName);
+
+    _loadPlayers(books.playersBook, bank);
+    bank.money = books.theBank.money;
+    _loadLines(bank, books.linesBook);
+    _loadCustomsPost(bank, books.customsPostsBook);
+    _loadTitles(bank, books.titlesBook);
+    _loadBuilding(bank, books.buildingBook);
+    _updatingObject(bank);
+    return bank;
 }
 
+function _loadPlayers(playersBook, bank) {
+    //En primer lugar modifico los datos del banquero
+    let players = bank.players;
+    players[0].money = playersBook[0].money;
+    players[0].acount = playersBook[0].acount;
+
+    //Ahora se crean y se reformulan los jugadores
+    for (let i = 1; i < playersBook.length; i++) {
+        let playerName = playersBook[i].name;
+        let playerAcount = playersBook[i].acount;
+        let playerMoney = playersBook[i].money;
+        let playerMortgage = playersBook[i].mortgage;
+
+        bank.newPlayer(playerName);
+        players[i].acount = playerAcount;
+        players[i].mortgage = playerMortgage;
+        players[i].money = playerMoney;
+    }
+
+}
+
+function _loadLines(bank, linesBook) {
+    let lines = bank.lines;
+    let players = bank.players;
+
+    for (let indexBook = 0; indexBook < linesBook.length; indexBook++) {
+        itemBook = linesBook[indexBook];
+        if (!itemBook.bankIsPropietary) {
+            let owner;
+            for (let indexPlayer = 0; indexPlayer < players.length; indexPlayer) {
+                if (players[indexPlayer].name === itemBook.owner) {
+                    owner = players[indexPlayer];
+                    break;
+                }
+            }
+
+            lines[indexBook].owner = owner;
+            lines[indexBook].passage = itemBook.passage;
+            lines[indexBook].mortgage = itemBook.mortgage;
+            owner.lines.push(lines[indexBook]);
+        }
+    }
+}
+
+function _loadCustomsPost(bank, book) {
+    let customsPosts = bank.customsPosts;
+    let players = bank.players;
+
+    for (let index = 0; index < book.length; index++) {
+        let item = book[index];
+        if (!item.bankIsPropietary) {
+            let owner;
+            for (let indexPlayer = 0; indexPlayer < players.length; indexPlayer) {
+                if (players[indexPlayer].name === itemBook.owner) {
+                    owner = players[indexPlayer];
+                    break;
+                }
+            }
+
+            customsPosts[index].owner = owner;
+            customsPosts[index].toll = item.toll;
+            customsPosts[index].mortgage = item.mortgage;
+            owner.customsPosts.push(customsPosts[index]);
+        }
+    }
+}
+
+function _loadTitles(bank, book){
+    let players = bank.players;
+    let titles = bank.titles;
+
+    for(let index = 0; index < book.length; index++){
+        let itemBook = book[index];
+        let title = titles[index];
+
+        if(!itemBook.bankIsPropietary){
+            let owner;
+            for(let indexPlayer = 0; indexPlayer < players.length; indexPlayer++){
+                if(players[indexPlayer].name === itemBook.owner){
+                    owner = players[indexPlayer];
+                    break;
+                }
+            }
+
+            title.owner = owner;
+            owner.titles.push(title);
+            title.mortgage = itemBook.mortgage;
+            title.zoneBenefits = itemBook.zoneBenefits;
+            title.imperialZone = itemBook.imperialZone;
+            title.hasACastle = itemBook.hasACastle;
+        }
+    }
+}
+
+function _loadBuilding(bank, book){
+    let players = bank.players;
+    let titles = bank.titles;
+    let houses = bank.houses;
+    let castles = bank.castles;
+    let housesBook = book.houses;
+    let castlesBook = book.castles;
+
+
+    //Primero asigno las casas
+    for(let indexHouse = 0; indexHouse < housesBook.length; indexHouse++){
+        let itemBook = housesBook[indexHouse];
+        let house = houses[indexHouse];
+
+        if(!itemBook.bankIsPropietary){
+            let owner, title;
+
+            //Recupero al jugador
+            for(let indexPlayer = 0; indexPlayer < players.length; indexPlayer++){
+                if(players[indexPlayer].name === itemBook.owner){
+                    owner = players[indexPlayer];
+                    break;
+                }
+            }
+
+            //Recupero la propiedad
+            for(let indexTitle = 0; indexTitle < titles.length; indexTitle++){
+                if(titles[indexTitle].name === itemBook.title){
+                    title = titles[indexTitle];
+                    break;
+                }
+            }
+
+            house.owner = owner;
+            house.title = title;
+            title.houses.push(house);
+        }
+    }
+
+    //Ahora asigno los castillos
+    for(let indexCastle = 0; indexCastle < castlesBook.length; indexCastle++){
+        let itemBook = castlesBook[indexCastle];
+        let castle = castles[indexCastle];
+
+        if(!itemBook.bankIsPropietary){
+            let owner, title;
+
+            //Recupero al jugador
+            for(let indexPlayer = 0; indexPlayer < players.length; indexPlayer++){
+                if(players[indexPlayer].name === itemBook.owner){
+                    owner = players[indexPlayer];
+                    break;
+                }
+            }
+
+            //Recupero la propiedad
+            for(let indexTitle = 0; indexTitle < titles.length; indexTitle++){
+                if(titles[indexTitle].name === itemBook.title){
+                    title = titles[indexTitle];
+                    break;
+                }
+            }
+            
+            castle.owner = owner;
+            castle.title = title;
+            console.log(itemBook);
+            title.castle = castle;
+            
+        }
+    }
+}
+
+function _updatingObject(bank){
+    bank.definePassages();
+    bank.defineTolls();
+
+    for(let i = 0; i < bank.players.length; i++){
+        console.log(bank.players[i]);
+        bank.players[i].countBuilding();
+        bank.players[i].calculateNetFortune();
+    }
+
+    for(let i = 0; i < bank.titles.length; i++){
+        bank.titles[i].defineRental();
+    }
+}
