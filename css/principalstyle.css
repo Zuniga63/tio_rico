@@ -2,7 +2,7 @@
 /********** Estilos de la tarjeta de estadisticas *********/
 /**********************************************************/
 body {
-  font-family: "Roboto", sans-serif;
+  /* font-family: "Roboto", sans-serif; */
   font-size: 16px;
   width: 100%;
 }
@@ -101,6 +101,114 @@ body {
     margin-left: 10px;
 }
 
+/*********************************************************/
+/********** ESTILOS DE LAS TARJETAS DE JUGADOR ***********/
+/*********************************************************/
+.player-card {
+  width: 95%;
+  margin: 0 auto 20px auto;
+  grid-auto-rows: auto;
+  margin-top: 20px;
+  padding: 5px;
+  border: 4px solid #666;
+  border-radius: 10px;
+  background-color: #f8f9fa;
+}
+
+.player-card p {
+  margin: 0;
+  padding: 0;
+}
+
+.player-card__header{
+  width: 90%;
+  border-bottom: 6px double black;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  margin-bottom: 20px;
+}
+
+.player-card__header__title{
+  grid-column: 1/-1;
+  text-align: center;
+  margin: 0;
+}
+
+.player-card__header__item{
+  text-align: center;
+}
+
+.player-card__header__item p{
+  display: inline-block;
+}
+
+.player-card__header__number{
+  font-style: italic;
+  font-weight: bold;
+}
+
+.player-card__body{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  padding-bottom: 20px;
+}
+
+.player-card__body__money{
+  background-color: lightskyblue;
+  border-radius: 20px;
+  font-size: 1rem;
+  text-align: center;
+  padding: 15px 0;
+  border: 2px solid blue;
+  margin-bottom: 10px;
+}
+
+.player-card__body__morgage{
+  background-color: rgb(250, 248, 135);
+  border-radius: 20px;
+  font-size: 1rem;
+  text-align: center;
+  padding: 15px 0;
+  border: 2px solid orange;
+  margin-bottom: 10px;
+}
+
+.player-card__body__netFortune{
+  background-color: rgb(171, 250, 135);
+  border-radius: 20px;
+  font-size: 1rem;
+  text-align: center;
+  padding: 15px 0;
+  border: 2px solid green;
+  margin-bottom: 10px;
+}
+
+.player-card__body .money{
+  font-size: 1rem;
+  font-weight: bold;
+}
+/* 
+.paymentSalary {
+  grid-column: span 2;
+}
+
+.cashDesposit {
+  grid-column: span 2;
+  margin: 1px 5px;
+}
+
+.cashWithdrawal {
+  grid-column: span 2;
+} */
+
+.modal-body input[type="number"] {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
 .ocultar {
   display: none;
 }
@@ -181,72 +289,4 @@ body {
   margin-top: 5px;
 }
 
-/*********************************************************/
-/********** ESTILOS DE LAS TARJETAS DE JUGADOR ***********/
-/*********************************************************/
-.player-card {
-  width: 95%;
-  margin: 0 auto 20px auto;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-auto-rows: auto;
-  margin-top: 20px;
-  padding: 5px;
-  border: 4px solid #666;
-  border-radius: 10px;
-  background-color: #f8f9fa;
-}
 
-.player-card p {
-  margin: 0;
-  padding: 0;
-}
-
-.player-card__title {
-  grid-column: 1/-1;
-  text-align: center;
-  padding-bottom: 10px;
-  border-bottom: 3px solid black;
-  margin-bottom: 20px;
-}
-
-.player-card__money {
-  grid-column: span 4;
-  background-color: lightskyblue;
-  margin-right: 20px;
-  margin-bottom: 20px;
-  border-radius: 20px;
-}
-
-.player-card__money-label {
-  font-size: 1.5rem;
-  text-align: center;
-}
-
-.player-card__money-money {
-  font-size: 2rem;
-  text-align: center;
-  font-weight: bold;
-}
-.player-card__objects {
-  grid-column: span 2;
-}
-
-.paymentSalary {
-  grid-column: span 2;
-}
-
-.cashDesposit {
-  grid-column: span 2;
-  margin: 1px 5px;
-}
-
-.cashWithdrawal {
-  grid-column: span 2;
-}
-
-.modal-body input[type="number"] {
-  display: block;
-  width: 100%;
-  text-align: center;
-}

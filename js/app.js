@@ -18,149 +18,148 @@ function createBanker(e) {
   }
 }
 
-  /*Esta función se debe ejecutar cuando el usuario desde la vista de home 
-  le da clic al botón agregar y entonces se procede a hacer todas las validaciones 
-  necesarias para agregar al nuevo jugador y hacer las actualizaciones pertinentes */
+/*Esta función se debe ejecutar cuando el usuario desde la vista de home 
+le da clic al botón agregar y entonces se procede a hacer todas las validaciones 
+necesarias para agregar al nuevo jugador y hacer las actualizaciones pertinentes */
 function createNewPlayer() {
-    let playerName = document.getElementById('homeNewPlayerName').value.trim();
-    let message = ``; //Mensaje que aparecerá en la página
-  
-    if (typeof playerName === 'undefined' || playerName.length === 0) {
-      message = createAlertMessage("Se debe ingresar un nombre valido", "alert-danger");
+  let playerName = document.getElementById('nameOfNewPlayer').value.trim();
+  let message = ``; //Mensaje que aparecerá en la página
+
+  if (typeof playerName === 'undefined' || playerName.length === 0) {
+    message = createAlertMessage("Se debe ingresar un nombre valido", "alert-danger");
+  } else {
+    /*El metodo del banco retorna false si el nombre está repetido o no hay dinero */
+    if (myBank.newPlayer(playerName)) {
+      //Se limpia el campo de ingreso de nuevo jugador
+      document.getElementById('nameOfNewPlayer').value = '';
+      SaveBank(myBank);
+      updateMainCard();
+      updateHomePlayersCard();
+
+      //Se crea el mensaje para el usuario
+      let textTemporal = `El jugador <strong>${playerName}</strong> fue gregado`;
+      message = createAlertMessage(textTemporal, "alert-success");
+
     } else {
-      //Al intentar crear el nuevo jugador si el nombre está repetido retorna false
-      if (miBank.newPlayer(playerName)) {
-        //Se limpia el campo de ingreso de nuevo jugador
-        document.getElementById('homeNewPlayerName').value = '';
-        //Actualizo el localstorage concerniente al banco
-        localStorage.miBank = JSON.stringify(miBank);
-        //Actualizo la tarje principal
-        updateMainCard();
-        updateHomePlayersCard();
-        //Creo el mensaje de que todo va correcto
-        let textTemporal = `El jugador <strong>${playerName}</strong> fue gregado`;
-        message = createAlertMessage(textTemporal, "alert-success");
-  
-      } else {
-        let textTemporal = `El nombre <strong>${playerName}</strong> ya está en uso`;
-        message = createAlertMessage(textTemporal, "alert-warning");
-      }
+      let textTemporal = `El nombre <strong>${playerName}</strong> ya está en uso`;
+      message = createAlertMessage(textTemporal, "alert-warning");
     }
-    //A partir de aqí se encuntan lo metodos que actualizan la vista
-    document.getElementById('homeMessage').innerHTML = message;
+  }
+  //Se muestra al usuario el mensaje
+  document.getElementById('newPlayerAlert').innerHTML = message;
 }
-  
-function createAlertMessage(message, type){
-    let result =  `<div class="alert ${type} alert-dismissible fade show" role="alert">
+
+function createAlertMessage(message, type) {
+  let result = `<div class="alert ${type} alert-dismissible fade show" role="alert">
                     ${message} 
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
                   </div>`;
-  
-    return result;
+
+  return result;
 }
+
+//Esta funcion se ejecuta cuando el usuario da click en el boton pagar salario
+function paySalary(e) {
+  /*Se recupera el nombre del jugador al que se le va a pagar el salrio
+    Que se encuentra en el padre del elemento que lanza el evento*/
+  let playerName = e.target.parentNode.parentNode.getAttribute('name');
   
-  //Esta funcion se ejecuta cuando el usuario da click en el boton pagar salario
-function paySalary(e){
-    /*Se recupera el nombre del jugador al que se le va a pagar el salrio
-      Que se encuentra en el padre del elemento que lanza el evento*/
-    let playerName = e.target.parentNode.getAttribute('name');
-    
-    if(miBank.paySalary(playerName)){
-      document.getElementById('salaryModalBody').innerHTML = `Se pagó el sueldo a ${playerName}`;
-      updateHomePlayersCard();
-      updateMainCard();
-      localStorage.miBank = JSON.stringify(miBank);
-    }else{
-      document.getElementById('salaryModalBody').innerHTML = `No se pudo pagar el salario al jugador ${playerName}`;
-    }
+  if (myBank.paySalary(playerName)) {
+    document.getElementById('salaryModalBody').innerHTML = `Se pagó el sueldo a ${playerName}`;
+    updateHomePlayersCard();
+    updateMainCard();
+    SaveBank(myBank);
+  } else {
+    document.getElementById('salaryModalBody').innerHTML = `No se pudo pagar el salario al jugador ${playerName}`;
+  }
 }
-  
-function makeCashDeposit(e){
-    let message = '';
-    document.getElementById('cashDepositModalAlert').innerHTML = '';
-    //Primero recupero el valor a consignar y el nombre del cliente
-    let amount = document.getElementById('cashDepositModalAmount').value;
-    let playerName = document.querySelector('#cashDepositModal .modal-body p span').textContent;
-    console.log(playerName)
-    //ahora verifico que sea un numero
-    amount = amount.trim();
-    if(amount.length>0){
-      //Ahora trato de convertir amount en un numero
-      if(/^([0-9])*$/.test(amount)){
-        amount = parseInt(amount);
-        //Ahora se intenta hacer el deposito
-        if(amount > 0 && miBank.cashDeposit(playerName, amount)){
-          localStorage.miBank = JSON.stringify(miBank);
-          message = createAlertMessage("Deposito reaizado correctamente", "alert-success")
-          updateHomePlayersCard();
-        }else{
-          if(amount === 0){
-            message = createAlertMessage("No puede ser cero", "alert-danger");
-          }else{
-            message = createAlertMessage("Ojo: Dinero Falso. Transaccion cancelada", "alert-warning");
-          } 
-          
+
+function makeCashDeposit(e) {
+  let message = '';
+  document.getElementById('cashDepositModalAlert').innerHTML = '';
+  //Primero recupero el valor a consignar y el nombre del cliente
+  let amount = document.getElementById('cashDepositModalAmount').value;
+  let playerName = document.querySelector('#cashDepositModal .modal-body p span').textContent;
+  console.log(playerName)
+  //ahora verifico que sea un numero
+  amount = amount.trim();
+  if (amount.length > 0) {
+    //Ahora trato de convertir amount en un numero
+    if (/^([0-9])*$/.test(amount)) {
+      amount = parseInt(amount);
+      //Ahora se intenta hacer el deposito
+      if (amount > 0 && myBank.cashDeposit(playerName, amount)) {
+        SaveBank(myBank);
+        message = createAlertMessage("Deposito realizado correctamente", "alert-success")
+        updateHomePlayersCard();
+      } else {
+        if (amount === 0) {
+          message = createAlertMessage("No puede ser cero", "alert-danger");
+        } else {
+          message = createAlertMessage("Ojo: Dinero Falso. Transaccion cancelada", "alert-warning");
         }
-  
+
       }
-      else{
-        message = createAlertMessage("No es un numero valido", "alert-danger");
-      }
-    }else{
-      message = createAlertMessage("Este campo es obligatorio", "alert-danger");
+
     }
-  
-    document.getElementById('cashDepositModalAlert').innerHTML = message;
-    document.getElementById('cashDepositModalAmount').value = '';
+    else {
+      message = createAlertMessage("No es un numero valido", "alert-danger");
+    }
+  } else {
+    message = createAlertMessage("Este campo es obligatorio", "alert-danger");
+  }
+
+  document.getElementById('cashDepositModalAlert').innerHTML = message;
+  document.getElementById('cashDepositModalAmount').value = '';
 }
-  
-function makeCashWithdrawal(){
-    console.log("Se accedio a la interfaz para retirar dinero");
-    document.getElementById('cashWithdrawalModalAlert').innerHTML = '';
-    let message = '';
-    //Primero recupero el monto a retirar y el jugador que solicita el retiro
-    let playerName = document.querySelector('#cashWithdrawalModal .modal-body p span').textContent;
-    let amount = document.getElementById('cashWithdrawalModalAmount').value;
-    console.log(`Los datos recolectados son: ${playerName} y ${amount}`);
-  
-    amount = amount.trim();
-    console.log(/^([0-9])*$/.test(amount));
-  
-    if(amount.length>0){
-      //Ahora trato de convertir amount en un numero
-      if(/^([0-9])*$/.test(amount)){
-        amount = parseInt(amount,10);
-        //Ahora se intenta hacer el retiro
-        if(amount>0 && miBank.cashWithdrawal(playerName, amount)){
-          localStorage.miBank = JSON.stringify(miBank);
-          message = createAlertMessage("Transaccion exitosa", "alert-success");
-          updateHomePlayersCard();
-        }else{
-          if(amount === 0){
-            message = createAlertMessage("No puede ser cero", "alert-danger");
-          }else{
-            message = createAlertMessage("Saldo insuficientes", "alert-danger");
-          }        
+
+function makeCashWithdrawal() {
+  console.log("Se accedio a la interfaz para retirar dinero");
+  document.getElementById('cashWithdrawalModalAlert').innerHTML = '';
+  let message = '';
+  //Primero recupero el monto a retirar y el jugador que solicita el retiro
+  let playerName = document.querySelector('#cashWithdrawalModal .modal-body p span').textContent;
+  let amount = document.getElementById('cashWithdrawalModalAmount').value;
+  console.log(`Los datos recolectados son: ${playerName} y ${amount}`);
+
+  amount = amount.trim();
+  console.log(/^([0-9])*$/.test(amount));
+
+  if (amount.length > 0) {
+    //Ahora trato de convertir amount en un numero
+    if (/^([0-9])*$/.test(amount)) {
+      amount = parseInt(amount, 10);
+      //Ahora se intenta hacer el retiro
+      if (amount > 0 && myBank.cashWithdrawal(playerName, amount)) {
+        SaveBank(myBank)
+        message = createAlertMessage("Transaccion exitosa", "alert-success");
+        updateHomePlayersCard();
+      } else {
+        if (amount === 0) {
+          message = createAlertMessage("No puede ser cero", "alert-danger");
+        } else {
+          message = createAlertMessage("Saldo insuficientes", "alert-danger");
         }
-  
       }
-      else{
-        message = createAlertMessage("No es un numero valido", "alert-danger");
-      }
-    }else{
-      message = createAlertMessage("Este campo es obligatorio", "alert-danger");
+
     }
-  
-    document.getElementById('cashWithdrawalModalAlert').innerHTML = message;
-    document.getElementById('cashWithdrawalModalAmount').value = '';
+    else {
+      message = createAlertMessage("No es un numero valido", "alert-danger");
+    }
+  } else {
+    message = createAlertMessage("Este campo es obligatorio", "alert-danger");
+  }
+
+  document.getElementById('cashWithdrawalModalAlert').innerHTML = message;
+  document.getElementById('cashWithdrawalModalAmount').value = '';
 }
 
 /***********************************************************************/
 /*****    LAS SIGUIENTES SON FUNCIONES PARA PINTAR EN PANTALLA     *****/
 /***********************************************************************/
-
+/**Pendiente de revisar */
 function printTitles() {
   // loadTitles();
   let result = ``;
@@ -200,15 +199,15 @@ function printTitles() {
 
   //Agrego las funciones que dehe hacerse al dar click en el boton vender
   let buttons = document.querySelectorAll("#titlesView .property_card__btn-sell")
-  for(let i = 0; i < buttons.length; i++){
-    buttons[i].addEventListener('click', (e)=>{
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', (e) => {
       //Se recupera el nombre del titulo que se quiere vender
       let titleName = e.target.parentNode.getAttribute('name')
       //Se recupera la informacion del titulo
       let titlePrice, actualOwner;
-      for(let index2 = 0; index2 < miBank.titles.length; index2++){
+      for (let index2 = 0; index2 < miBank.titles.length; index2++) {
         let title = miBank.titles[index2];
-        if(title.name === titleName){
+        if (title.name === titleName) {
           titlePrice = title.price;
           actualOwner = typeof title.owner === 'undefined' ? 'Banco' : title.owner;
           break;
@@ -222,7 +221,7 @@ function printTitles() {
 
       //Ahora escribo los nombre de los jugadores
       let players = ``;
-      for(let index3 = 0; index3 < miBank.players.length; index3++){
+      for (let index3 = 0; index3 < miBank.players.length; index3++) {
         players += `<option value="${miBank.players[index3].name}">${miBank.players[index3].name}</option>`
       }
 
@@ -232,7 +231,7 @@ function printTitles() {
     })
   }
 }
-
+/**Pendiente de revisar */
 function printLines() {
   // loadLines();
   let result = ``;
@@ -259,7 +258,7 @@ function printLines() {
 
   document.getElementById("linesView").innerHTML = result;
 }
-
+/**Pendiente de revisar */
 function printCustomsPots() {
   // loadCustomsPots();
   let result = ``;
@@ -287,49 +286,72 @@ function printCustomsPots() {
   document.getElementById("customsView").innerHTML = result;
 }
 
-function updateHomePlayersCard(){
+function updateHomePlayersCard() {
   let htmlCode = ``;
-  for(let i = 0; i < miBank.players.length; i++){
-    let player = miBank.players[i];
+  for (let i = 0; i < myBank.players.length; i++) {
+    let player = myBank.players[i];
+    let propertys = player.titles.length + player.lines.length + player.customsPosts.length;
 
     htmlCode += `<div name = "${player.name}" class="player-card">
-                  <div class="player-card__title">
-                    <h3>${player.name}</h3>
-                    <p>Numero de cuenta: ${player.acount}</p>
+                  <div class="player-card__header">
+                    <h3 class="player-card__header__title">${player.name}</h3>
+
+                    <div class="player-card__header__item">
+                      <p class="player-card__header__label">Propiedades:</p>
+                      <p class="player-card__header__number">${propertys}</p>
+                    </div>
+
+                    <div class="player-card__header__item">
+                      <p class="player-card__header__label">Casas:</p>
+                      <p class="player-card__header__number">${player.houses}</p>
+                    </div>
+                    <div class="player-card__header__item">
+                      <p class="player-card__header__label">Castillos:</p>
+                      <p class="player-card__header__number">${player.castles}</p>
+                    </div>
                   </div>
 
-                  <div class="player-card__money">
-                    <p class="player-card__money-label">Dinero</p>
-                    <p class="player-card__money-money"> ${formatCurrencyLite(player.money)}</p>
+                  <div class="player-card__body">
+                    <div class="player-card__body__money">
+                    <p>Dinero</p>
+                    <p class="money">${formatCurrencyLite(player.money)}</p>
                   </div>
 
-                  <div class="player-card__objects">
-                    <p>Titulos: ${player.titles.length}</p>
-                    <p>Casas: ${player.houses.length}</p>
-                    <p>Castillos: ${player.castles.length}</p>
+                  <div class="player-card__body__morgage">
+                    <p>Hipotecas</p>
+                    <p class="money">${formatCurrencyLite(player.mortgage)}</p>
+                  </div>
+
+                  <div class="player-card__body__netFortune">
+                    <p>Fortuna Neta</p>
+                      <p class="money">${formatCurrencyLite(player.netFortune)}</p>
                   </div>
 
                   <button class="paymentSalary btn btn-primary" data-toggle="modal" data-target="#salaryModal">Pagar salario</button>
+      
                   <button class="cashDesposit btn btn-success" data-toggle="modal" data-target="#cashDepositModal">Hacer Deposito</button>
+      
                   <button class="cashWithdrawal btn btn-danger" data-toggle="modal" data-target="#cashWithdrawalModal">Hacer Retiro</button>
-                </div>`;
+
+                </div>
+              </div>`;
   }
 
   document.getElementById('players-cards').innerHTML = htmlCode;
 
   //Agrego los eventos de los botones para pagar los sueldos
   let buttons = document.querySelectorAll('.player-card .paymentSalary');
-  for(let i = 0; i < buttons.length; i++){
+  for (let i = 0; i < buttons.length; i++) {
     buttons[i].addEventListener('click', paySalary);
   }
 
   //Agrego los eventos de los botones para hacer depositos, como esto abre es una ventana modal
   //lo que hace es pasarle el nombre del cliente a la ventana modal
   buttons = document.querySelectorAll('.player-card .cashDesposit');
-  for(let i = 0; i < buttons.length; i++){
-    buttons[i].addEventListener('click', (e)=>{
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', (e) => {
       //Primero recupero el nombre del cliente
-      let playerName = e.target.parentNode.getAttribute('name');
+      let playerName = e.target.parentNode.parentNode.getAttribute('name');
       //Ahora lo imrpimo en la etiqueta nombre cliente
       document.querySelector('#cashDepositModal .modal-body p span').innerText = playerName;
     });
@@ -337,10 +359,10 @@ function updateHomePlayersCard(){
 
   //Igual que lo anterior solo que este para hacer retiros
   buttons = document.querySelectorAll('.player-card .cashWithdrawal');
-  for(let i = 0; i < buttons.length; i++){
-    buttons[i].addEventListener('click', (e)=>{
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', (e) => {
       //Primero recupero el nombre del cliente
-      let playerName = e.target.parentNode.getAttribute('name');
+      let playerName = e.target.parentNode.parentNode.getAttribute('name');
       //Ahora lo imrpimo en la etiqueta nombre cliente
       document.querySelector('#cashWithdrawalModal .modal-body p span').innerText = playerName;
     });
@@ -354,6 +376,7 @@ function loadStatus() {
   //Se recupera el banco desde localstorage
   myBank = LoadBank();
   updateMainCard();
+  updateHomePlayersCard();
 
   //Se habilita el boton para reiniciar el juego
   document.getElementById("restar").addEventListener("click", () => {
@@ -361,12 +384,11 @@ function loadStatus() {
     location.href = "./index.html";
   });
 
-  //document.getElementById('homeAddPlayer').addEventListener('click', createNewPlayer);
+  document.getElementById('addNewPlaer').addEventListener('click', createNewPlayer);
 
 
   // //Actualizo o imprimo los datos en pantallas
-  // updateMainCard();
-  // updateHomePlayersCard();
+  // 
   // printTitles();
   // printLines();
   // printCustomsPots();
@@ -376,8 +398,8 @@ function loadStatus() {
   // buildNavigation();
 
   // //Agrego la funcionalidad a los modales para agregar o retirar dinero
-  // document.getElementById('makeCashDeposit').addEventListener('click', makeCashDeposit);
-  // document.getElementById('makeCashWithdrawal').addEventListener('click', makeCashWithdrawal);
+  document.getElementById('makeCashDeposit').addEventListener('click', makeCashDeposit);
+  document.getElementById('makeCashWithdrawal').addEventListener('click', makeCashWithdrawal);
 }
 
 function buildNavigation() {
@@ -400,7 +422,7 @@ function buildNavigationHelper(navigatorButton, viewShow) {
   });
 }
 
-function updateMainCard(){
+function updateMainCard() {
   let bankerName = myBank.bankerName;
   let money = myBank.money;
   let mortgage = 0;
@@ -412,41 +434,41 @@ function updateMainCard(){
   let lines = 0;
   let customsPosts = 0;
 
-  for(let index = 0; index < myBank.titles.length; index++){
+  for (let index = 0; index < myBank.titles.length; index++) {
 
     let title = myBank.titles[index];
-    if(typeof title.owner === 'undefined'){
+    if (typeof title.owner === 'undefined') {
       titles++;
       netFortune += title.price;
     }
 
-    if(index < 4){
+    if (index < 4) {
       let line = myBank.lines[index];
       let customsPost = myBank.customsPosts[index];
 
-      if(typeof line.owner === 'undefined'){
+      if (typeof line.owner === 'undefined') {
         lines++;
         netFortune += line.price;
       }
 
-      if(typeof customsPost.owner === 'undefined'){
+      if (typeof customsPost.owner === 'undefined') {
         customsPosts++;
         netFortune += customsPost.price;
       }
     }
   }
 
-  for(let index = 0; index < myBank.players.length; index++){
+  for (let index = 0; index < myBank.players.length; index++) {
     mortgage += myBank.players[index].mortgage;
   }
 
-  for(let index = 0; index < myBank.houses.length; index++){
-    if(typeof myBank.houses[index].owner === 'undefined'){
+  for (let index = 0; index < myBank.houses.length; index++) {
+    if (typeof myBank.houses[index].owner === 'undefined') {
       houses++;
       netFortune += HOUSE_PRICE;
     }
 
-    if(index < MAX_CASTLES && typeof myBank.castles[index].owner === 'undefined'){
+    if (index < MAX_CASTLES && typeof myBank.castles[index].owner === 'undefined') {
       castles++;
       netFortune += CASTLE_PRICE;
     }
@@ -464,7 +486,7 @@ function updateMainCard(){
   document.getElementById("bankTitles").innerHTML = `${titles}`;
   document.getElementById("bankLines").innerHTML = `${lines}`;
   document.getElementById("bankCustomsPosts").innerHTML = `${customsPosts}`;
-  
+
 }
 
 /******************************************************************
@@ -476,21 +498,21 @@ window.addEventListener("load", () => {
     /*Localstorage.book es donde se guardan los datos de la aplicacion de manera local*/
     if (typeof localStorage.books !== "undefined") {
       location.href = "./principal.html";
-    }else{
+    } else {
       document.getElementById("index__button").addEventListener("click", createBanker);
     }
 
-  } else{
+  } else {
     /*Si localstorage.books está indefinido se limpia el storage y se lanza al index parasolicitar banquero y crear los objetos */
     if (typeof localStorage.books !== 'undefined') {
-      
-      if(typeof localStorage.actualView === 'undefined'){
+
+      if (typeof localStorage.actualView === 'undefined') {
         actualView = document.getElementById("home");
         localStorage.actualView = "home";
-      }else{
+      } else {
         actualView = document.getElementById(localStorage.actualView);
       }
-      
+
       loadStatus();
     } else {
       localStorage.clear();
@@ -500,15 +522,15 @@ window.addEventListener("load", () => {
 });//Fin de addevenlistener
 
 /* Esta es una funcion que entrega fromato a los numeros segunel pais y la moneda */
-function formatCurrency(locales, currency, fractionDigits, number){
+function formatCurrency(locales, currency, fractionDigits, number) {
   var formatted = new Intl.NumberFormat(locales, {
-      style: 'currency',
-      currency: currency,
-      minimumFractionDigits: fractionDigits
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: fractionDigits
   }).format(number);
   return formatted;
 }
 
-function formatCurrencyLite(number){
+function formatCurrencyLite(number) {
   return formatCurrency('es-CO', 'COP', 2, number);
 }

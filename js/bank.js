@@ -919,7 +919,7 @@ class Bank {
         //el dinero total que puede estar en circulacion
         console.log("Metodo llamado con los parametros (" + playerName + ", " + amount);
         let balance = this.money + amount;
-        let player = recoveryPlayer(playerName);
+        let player = this.recoveryPlayer(playerName);
 
         if (balance <= BASE_MONEY) {
             console.log("El balance no ha sido superado");
@@ -942,7 +942,7 @@ class Bank {
     }
 
     cashWithdrawal(playerName, amount) {
-        let player = recoveryPlayer(playerName);
+        let player = this.recoveryPlayer(playerName);
 
         if (player.money >= amount) {
             player.cashWithdrawal(amount);
