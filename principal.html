@@ -279,12 +279,16 @@
             <p>Propietario actual: <span id="bankPropertySaleActualOwner">Banco</span></p>
             <p>Precio de venta: <span id="bankPropertySalePrice">$ 600.00</span></p>
             <p>Comprador: 
-              <select id="bankPropertySaleBuyer"><option value="Andres">Seleccionar jugador</option><option value="Andres">Seleccionar jugador</option>
-            </select></p>
+              <select id="bankPropertySaleBuyer">
+                <option value="Andres">Seleccionar jugador</option>
+                <option value="Andres">Seleccionar jugador</option>
+              </select>
+            </p>
           </div>
+          <div class="sellAlert"></div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Salir</button>
-            <button type="button" class="btn btn-primary" data-dismiss="modal">Vender</button>
+            <button type="button" class="btn btn-primary" id="bankPropertySaleBtn">Vender</button>
           </div>
         </div>
       </div>

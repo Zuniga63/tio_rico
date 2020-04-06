@@ -156,6 +156,25 @@ function makeCashWithdrawal() {
   document.getElementById('cashWithdrawalModalAmount').value = '';
 }
 
+function sellProperty(){
+  let propertyName = document.getElementById('bankPropertySaleTitle').textContent;
+  let buyerName = document.getElementById('bankPropertySaleBuyer').value;
+  let result = myBank.sellProperty(propertyName, buyerName);
+  console.log(document.querySelector('#bankPropertySale .sellAlert'));
+
+  if(result.result){
+    SaveBank(myBank);
+    updateMainCard();
+    updateHomePlayersCard();
+    printTitles();
+    document.querySelector('#bankPropertySale .sellAlert').innerHTML= createAlertMessage(result.message, "alert-success");
+  }else{
+    document.querySelector('#bankPropertySale .sellAlert').innerHTML= createAlertMessage(result.message, "alert-danger");
+  }
+
+  
+}
+
 /***********************************************************************/
 /*****    LAS SIGUIENTES SON FUNCIONES PARA PINTAR EN PANTALLA     *****/
 /***********************************************************************/
@@ -200,36 +219,38 @@ function printTitles() {
   //Agrego las funciones que dehe hacerse al dar click en el boton vender
   let buttons = document.querySelectorAll("#titlesView .property_card__btn-sell")
   for (let i = 0; i < buttons.length; i++) {
-    buttons[i].addEventListener('click', (e) => {
-      //Se recupera el nombre del titulo que se quiere vender
-      let titleName = e.target.parentNode.getAttribute('name')
-      //Se recupera la informacion del titulo
-      let titlePrice, actualOwner;
-      for (let index2 = 0; index2 < myBank.titles.length; index2++) {
-        let title = myBank.titles[index2];
-        if (title.name === titleName) {
-          titlePrice = title.price;
-          actualOwner = typeof title.owner === 'undefined' ? 'Banco' : title.owner;
-          break;
-        }
-      }
-
-      //Ahora lo escribo en el modal
-      document.getElementById('bankPropertySaleTitle').innerText = titleName;
-      document.getElementById('bankPropertySaleActualOwner').innerText = actualOwner;
-      document.getElementById('bankPropertySalePrice').innerText = formatCurrencyLite(titlePrice);
-
-      //Ahora escribo los nombre de los jugadores
-      let players = ``;
-      for (let index3 = 0; index3 < miBank.players.length; index3++) {
-        players += `<option value="${miBank.players[index3].name}">${miBank.players[index3].name}</option>`
-      }
-
-      document.getElementById('bankPropertySaleBuyer').innerHTML = players;
-
-      console.log(titleName + actualOwner + titlePrice);
-    })
+    buttons[i].addEventListener('click', _printTitles_btnSell);
   }
+}
+
+function _printTitles_btnSell(e) {
+  //Se recupera el nombre del titulo que se quiere vender
+  let titleName = e.target.parentNode.getAttribute('name')
+  //Se recupera la informacion del titulo
+  let titlePrice, actualOwner;
+  for (let index2 = 0; index2 < myBank.titles.length; index2++) {
+    let title = myBank.titles[index2];
+    if (title.name === titleName) {
+      titlePrice = title.price;
+      actualOwner = typeof title.owner === 'undefined' ? 'Banco' : title.owner;
+      break;
+    }
+  }
+
+  //Ahora lo escribo en el modal
+  document.getElementById('bankPropertySaleTitle').innerText = titleName;
+  document.getElementById('bankPropertySaleActualOwner').innerText = actualOwner;
+  document.getElementById('bankPropertySalePrice').innerText = formatCurrencyLite(titlePrice);
+
+  //Ahora escribo los nombre de los jugadores
+  let players = ``;
+  for (let index3 = 0; index3 < myBank.players.length; index3++) {
+    players += `<option value="${myBank.players[index3].name}">${myBank.players[index3].name}</option>`
+  }
+
+  document.getElementById('bankPropertySaleBuyer').innerHTML = players;
+
+  console.log(titleName + actualOwner + titlePrice);
 }
 
 function printLines() {
@@ -284,6 +305,73 @@ function printCustomsPots() {
   }
 
   document.getElementById("customsView").innerHTML = result;
+}
+
+function updateMainCard() {
+  let bankerName = myBank.bankerName;
+  let money = myBank.money;
+  let mortgage = 0;
+  let netFortune = money;
+  let players = myBank.players.length;
+  let houses = 0;
+  let castles = 0;
+  let titles = 0;
+  let lines = 0;
+  let customsPosts = 0;
+
+  for (let index = 0; index < myBank.titles.length; index++) {
+
+    let title = myBank.titles[index];
+    if (typeof title.owner === 'undefined') {
+      titles++;
+      netFortune += title.price;
+    }
+
+    if (index < 4) {
+      let line = myBank.lines[index];
+      let customsPost = myBank.customsPosts[index];
+
+      if (typeof line.owner === 'undefined') {
+        lines++;
+        netFortune += line.price;
+      }
+
+      if (typeof customsPost.owner === 'undefined') {
+        customsPosts++;
+        netFortune += customsPost.price;
+      }
+    }
+  }
+
+  for (let index = 0; index < myBank.players.length; index++) {
+    mortgage += myBank.players[index].mortgage;
+  }
+
+  for (let index = 0; index < myBank.houses.length; index++) {
+    if (typeof myBank.houses[index].owner === 'undefined') {
+      houses++;
+      netFortune += HOUSE_PRICE;
+    }
+
+    if (index < MAX_CASTLES && typeof myBank.castles[index].owner === 'undefined') {
+      castles++;
+      netFortune += CASTLE_PRICE;
+    }
+  }
+
+  netFortune += mortgage;
+
+  document.getElementById("bankerName").innerText = `${bankerName}`;
+  document.getElementById("bankMoney").innerHTML = `${formatCurrencyLite(money)}`;
+  document.getElementById("bankMortgage").innerHTML = `${formatCurrencyLite(mortgage)}`;
+  document.getElementById("bankNetFortune").innerHTML = `${formatCurrencyLite(netFortune)}`;
+  document.getElementById("bankPlayers").innerHTML = `${players}`;
+  document.getElementById("bankHouses").innerHTML = `${houses}`;
+  document.getElementById("bankCastles").innerHTML = `${castles}`;
+  document.getElementById("bankTitles").innerHTML = `${titles}`;
+  document.getElementById("bankLines").innerHTML = `${lines}`;
+  document.getElementById("bankCustomsPosts").innerHTML = `${customsPosts}`;
+
 }
 
 function updateHomePlayersCard() {
@@ -395,6 +483,7 @@ function loadStatus() {
   // //Agrego la funcionalidad a los modales para agregar o retirar dinero
   document.getElementById('makeCashDeposit').addEventListener('click', makeCashDeposit);
   document.getElementById('makeCashWithdrawal').addEventListener('click', makeCashWithdrawal);
+  document.getElementById('bankPropertySaleBtn').addEventListener('click', sellProperty);
 }
 
 function buildNavigation() {
@@ -415,73 +504,6 @@ function buildNavigationHelper(navigatorButton, viewShow) {
     //Finalmente le digo que se muestre
     actualView.classList.remove("ocultar");
   });
-}
-
-function updateMainCard() {
-  let bankerName = myBank.bankerName;
-  let money = myBank.money;
-  let mortgage = 0;
-  let netFortune = money;
-  let players = myBank.players.length;
-  let houses = 0;
-  let castles = 0;
-  let titles = 0;
-  let lines = 0;
-  let customsPosts = 0;
-
-  for (let index = 0; index < myBank.titles.length; index++) {
-
-    let title = myBank.titles[index];
-    if (typeof title.owner === 'undefined') {
-      titles++;
-      netFortune += title.price;
-    }
-
-    if (index < 4) {
-      let line = myBank.lines[index];
-      let customsPost = myBank.customsPosts[index];
-
-      if (typeof line.owner === 'undefined') {
-        lines++;
-        netFortune += line.price;
-      }
-
-      if (typeof customsPost.owner === 'undefined') {
-        customsPosts++;
-        netFortune += customsPost.price;
-      }
-    }
-  }
-
-  for (let index = 0; index < myBank.players.length; index++) {
-    mortgage += myBank.players[index].mortgage;
-  }
-
-  for (let index = 0; index < myBank.houses.length; index++) {
-    if (typeof myBank.houses[index].owner === 'undefined') {
-      houses++;
-      netFortune += HOUSE_PRICE;
-    }
-
-    if (index < MAX_CASTLES && typeof myBank.castles[index].owner === 'undefined') {
-      castles++;
-      netFortune += CASTLE_PRICE;
-    }
-  }
-
-  netFortune += mortgage;
-
-  document.getElementById("bankerName").innerText = `${bankerName}`;
-  document.getElementById("bankMoney").innerHTML = `${formatCurrencyLite(money)}`;
-  document.getElementById("bankMortgage").innerHTML = `${formatCurrencyLite(mortgage)}`;
-  document.getElementById("bankNetFortune").innerHTML = `${formatCurrencyLite(netFortune)}`;
-  document.getElementById("bankPlayers").innerHTML = `${players}`;
-  document.getElementById("bankHouses").innerHTML = `${houses}`;
-  document.getElementById("bankCastles").innerHTML = `${castles}`;
-  document.getElementById("bankTitles").innerHTML = `${titles}`;
-  document.getElementById("bankLines").innerHTML = `${lines}`;
-  document.getElementById("bankCustomsPosts").innerHTML = `${customsPosts}`;
-
 }
 
 /******************************************************************
