@@ -1,5 +1,5 @@
 //Se declaran las variables globales del juego
-var actualView, miBank;
+var actualView, myBank;
 
 /********************************************************************
  **    A PARTIR DE AQUI SE DEFINEN LAS FUNCIONES GLOBALES          **
@@ -10,14 +10,9 @@ var actualView, miBank;
 function createBanker(e) {
   let bankerName = document.getElementById("bankerName").value;
   bankerName = bankerName.trim();
-  console.log(bankerName)
   if (bankerName.length !== 0) {
-
-    console.log(bankerName);
-    miBank = new Bank(bankerName);
-
-    localStorage.miBank = JSON.stringify(miBank);
-    localStorage.gameSaved = true;
+    myBank = new Bank(bankerName);
+    SaveBank(myBank);
 
     location.href = "./principal.html";
   }
@@ -292,16 +287,6 @@ function printCustomsPots() {
   document.getElementById("customsView").innerHTML = result;
 }
 
-function updateMainCard(){
-  document.getElementById("bankerName").innerText = `Banquero: ${miBank.bankerName}`;
-  document.getElementById("bankerMoney").innerHTML = `Dinero: ${formatCurrencyLite(miBank.money)}`;
-  document.getElementById("bankerHouses").innerHTML = `Casas: ${miBank.houses.length}`;
-  document.getElementById("bankerCastles").innerHTML = `Castillos: ${miBank.castles.length}`;
-  document.getElementById("bankerTitles").innerHTML = `Titulos: ${miBank.titles.length}`;
-  document.getElementById("bankerCustomsPost").innerHTML = `Pasos: ${miBank.customsPosts.length}`;
-  document.getElementById("bankerLines").innerHTML = `Lineas: ${miBank.lines.length}`;
-}
-
 function updateHomePlayersCard(){
   let htmlCode = ``;
   for(let i = 0; i < miBank.players.length; i++){
@@ -365,33 +350,34 @@ function updateHomePlayersCard(){
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-function loadState1() {
-  //Primero habilito el boton para reiniciar
+function loadStatus() {
+  //Se recupera el banco desde localstorage
+  myBank = LoadBank();
+  updateMainCard();
+
+  //Se habilita el boton para reiniciar el juego
   document.getElementById("restar").addEventListener("click", () => {
     localStorage.clear();
     location.href = "./index.html";
   });
 
-  document.getElementById('homeAddPlayer').addEventListener('click', createNewPlayer);
+  //document.getElementById('homeAddPlayer').addEventListener('click', createNewPlayer);
 
-  //Lo siguiente es codigo temporal
-  //Primero rescato el objeto del local storage
-  miBank = new Bank();
 
-  //Actualizo o imprimo los datos en pantallas
-  updateMainCard();
-  updateHomePlayersCard();
-  printTitles();
-  printLines();
-  printCustomsPots();
+  // //Actualizo o imprimo los datos en pantallas
+  // updateMainCard();
+  // updateHomePlayersCard();
+  // printTitles();
+  // printLines();
+  // printCustomsPots();
 
-  actualView.classList.remove("ocultar");
-  //Fin del codigo temporal
-  buildNavigation();
+  // actualView.classList.remove("ocultar");
+  // //Fin del codigo temporal
+  // buildNavigation();
 
-  //Agrego la funcionalidad a los modales para agregar o retirar dinero
-  document.getElementById('makeCashDeposit').addEventListener('click', makeCashDeposit);
-  document.getElementById('makeCashWithdrawal').addEventListener('click', makeCashWithdrawal);
+  // //Agrego la funcionalidad a los modales para agregar o retirar dinero
+  // document.getElementById('makeCashDeposit').addEventListener('click', makeCashDeposit);
+  // document.getElementById('makeCashWithdrawal').addEventListener('click', makeCashWithdrawal);
 }
 
 function buildNavigation() {
@@ -414,19 +400,89 @@ function buildNavigationHelper(navigatorButton, viewShow) {
   });
 }
 
+function updateMainCard(){
+  let bankerName = myBank.bankerName;
+  let money = myBank.money;
+  let mortgage = 0;
+  let netFortune = money;
+  let players = myBank.players.length;
+  let houses = 0;
+  let castles = 0;
+  let titles = 0;
+  let lines = 0;
+  let customsPosts = 0;
+
+  for(let index = 0; index < myBank.titles.length; index++){
+
+    let title = myBank.titles[index];
+    if(typeof title.owner === 'undefined'){
+      titles++;
+      netFortune += title.price;
+    }
+
+    if(index < 4){
+      let line = myBank.lines[index];
+      let customsPost = myBank.customsPosts[index];
+
+      if(typeof line.owner === 'undefined'){
+        lines++;
+        netFortune += line.price;
+      }
+
+      if(typeof customsPost.owner === 'undefined'){
+        customsPosts++;
+        netFortune += customsPost.price;
+      }
+    }
+  }
+
+  for(let index = 0; index < myBank.players.length; index++){
+    mortgage += myBank.players[index].mortgage;
+  }
+
+  for(let index = 0; index < myBank.houses.length; index++){
+    if(typeof myBank.houses[index].owner === 'undefined'){
+      houses++;
+      netFortune += HOUSE_PRICE;
+    }
+
+    if(index < MAX_CASTLES && typeof myBank.castles[index].owner === 'undefined'){
+      castles++;
+      netFortune += CASTLE_PRICE;
+    }
+  }
+
+  netFortune += mortgage;
+
+  document.getElementById("bankerName").innerText = `${bankerName}`;
+  document.getElementById("bankMoney").innerHTML = `${formatCurrencyLite(money)}`;
+  document.getElementById("bankMortgage").innerHTML = `${formatCurrencyLite(mortgage)}`;
+  document.getElementById("bankNetFortune").innerHTML = `${formatCurrencyLite(netFortune)}`;
+  document.getElementById("bankPlayers").innerHTML = `${players}`;
+  document.getElementById("bankHouses").innerHTML = `${houses}`;
+  document.getElementById("bankCastles").innerHTML = `${castles}`;
+  document.getElementById("bankTitles").innerHTML = `${titles}`;
+  document.getElementById("bankLines").innerHTML = `${lines}`;
+  document.getElementById("bankCustomsPosts").innerHTML = `${customsPosts}`;
+  
+}
+
 /******************************************************************
     A PARTIR DE AQUI SE EMPIEZAN A EJECUTAR LAS FUNCIONES
 ********************************************************************/
 
 window.addEventListener("load", () => {
   if (ACTUAL_LOCATION.includes("index.html")) {
-    if (typeof localStorage.miBank !== "undefined") {
+    /*Localstorage.book es donde se guardan los datos de la aplicacion de manera local*/
+    if (typeof localStorage.books !== "undefined") {
       location.href = "./principal.html";
+    }else{
+      document.getElementById("index__button").addEventListener("click", createBanker);
     }
-    document.getElementById("index__button").addEventListener("click", createBanker);
 
-  } else {
-    if (typeof localStorage.miBank !== 'undefined') {
+  } else{
+    /*Si localstorage.books está indefinido se limpia el storage y se lanza al index parasolicitar banquero y crear los objetos */
+    if (typeof localStorage.books !== 'undefined') {
       
       if(typeof localStorage.actualView === 'undefined'){
         actualView = document.getElementById("home");
@@ -435,13 +491,13 @@ window.addEventListener("load", () => {
         actualView = document.getElementById(localStorage.actualView);
       }
       
-      loadState1();
+      loadStatus();
     } else {
       localStorage.clear();
       location.href = "./index.html";
     }
   }
-});
+});//Fin de addevenlistener
 
 /* Esta es una funcion que entrega fromato a los numeros segunel pais y la moneda */
 function formatCurrency(locales, currency, fractionDigits, number){

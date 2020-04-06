@@ -84,31 +84,47 @@
           </button>
     </nav>
 
-    <div class="alert alert-primary bankerName">
-        <h1 id="bankerName">Bienvenido Andrés</h1>
-        <div class="container">
-            <div class="row">
-                <div class="col"><p id="bankerMoney">Dinero: 999999</p></div>
-                <div class="col"><p id="bankerHouses">Casas: 999</p></div>
-                <div class="col"><p id="bankerCastles">Castillos: 999</p></div>
-            </div>
-        </div>
-        <div class="container p-0 pr-1">
-            <div class="row">
-                <div class="col-5"><p id="bankerTitles">Titulos: 999</p></div>
-                <div class="col"><p id="bankerCustomsPost">Pasos: 999</p></div>
-                <div class="col"><p id="bankerLines">Lineas: 9999</p></div>
-            </div>
-        </div>
+    <div class="main-card">
+      <h2 class="main-card__title">Estadisticas Generales</h2>
+      <div class="main-card__banker">
+        <p>Banquero:</p>
+        <p id="bankerName">Nombre del banquero</p>
+      </div>
+      <div class="main-card__money-area">
+        <p class="main-card__label">Dinero</p>
+        <p class="main-card__label">Hipotecas</p>
+        <p class="main-card__label">Fortuna Neta</p>
+        <p class="main-card__money" id="bankMoney">$ 300,000.00</p>
+        <p class="main-card__money" id="bankMortgage">$ 300,000.00</p>
+        <p class="main-card__money" id="bankNetFortune">$ 300,000.00</p>
+      </div>
+
+      <div class="main-card__assets">
+        <p class="main-card__label">Jugadores:</p>
+        <p class="main-card__number" id="bankPlayers">00</p>
+        <p class="main-card__label center">Casas:</p>
+        <p class="main-card__number center" id="bankHouses">00</p>
+        <p class="main-card__label">Castillos:</p>
+        <p class="main-card__number" id="bankCastles">00</p>
+        <p class="main-card__label">Titulos:</p>
+        <p class="main-card__number" id="bankTitles">00</p>
+        <p class="main-card__label center">Lineas:</p>
+        <p class="main-card__number center" id="bankLines">00</p>
+        <p class="main-card__label">Pasos:</p>
+        <p class="main-card__number" id="bankCustomsPosts">00</p>
+      </div>
+
+      <div class="main-card__newPlayer">
+        <input type="search" id="nameOfNewPlayer" class="form-control" placeholder="Nombre del nuevo jugador">
+        <button id="addNewPlaer" class="btn btn-outline-success">Agregar</button>
+        <div id="newPlayerAlert"></div>
+      </div>
+
     </div>
 
-    <section id="home" class="ocultar">
+    <section id="home" >
         <h2>Home</h1>
-          <div class="form-inline my-2 my-lg-0">
-            <input id="homeNewPlayerName" class="form-control mr-sm-2" type="search" placeholder="Nombre del nuevo jugador" aria-label="Search">
-            <button id="homeAddPlayer" class="btn btn-outline-success my-2 my-sm-0">Agregar</button>
-          </div>
-          <div id="homeMessage"></div>
+          
         <div id="players-cards">
         </div>
         <!-- Modal para notificar que se pagó el sueldo-->

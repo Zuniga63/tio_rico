@@ -553,6 +553,7 @@ class Castle extends Building {
 /***************************************/
 class Bank {
     constructor(bankerName) {
+        
         this.players = [];
         this.titles = [];
         this.customsPosts = [];
@@ -1567,7 +1568,7 @@ class Bank {
 
 /**A continuacion se encuentran los metodos de persistencias, que guardan la informacion en localstorages */
 
-function SaveState(bank) {
+function SaveBank(bank) {
     let books = new Object();
     books.theBank = _saveBank(bank);
     books.playersBook = _savePlayers(bank);
@@ -1744,7 +1745,7 @@ function _saveBuilding(bank) {
 //------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------
 
-function LoadState() {
+function LoadBank() {
     let books = JSON.parse(localStorage.books);
     let bank = new Bank(books.theBank.bankerName);
 
