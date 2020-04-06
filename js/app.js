@@ -65,7 +65,7 @@ function paySalary(e) {
   /*Se recupera el nombre del jugador al que se le va a pagar el salrio
     Que se encuentra en el padre del elemento que lanza el evento*/
   let playerName = e.target.parentNode.parentNode.getAttribute('name');
-  
+
   if (myBank.paySalary(playerName)) {
     document.getElementById('salaryModalBody').innerHTML = `Se pagó el sueldo a ${playerName}`;
     updateHomePlayersCard();
@@ -159,12 +159,12 @@ function makeCashWithdrawal() {
 /***********************************************************************/
 /*****    LAS SIGUIENTES SON FUNCIONES PARA PINTAR EN PANTALLA     *****/
 /***********************************************************************/
-/**Pendiente de revisar */
+
 function printTitles() {
   // loadTitles();
   let result = ``;
-  for (let i = 0; i < miBank.titles.length; i++) {
-    let t = miBank.titles[i];
+  for (let i = 0; i < myBank.titles.length; i++) {
+    let t = myBank.titles[i];
     let owner = typeof t.owner === "undefined" ? "Banco" : t.owner.name;
     let disableSale = owner !== "Banco" ? 'disabled="true"' : "";
     let castle = typeof t.castle === "undefined" ? 0 : 1;
@@ -205,8 +205,8 @@ function printTitles() {
       let titleName = e.target.parentNode.getAttribute('name')
       //Se recupera la informacion del titulo
       let titlePrice, actualOwner;
-      for (let index2 = 0; index2 < miBank.titles.length; index2++) {
-        let title = miBank.titles[index2];
+      for (let index2 = 0; index2 < myBank.titles.length; index2++) {
+        let title = myBank.titles[index2];
         if (title.name === titleName) {
           titlePrice = title.price;
           actualOwner = typeof title.owner === 'undefined' ? 'Banco' : title.owner;
@@ -231,12 +231,12 @@ function printTitles() {
     })
   }
 }
-/**Pendiente de revisar */
+
 function printLines() {
   // loadLines();
   let result = ``;
-  for (let i = 0; i < miBank.lines.length; i++) {
-    let l = miBank.lines[i];
+  for (let i = 0; i < myBank.lines.length; i++) {
+    let l = myBank.lines[i];
     let owner = typeof l.owner === "undefined" ? "Banco" : l.owner.name;
     let foreground = "black";
 
@@ -258,12 +258,12 @@ function printLines() {
 
   document.getElementById("linesView").innerHTML = result;
 }
-/**Pendiente de revisar */
+
 function printCustomsPots() {
   // loadCustomsPots();
   let result = ``;
-  for (let i = 0; i < miBank.customsPosts.length; i++) {
-    let l = miBank.customsPosts[i];
+  for (let i = 0; i < myBank.customsPosts.length; i++) {
+    let l = myBank.customsPosts[i];
     let owner = typeof l.owner === "undefined" ? "Banco" : l.owner.name;
     let foreground = "black";
 
@@ -377,6 +377,9 @@ function loadStatus() {
   myBank = LoadBank();
   updateMainCard();
   updateHomePlayersCard();
+  printTitles();
+  printLines();
+  printCustomsPots();
 
   //Se habilita el boton para reiniciar el juego
   document.getElementById("restar").addEventListener("click", () => {
@@ -386,16 +389,8 @@ function loadStatus() {
 
   document.getElementById('addNewPlaer').addEventListener('click', createNewPlayer);
 
-
-  // //Actualizo o imprimo los datos en pantallas
-  // 
-  // printTitles();
-  // printLines();
-  // printCustomsPots();
-
-  // actualView.classList.remove("ocultar");
-  // //Fin del codigo temporal
-  // buildNavigation();
+  actualView.classList.remove("ocultar");
+  buildNavigation();
 
   // //Agrego la funcionalidad a los modales para agregar o retirar dinero
   document.getElementById('makeCashDeposit').addEventListener('click', makeCashDeposit);
