@@ -117,15 +117,56 @@
       <div class="main-card__newPlayer">
         <input type="search" id="nameOfNewPlayer" class="form-control" placeholder="Nombre del nuevo jugador">
         <button id="addNewPlaer" class="btn btn-outline-success">Agregar</button>
-        <div id="newPlayerAlert"></div>
       </div>
+
+      <div id="newPlayerAlert"></div>
 
     </div>
 
     <section id="home" >
-        <h2>Home</h1>
+        <h2>Home</h2>
           
         <div id="players-cards">
+          <div name = "playerName" class="player-card">
+            <div class="player-card__header">
+              <h3 class="player-card__header__title">Nombre del jugador</h3>
+              <div class="player-card__header__item">
+                <p class="player-card__header__label">Propiedades:</p>
+                <p class="player-card__header__number">00</p>
+              </div>
+              <div class="player-card__header__item">
+                <p class="player-card__header__label">Casas:</p>
+                <p class="player-card__header__number">00</p>
+              </div>
+              <div class="player-card__header__item">
+                <p class="player-card__header__label">Castillos:</p>
+                <p class="player-card__header__number">00</p>
+              </div>
+            </div>
+            <div class="player-card__body">
+              <div class="player-card__body__money">
+                <p>Dinero</p>
+                <p class="money">$ 100.000,00</p>
+              </div>
+
+              <div class="player-card__body__morgage">
+                <p>Hipotecas</p>
+                <p class="money">$ 100.000,00</p>
+              </div>
+
+              <div class="player-card__body__netFortune">
+                <p>Fortuna Neta</p>
+                <p class="money">$ 100.000,00</p>
+              </div>
+
+              <button class="paymentSalary btn btn-primary" data-toggle="modal" data-target="#salaryModal">Pagar salario</button>
+              
+              <button class="cashDesposit btn btn-success" data-toggle="modal" data-target="#cashDepositModal">Hacer Deposito</button>
+              
+              <button class="cashWithdrawal btn btn-danger" data-toggle="modal" data-target="#cashWithdrawalModal">Hacer Retiro</button>
+
+            </div>
+          </div>
         </div>
         <!-- Modal para notificar que se pagó el sueldo-->
         <div class="modal fade" id="salaryModal" tabindex="-1" role="dialog" aria-labelledby="salaryModalTitle" aria-hidden="true">
