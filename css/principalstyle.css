@@ -255,6 +255,10 @@ body {
   font-size: 1.3rem;
 }
 
+.property_card__body p[name] span {
+  font-weight: bold;
+}
+
 .property_card__btn-sell,
 .property_card__btn-mortgage {
   grid-column: span 2;

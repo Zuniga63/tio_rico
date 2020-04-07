@@ -160,12 +160,22 @@ function sellProperty(){
   let propertyName = document.getElementById('bankPropertySaleTitle').textContent;
   let buyerName = document.getElementById('bankPropertySaleBuyer').value;
   let result = myBank.sellProperty(propertyName, buyerName);
-  console.log(document.querySelector('#bankPropertySale .sellAlert'));
 
   if(result.result){
     SaveBank(myBank);
     updateMainCard();
     updateHomePlayersCard();
+    switch(result.propertyType){
+      case "Title":
+        printTitles();
+        break;
+      case "Line":
+        printLines();
+        break;
+      case "CustomsPost":
+        printCustomsPots();
+        break;
+    }
     printTitles();
     document.querySelector('#bankPropertySale .sellAlert').innerHTML= createAlertMessage(result.message, "alert-success");
   }else{
@@ -197,11 +207,11 @@ function printTitles() {
                       <img src="img/titles/${t.image}" alt="${t.name}" class="property_card__img">
                       <div class="property_card__body">
                         <p>Propietario: <span>${owner}</span></p>
-                        <p>Precio: <span>$ ${t.price}</span></p>
+                        <p name = "price">Precio: <span>$ ${t.price}</span></p>
                         <p>Casas: <span>${t.houses.length}</span></p>
                         <p>Castillo: <span>${castle}</span></p>
-                        <p>Alquiler: <span>$ ${t.rental}</span></p>
-                        <p>Hipoteca: <span>$ ${t.rent}</span></p>
+                        <p name = "rental">Alquiler: <span>$ ${t.rental}</span></p>
+                        <p>Hipoteca: <span>$ ${t.mortgage}</span></p>
                       </div>
 
                       <button type="button" class="btn btn-primary property_card__btn-sell" data-toggle="modal" data-target="#bankPropertySale" ${disableSale}>Vender</button>
@@ -219,38 +229,8 @@ function printTitles() {
   //Agrego las funciones que dehe hacerse al dar click en el boton vender
   let buttons = document.querySelectorAll("#titlesView .property_card__btn-sell")
   for (let i = 0; i < buttons.length; i++) {
-    buttons[i].addEventListener('click', _printTitles_btnSell);
+    buttons[i].addEventListener('click', _propertyBtnSell);
   }
-}
-
-function _printTitles_btnSell(e) {
-  //Se recupera el nombre del titulo que se quiere vender
-  let titleName = e.target.parentNode.getAttribute('name')
-  //Se recupera la informacion del titulo
-  let titlePrice, actualOwner;
-  for (let index2 = 0; index2 < myBank.titles.length; index2++) {
-    let title = myBank.titles[index2];
-    if (title.name === titleName) {
-      titlePrice = title.price;
-      actualOwner = typeof title.owner === 'undefined' ? 'Banco' : title.owner;
-      break;
-    }
-  }
-
-  //Ahora lo escribo en el modal
-  document.getElementById('bankPropertySaleTitle').innerText = titleName;
-  document.getElementById('bankPropertySaleActualOwner').innerText = actualOwner;
-  document.getElementById('bankPropertySalePrice').innerText = formatCurrencyLite(titlePrice);
-
-  //Ahora escribo los nombre de los jugadores
-  let players = ``;
-  for (let index3 = 0; index3 < myBank.players.length; index3++) {
-    players += `<option value="${myBank.players[index3].name}">${myBank.players[index3].name}</option>`
-  }
-
-  document.getElementById('bankPropertySaleBuyer').innerHTML = players;
-
-  console.log(titleName + actualOwner + titlePrice);
 }
 
 function printLines() {
@@ -261,7 +241,7 @@ function printLines() {
     let owner = typeof l.owner === "undefined" ? "Banco" : l.owner.name;
     let foreground = "black";
 
-    let division = `<div class="property_card" style="background-color: white; color: ${foreground};">
+    let division = `<div name = "${l.name}" class="property_card" style="background-color: white; color: ${foreground};">
                       <h2 class="property_card__title">${l.name}</h2>
                       <img src="img/titles/${l.image}" alt="${l.name}" class="property_card__img">
                       <div class="property_card__body">
@@ -269,7 +249,7 @@ function printLines() {
                         <p>Precio: <span>$ ${l.price}</span></p>
                         <p>Pasaje: <span>$ ${l.passage}</span></p>
                       </div>
-                      <button type="button" class="btn btn-primary property_card__btn-sell" disabled="true">Vender</button>
+                      <button type="button" class="btn btn-primary property_card__btn-sell" data-toggle="modal" data-target="#bankPropertySale">Vender</button>
                       <button type="button" class="btn btn-success property_card__btn-auction" disabled="true">Subastar</button>
                       <button type="button" class="btn btn-dark property_card__btn-mortgage" disabled="true">Hipotecar</button>
                       <button type="button" class="btn btn-dark property_card__btn-payPassage" disabled="true">Cobrar pasaje</button>
@@ -278,6 +258,12 @@ function printLines() {
   }
 
   document.getElementById("linesView").innerHTML = result;
+
+  //Agrego las funciones que dehe hacerse al dar click en el boton vender
+  let buttons = document.querySelectorAll("#linesView .property_card__btn-sell")
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', _propertyBtnSell);
+  }
 }
 
 function printCustomsPots() {
@@ -288,7 +274,7 @@ function printCustomsPots() {
     let owner = typeof l.owner === "undefined" ? "Banco" : l.owner.name;
     let foreground = "black";
 
-    let division = `<div class="property_card" style="background-color: white; color: ${foreground};">
+    let division = `<div name = "${l.name}" class="property_card" style="background-color: white; color: ${foreground};">
                       <h2 class="property_card__title">${l.name}</h2>
                       <img src="img/titles/${l.image}" alt="${l.name}" class="property_card__img">
                       <div class="property_card__body">
@@ -296,7 +282,7 @@ function printCustomsPots() {
                         <p>Precio: <span>$ ${l.price}</span></p>
                         <p>Peaje: <span>$ ${l.toll}</span></p>
                       </div>
-                      <button type="button" class="btn btn-primary property_card__btn-sell" disabled="true">Vender</button>
+                      <button type="button" class="btn btn-primary property_card__btn-sell" data-toggle="modal" data-target="#bankPropertySale">Vender</button>
                       <button type="button" class="btn btn-success property_card__btn-auction" disabled="true">Subastar</button>
                       <button type="button" class="btn btn-dark property_card__btn-mortgage" disabled="true">Hipotecar</button>
                       <button type="button" class="btn btn-dark property_card__btn-payToll" disabled="true">Cobrar peaje</button>
@@ -305,6 +291,37 @@ function printCustomsPots() {
   }
 
   document.getElementById("customsView").innerHTML = result;
+
+  //Agrego las funciones que dehe hacerse al dar click en el boton vender
+  let buttons = document.querySelectorAll("#customsView .property_card__btn-sell")
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', _propertyBtnSell);
+  }
+}
+
+function _propertyBtnSell(e) {
+  //Se recupera el nombre del titulo que se quiere vender
+  let propertyName = e.target.parentNode.getAttribute('name')
+  let property = myBank.recoveryProperty(propertyName);
+  let actualOwner = typeof property.owner === 'undefined'
+                  ? 'Banco'
+                  : property.owner.name;
+  
+  
+  //Ahora lo escribo en el modal
+  document.getElementById('bankPropertySaleTitle').innerText = propertyName;
+  document.getElementById('bankPropertySaleActualOwner').innerText = actualOwner;
+  document.getElementById('bankPropertySalePrice').innerText = formatCurrencyLite(property.price);
+
+  //Ahora escribo los nombre de los jugadores
+  let players = ``;
+  for (let index3 = 0; index3 < myBank.players.length; index3++) {
+    players += `<option value="${myBank.players[index3].name}">${myBank.players[index3].name}</option>`
+  }
+  document.getElementById('bankPropertySaleBuyer').innerHTML = players;
+
+  //Se borra cualquier tipo de alerta anterior
+  document.querySelector('#bankPropertySale .sellAlert').innerHTML = '';
 }
 
 function updateMainCard() {
