@@ -1809,18 +1809,18 @@ function _loadLines(bank, linesBook) {
 function _loadCustomsPost(bank, book) {
     let customsPosts = bank.customsPosts;
     let players = bank.players;
-
+    
     for (let index = 0; index < book.length; index++) {
         let item = book[index];
         if (!item.bankIsPropietary) {
             let owner;
-            for (let indexPlayer = 0; indexPlayer < players.length; indexPlayer) {
-                if (players[indexPlayer].name === itemBook.owner) {
+            for (let indexPlayer = 0; indexPlayer < players.length; indexPlayer++) {
+                if (players[indexPlayer].name === item.owner) {
                     owner = players[indexPlayer];
                     break;
                 }
             }
-
+            
             customsPosts[index].owner = owner;
             customsPosts[index].toll = item.toll;
             customsPosts[index].mortgage = item.mortgage;

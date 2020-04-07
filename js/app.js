@@ -480,6 +480,7 @@ function updateHomePlayersCard() {
 function loadStatus() {
   //Se recupera el banco desde localstorage
   myBank = LoadBank();
+  console.log(myBank)
   updateMainCard();
   updateHomePlayersCard();
   printTitles();
@@ -536,7 +537,7 @@ window.addEventListener("load", () => {
       document.getElementById("index__button").addEventListener("click", createBanker);
     }
 
-  } else {
+  } else if(ACTUAL_LOCATION.includes("principal.html")){
     /*Si localstorage.books está indefinido se limpia el storage y se lanza al index parasolicitar banquero y crear los objetos */
     if (typeof localStorage.books !== 'undefined') {
 
@@ -551,7 +552,9 @@ window.addEventListener("load", () => {
     } else {
       localStorage.clear();
       location.href = "./index.html";
-    }
+    }    
+  }else{
+    location.href = "./index.html";
   }
 });//Fin de addevenlistener
 
