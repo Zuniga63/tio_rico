@@ -195,12 +195,32 @@ function printTitles() {
   for (let i = 0; i < myBank.titles.length; i++) {
     let t = myBank.titles[i];
     let owner = typeof t.owner === "undefined" ? "Banco" : t.owner.name;
-    let disableSale = owner !== "Banco" ? 'disabled="true"' : "";
+    
     let castle = typeof t.castle === "undefined" ? 0 : 1;
     let foreground = "black";
 
     if (t.color === "#FF0901" || t.color === "#2C8000" || t.color === "#5113AD")
       foreground = "white";
+
+    /*
+    | A continuacion se definen los parametros que habilitan o deshabiltan los botones
+     */
+    let disableSale = owner !== "Banco" ? 'disabled="true"' : "";
+    let disableAuction = owner !== "Banco" ? 'disabled = "true"': "";
+    let disableMortgage = (owner === "Banco" || t.mortgage>0) 
+                        ? 'disabled = "true"' 
+                        : "";
+
+    let disableBuilding = "";
+    if(owner === "Banco" || t.hasACastle){
+      disableBuilding = 'disabled = "true"';
+    }
+    let disableDemolish = "";
+    if(owner === "Banco" || !t.hasACastle || t.houses.length === 0){
+      disableDemolish = 'disabled = "true"';
+    }
+    let disableCollectRent = t.rental === 0 ? 'disabled = "true"' : "";
+
 
     let division = `<div name = "${t.name}" class="property_card" style="background-color: ${t.color}; color: ${foreground};">
                       <h2 class="property_card__title">${t.name}</h2>
@@ -215,11 +235,11 @@ function printTitles() {
                       </div>
 
                       <button type="button" class="btn btn-primary property_card__btn-sell" data-toggle="modal" data-target="#bankPropertySale" ${disableSale}>Vender</button>
-                      <button type="button" class="btn btn-success property_card__btn-auction" disabled="true">Subastar</button>
-                      <button type="button" class="btn btn-dark property_card__btn-mortgage" disabled="true">Hipotecar</button>
-                      <button type="button" class="btn btn-success property_card__btn-build" disabled="true">Edificar</button>
-                      <button type="button" class="btn btn-danger property_card__btn-demolish" disabled="true">Demoler</button>
-                      <button type="button" class="btn btn-dark property_card__btn-rental" disabled="true">Cobrar alquiler</button>
+                      <button type="button" class="btn btn-success property_card__btn-auction" ${disableAuction}>Subastar</button>
+                      <button type="button" class="btn btn-dark property_card__btn-mortgage" ${disableMortgage}>Hipotecar</button>
+                      <button type="button" class="btn btn-success property_card__btn-build" ${disableBuilding}>Edificar</button>
+                      <button type="button" class="btn btn-danger property_card__btn-demolish" ${disableDemolish}>Demoler</button>
+                      <button type="button" class="btn btn-dark property_card__btn-rental" ${disableCollectRent}>Cobrar alquiler</button>
                     </div>`;
     result += division;
   }
@@ -241,6 +261,15 @@ function printLines() {
     let owner = typeof l.owner === "undefined" ? "Banco" : l.owner.name;
     let foreground = "black";
 
+    let disableSale = owner !== "Banco" ? 'disabled="true"' : "";
+    let disableAuction = owner !== "Banco" ? 'disabled = "true"': "";
+    let disableMortgage = (owner === "Banco" || l.mortgage>0) 
+                        ? 'disabled = "true"' 
+                        : "";
+    let disableCollectPassage = owner === 'Banco'
+                              ? 'disabled = "true"' 
+                              : ""; 
+
     let division = `<div name = "${l.name}" class="property_card" style="background-color: white; color: ${foreground};">
                       <h2 class="property_card__title">${l.name}</h2>
                       <img src="img/titles/${l.image}" alt="${l.name}" class="property_card__img">
@@ -249,10 +278,10 @@ function printLines() {
                         <p>Precio: <span>$ ${l.price}</span></p>
                         <p>Pasaje: <span>$ ${l.passage}</span></p>
                       </div>
-                      <button type="button" class="btn btn-primary property_card__btn-sell" data-toggle="modal" data-target="#bankPropertySale">Vender</button>
-                      <button type="button" class="btn btn-success property_card__btn-auction" disabled="true">Subastar</button>
-                      <button type="button" class="btn btn-dark property_card__btn-mortgage" disabled="true">Hipotecar</button>
-                      <button type="button" class="btn btn-dark property_card__btn-payPassage" disabled="true">Cobrar pasaje</button>
+                      <button type="button" class="btn btn-primary property_card__btn-sell" data-toggle="modal" data-target="#bankPropertySale" ${disableSale}>Vender</button>
+                      <button type="button" class="btn btn-success property_card__btn-auction" ${disableAuction}>Subastar</button>
+                      <button type="button" class="btn btn-dark property_card__btn-mortgage" ${disableMortgage}>Hipotecar</button>
+                      <button type="button" class="btn btn-dark property_card__btn-payPassage" ${disableCollectPassage}>Cobrar pasaje</button>
                     </div>`;
     result += division;
   }
@@ -274,6 +303,15 @@ function printCustomsPots() {
     let owner = typeof l.owner === "undefined" ? "Banco" : l.owner.name;
     let foreground = "black";
 
+    let disableSale = owner !== "Banco" ? 'disabled="true"' : "";
+    let disableAuction = owner !== "Banco" ? 'disabled = "true"': "";
+    let disableMortgage = (owner === "Banco" || l.mortgage>0) 
+                        ? 'disabled = "true"' 
+                        : "";
+    let disableChargeToll = owner === 'Banco'
+                              ? 'disabled = "true"' 
+                              : ""; 
+
     let division = `<div name = "${l.name}" class="property_card" style="background-color: white; color: ${foreground};">
                       <h2 class="property_card__title">${l.name}</h2>
                       <img src="img/titles/${l.image}" alt="${l.name}" class="property_card__img">
@@ -282,10 +320,10 @@ function printCustomsPots() {
                         <p>Precio: <span>$ ${l.price}</span></p>
                         <p>Peaje: <span>$ ${l.toll}</span></p>
                       </div>
-                      <button type="button" class="btn btn-primary property_card__btn-sell" data-toggle="modal" data-target="#bankPropertySale">Vender</button>
-                      <button type="button" class="btn btn-success property_card__btn-auction" disabled="true">Subastar</button>
-                      <button type="button" class="btn btn-dark property_card__btn-mortgage" disabled="true">Hipotecar</button>
-                      <button type="button" class="btn btn-dark property_card__btn-payToll" disabled="true">Cobrar peaje</button>
+                      <button type="button" class="btn btn-primary property_card__btn-sell" data-toggle="modal" data-target="#bankPropertySale" ${disableSale}>Vender</button>
+                      <button type="button" class="btn btn-success property_card__btn-auction" ${disableAuction}>Subastar</button>
+                      <button type="button" class="btn btn-dark property_card__btn-mortgage" ${disableMortgage}>Hipotecar</button>
+                      <button type="button" class="btn btn-dark property_card__btn-payToll" ${disableChargeToll}>Cobrar peaje</button>
                     </div>`;
     result += division;
   }
@@ -480,7 +518,6 @@ function updateHomePlayersCard() {
 function loadStatus() {
   //Se recupera el banco desde localstorage
   myBank = LoadBank();
-  console.log(myBank)
   updateMainCard();
   updateHomePlayersCard();
   printTitles();
