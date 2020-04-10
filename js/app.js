@@ -313,7 +313,7 @@ function printLines() {
                         <p>Pasaje: <span>$ ${l.passage}</span></p>
                       </div>
                       <button type="button" class="btn btn-primary property_card__btn-sell" data-toggle="modal" data-target="#bankPropertySale" ${disableSale}>Vender</button>
-                      <button type="button" class="btn btn-success property_card__btn-auction" ${disableAuction}>Subastar</button>
+                      <button type="button" class="btn btn-success property_card__btn-auction" data-toggle="modal" data-target="#bankPropertyAuction" ${disableAuction}>Subastar</button>
                       <button type="button" class="btn btn-dark property_card__btn-mortgage" ${disableMortgage}>Hipotecar</button>
                       <button type="button" class="btn btn-dark property_card__btn-payPassage" ${disableCollectPassage}>Cobrar pasaje</button>
                     </div>`;
@@ -326,6 +326,11 @@ function printLines() {
   let buttons = document.querySelectorAll("#linesView .property_card__btn-sell")
   for (let i = 0; i < buttons.length; i++) {
     buttons[i].addEventListener('click', _propertyBtnSell);
+  }
+
+  buttons = document.querySelectorAll("#linesView .property_card__btn-auction");
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', _propertyBtnAuction);
   }
 }
 
@@ -355,7 +360,7 @@ function printCustomsPots() {
                         <p>Peaje: <span>$ ${l.toll}</span></p>
                       </div>
                       <button type="button" class="btn btn-primary property_card__btn-sell" data-toggle="modal" data-target="#bankPropertySale" ${disableSale}>Vender</button>
-                      <button type="button" class="btn btn-success property_card__btn-auction" ${disableAuction}>Subastar</button>
+                      <button type="button" class="btn btn-success property_card__btn-auction" data-toggle="modal" data-target="#bankPropertyAuction" ${disableAuction}>Subastar</button>
                       <button type="button" class="btn btn-dark property_card__btn-mortgage" ${disableMortgage}>Hipotecar</button>
                       <button type="button" class="btn btn-dark property_card__btn-payToll" ${disableChargeToll}>Cobrar peaje</button>
                     </div>`;
@@ -368,6 +373,11 @@ function printCustomsPots() {
   let buttons = document.querySelectorAll("#customsView .property_card__btn-sell")
   for (let i = 0; i < buttons.length; i++) {
     buttons[i].addEventListener('click', _propertyBtnSell);
+  }
+
+  buttons = document.querySelectorAll("#customsView .property_card__btn-auction");
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', _propertyBtnAuction);
   }
 }
 
