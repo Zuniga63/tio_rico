@@ -156,16 +156,16 @@ function makeCashWithdrawal() {
   document.getElementById('cashWithdrawalModalAmount').value = '';
 }
 
-function sellProperty(){
+function sellProperty() {
   let propertyName = document.getElementById('bankPropertySaleTitle').textContent;
   let buyerName = document.getElementById('bankPropertySaleBuyer').value;
   let result = myBank.sellProperty(propertyName, buyerName);
 
-  if(result.result){
+  if (result.result) {
     SaveBank(myBank);
     updateMainCard();
     updateHomePlayersCard();
-    switch(result.propertyType){
+    switch (result.propertyType) {
       case "Title":
         printTitles();
         break;
@@ -176,13 +176,42 @@ function sellProperty(){
         printCustomsPots();
         break;
     }
-    printTitles();
-    document.querySelector('#bankPropertySale .sellAlert').innerHTML= createAlertMessage(result.message, "alert-success");
-  }else{
-    document.querySelector('#bankPropertySale .sellAlert').innerHTML= createAlertMessage(result.message, "alert-danger");
+    document.querySelector('#bankPropertySale .sellAlert').innerHTML = createAlertMessage(result.message, "alert-success");
+  } else {
+    document.querySelector('#bankPropertySale .sellAlert').innerHTML = createAlertMessage(result.message, "alert-danger");
   }
 
-  
+
+}
+
+function auctionProperty() {
+  let propertyName = document.getElementById('bankPropertyAuctionTitle').textContent;
+  let buyerName = document.getElementById('bankPropertyAuctionBuyer').value;
+  let auctionPrice = document.getElementById('bankPropertyAuctionPrice').value;
+  auctionPrice = parseInt(auctionPrice);
+  auctionPrice = isNaN(auctionPrice) ? 0: auctionPrice;
+  console.log(auctionPrice);
+  let result = myBank.auctionProperty(propertyName, buyerName, auctionPrice);
+
+  if (result.result) {
+    SaveBank(myBank);
+    updateMainCard();
+    updateHomePlayersCard();
+    switch (result.propertyType) {
+      case "Title":
+        printTitles();
+        break;
+      case "Line":
+        printLines();
+        break;
+      case "CustomsPost":
+        printCustomsPots();
+        break;
+    }
+    document.querySelector('#bankPropertyAuction .auctionAlert').innerHTML = createAlertMessage(result.message, "alert-success");
+  } else {
+    document.querySelector('#bankPropertyAuction .auctionAlert').innerHTML = createAlertMessage(result.message, "alert-danger");
+  }
 }
 
 /***********************************************************************/
@@ -195,7 +224,7 @@ function printTitles() {
   for (let i = 0; i < myBank.titles.length; i++) {
     let t = myBank.titles[i];
     let owner = typeof t.owner === "undefined" ? "Banco" : t.owner.name;
-    
+
     let castle = typeof t.castle === "undefined" ? 0 : 1;
     let foreground = "black";
 
@@ -206,17 +235,17 @@ function printTitles() {
     | A continuacion se definen los parametros que habilitan o deshabiltan los botones
      */
     let disableSale = owner !== "Banco" ? 'disabled="true"' : "";
-    let disableAuction = owner !== "Banco" ? 'disabled = "true"': "";
-    let disableMortgage = (owner === "Banco" || t.mortgage>0) 
-                        ? 'disabled = "true"' 
-                        : "";
+    let disableAuction = owner !== "Banco" ? 'disabled = "true"' : "";
+    let disableMortgage = (owner === "Banco" || t.mortgage > 0)
+      ? 'disabled = "true"'
+      : "";
 
     let disableBuilding = "";
-    if(owner === "Banco" || t.hasACastle){
+    if (owner === "Banco" || t.hasACastle) {
       disableBuilding = 'disabled = "true"';
     }
     let disableDemolish = "";
-    if(owner === "Banco" || !t.hasACastle || t.houses.length === 0){
+    if (owner === "Banco" || !t.hasACastle || t.houses.length === 0) {
       disableDemolish = 'disabled = "true"';
     }
     let disableCollectRent = t.rental === 0 ? 'disabled = "true"' : "";
@@ -235,7 +264,7 @@ function printTitles() {
                       </div>
 
                       <button type="button" class="btn btn-primary property_card__btn-sell" data-toggle="modal" data-target="#bankPropertySale" ${disableSale}>Vender</button>
-                      <button type="button" class="btn btn-success property_card__btn-auction" ${disableAuction}>Subastar</button>
+                      <button type="button" class="btn btn-success property_card__btn-auction" data-toggle="modal" data-target="#bankPropertyAuction"  ${disableAuction}>Subastar</button>
                       <button type="button" class="btn btn-dark property_card__btn-mortgage" ${disableMortgage}>Hipotecar</button>
                       <button type="button" class="btn btn-success property_card__btn-build" ${disableBuilding}>Edificar</button>
                       <button type="button" class="btn btn-danger property_card__btn-demolish" ${disableDemolish}>Demoler</button>
@@ -251,6 +280,11 @@ function printTitles() {
   for (let i = 0; i < buttons.length; i++) {
     buttons[i].addEventListener('click', _propertyBtnSell);
   }
+
+  buttons = document.querySelectorAll("#titlesView .property_card__btn-auction");
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', _propertyBtnAuction);
+  }
 }
 
 function printLines() {
@@ -262,13 +296,13 @@ function printLines() {
     let foreground = "black";
 
     let disableSale = owner !== "Banco" ? 'disabled="true"' : "";
-    let disableAuction = owner !== "Banco" ? 'disabled = "true"': "";
-    let disableMortgage = (owner === "Banco" || l.mortgage>0) 
-                        ? 'disabled = "true"' 
-                        : "";
+    let disableAuction = owner !== "Banco" ? 'disabled = "true"' : "";
+    let disableMortgage = (owner === "Banco" || l.mortgage > 0)
+      ? 'disabled = "true"'
+      : "";
     let disableCollectPassage = owner === 'Banco'
-                              ? 'disabled = "true"' 
-                              : ""; 
+      ? 'disabled = "true"'
+      : "";
 
     let division = `<div name = "${l.name}" class="property_card" style="background-color: white; color: ${foreground};">
                       <h2 class="property_card__title">${l.name}</h2>
@@ -304,13 +338,13 @@ function printCustomsPots() {
     let foreground = "black";
 
     let disableSale = owner !== "Banco" ? 'disabled="true"' : "";
-    let disableAuction = owner !== "Banco" ? 'disabled = "true"': "";
-    let disableMortgage = (owner === "Banco" || l.mortgage>0) 
-                        ? 'disabled = "true"' 
-                        : "";
+    let disableAuction = owner !== "Banco" ? 'disabled = "true"' : "";
+    let disableMortgage = (owner === "Banco" || l.mortgage > 0)
+      ? 'disabled = "true"'
+      : "";
     let disableChargeToll = owner === 'Banco'
-                              ? 'disabled = "true"' 
-                              : ""; 
+      ? 'disabled = "true"'
+      : "";
 
     let division = `<div name = "${l.name}" class="property_card" style="background-color: white; color: ${foreground};">
                       <h2 class="property_card__title">${l.name}</h2>
@@ -342,10 +376,10 @@ function _propertyBtnSell(e) {
   let propertyName = e.target.parentNode.getAttribute('name')
   let property = myBank.recoveryProperty(propertyName);
   let actualOwner = typeof property.owner === 'undefined'
-                  ? 'Banco'
-                  : property.owner.name;
-  
-  
+    ? 'Banco'
+    : property.owner.name;
+
+
   //Ahora lo escribo en el modal
   document.getElementById('bankPropertySaleTitle').innerText = propertyName;
   document.getElementById('bankPropertySaleActualOwner').innerText = actualOwner;
@@ -360,6 +394,29 @@ function _propertyBtnSell(e) {
 
   //Se borra cualquier tipo de alerta anterior
   document.querySelector('#bankPropertySale .sellAlert').innerHTML = '';
+}
+
+function _propertyBtnAuction(e) {
+  //Se recupera el nombre del titulo que se quiere vender
+  let propertyName = e.target.parentNode.getAttribute('name')
+  let property = myBank.recoveryProperty(propertyName);
+  let actualOwner = typeof property.owner === 'undefined'
+    ? 'Banco'
+    : property.owner.name;
+  let basePrice = property.price - 200;
+
+  //Ahora escribo los nombre de los jugadores
+  let players = ``;
+  for (let index3 = 0; index3 < myBank.players.length; index3++) {
+    players += `<option value="${myBank.players[index3].name}">${myBank.players[index3].name}</option>`
+  }
+
+  document.getElementById('bankPropertyAuctionTitle').innerText = property.name;
+  document.getElementById('bankPropertyAuctionActualOwner').innerText = actualOwner;
+  document.getElementById('bankPropertyAuctionPrice').value = basePrice;
+  document.getElementById('bankPropertyAuctionBuyer').innerHTML = players;
+
+  document.querySelector('#bankPropertyAuction .auctionAlert').innerHTML = '';
 }
 
 function updateMainCard() {
@@ -539,6 +596,7 @@ function loadStatus() {
   document.getElementById('makeCashDeposit').addEventListener('click', makeCashDeposit);
   document.getElementById('makeCashWithdrawal').addEventListener('click', makeCashWithdrawal);
   document.getElementById('bankPropertySaleBtn').addEventListener('click', sellProperty);
+  document.getElementById('bankPropertyAuctionBtn').addEventListener('click', auctionProperty);
 }
 
 function buildNavigation() {
@@ -574,7 +632,7 @@ window.addEventListener("load", () => {
       document.getElementById("index__button").addEventListener("click", createBanker);
     }
 
-  } else if(ACTUAL_LOCATION.includes("principal.html")){
+  } else if (ACTUAL_LOCATION.includes("principal.html")) {
     /*Si localstorage.books está indefinido se limpia el storage y se lanza al index parasolicitar banquero y crear los objetos */
     if (typeof localStorage.books !== 'undefined') {
 
@@ -589,8 +647,8 @@ window.addEventListener("load", () => {
     } else {
       localStorage.clear();
       location.href = "./index.html";
-    }    
-  }else{
+    }
+  } else {
     location.href = "./index.html";
   }
 });//Fin de addevenlistener

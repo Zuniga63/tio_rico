@@ -294,8 +294,35 @@
       </div>
     </div>
 
-    
-
+    <!-- El siguientes es el modal para poder subastar propiedades -->
+    <div class="modal fade" id="bankPropertyAuction" tabindex="-1" role="dialog" aria-labelledby="bankPropertySaleTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">SUBASTA DE PROPIEDADES</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <h5 id="bankPropertyAuctionTitle">Cielos de dumbo</h5>
+            <p>Propietario actual: <span id="bankPropertyAuctionActualOwner">Banco</span></p>
+            <p>Precio de venta:$ <input type="number" id="bankPropertyAuctionPrice" value="400"></input></p>
+            <label>Comprador: 
+              <select id="bankPropertyAuctionBuyer">
+                <option value="Andres">Seleccionar jugador</option>
+                <option value="Andres">Seleccionar jugador</option>
+              </select>
+            </label>
+          </div>
+          <div class="auctionAlert"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Salir</button>
+            <button type="button" class="btn btn-primary" id="bankPropertyAuctionBtn">Vender</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- script de bootstrap -->
     <script

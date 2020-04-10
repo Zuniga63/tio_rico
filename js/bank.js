@@ -1248,12 +1248,15 @@ class Bank {
 
                     switch (property.toString()) {
                         case "Title":
+                            e.propertyType = "Title";
                             this.verifyZone(property.color);
                             break;
                         case "Line":
+                            e.propertyType = "Line";
                             this.definePassages();
                             break;
                         case "CustomsPost":
+                            e.propertyType = "CustomsPost";
                             this.defineTolls();
                             break;
                         default:
