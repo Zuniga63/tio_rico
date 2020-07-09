@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tio Rico Mac Pato</title>
+
+    <!-- Familias tipograficas -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@400;500;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Normalize -->
+    <link rel="stylesheet" href="./css/normalize.css" />
+
+    <!-- Cdn de fontawesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css"
+    />
+
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="./css/main.css" />
+  </head>
+  <body>
+    <div class="container" id="app">
+      <!-- LOBY -->
+      <div class="loby" id="loby">
+        <div class="loby__card">
+          <!-- El header de la tarjeta -->
+          <header class="loby__header">
+            <h1 class="loby__title">Banco</h1>
+            <p class="loby__subtitle">
+              <span class="txt-bold txt-small">Mac</span> Pato
+            </p>
+          </header>
+
+          <!-- El cuerpo de la tarjeta -->
+          <div class="loby__body">
+            <figure class="loby__fig">
+              <img
+                src="./img/TioMacPato.png"
+                alt="Imagen del pato mas rico de todos"
+                class="loby__img"
+              />
+            </figure>
+            <div class="loby__form">
+              <label for="lobyBanker" class="loby__label form__label"
+                >Para iniciar escribe el nombre del banquero</label
+              >
+              <input type="text" class="loby__input form__input" id="lobyBanker" placeholder="Escribelo aquí"/>
+              <button class="loby__btn btn btn--success">Iniciar Partida</button>
+            </div>
+          </div>
+          <footer class="loby__footer">
+            <p class="copy ">Creado por: <span class="txt-bold">{{author}}</span></p>
+            <p class="copy">v-{{version}}</p>
+          </footer>
+        </div>
+      </div>
+    </div>
+
+    <!-- Librería de Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <!-- script personalizados -->
+    <script src="./js/app.js"></script>
+  </body>
+</html>

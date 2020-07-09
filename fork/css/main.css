@@ -1,0 +1,166 @@
+:root{
+  --body-font: 'Poppins', sans-serif;
+  --title-font: 'Playfair Display', serif;
+  --currant: #8c0004;
+  --scarlet: #c8000a;
+  --magenta: #ff0038;
+  --cyan: #00cffa;
+  --black: #020509;
+  --yellow: #ffce38;
+  --marigold: #e8a735;
+  --cobblestone: #e2c499;
+  --primary: #007bff;
+  --secondary: #6c757d;
+  --success: #28a745;
+  --success-light: #28a746c4;
+  --info: #17a2b8;
+  --warning: #ffc107;
+  --danger: #dc3545;
+}
+
+*, *::before, *::after{
+  box-sizing: border-box;
+}
+
+body{
+  font-size: 16px;
+  font-family: var(--body-font);
+  min-height: 100vh;
+}
+
+.txt-bold{
+  font-weight: 800;
+}
+
+.txt-small{
+  font-size: 0.8em;
+}
+
+.form__label,
+.form__input {
+  display: block;
+  width: 100%;
+  margin-bottom: 5px;
+  padding: 0 5px;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  font-weight: 900;
+  letter-spacing: 3px;
+  font-size: 1.2em;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-color: transparent;
+  border: 1px solid #7f8c8d;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  text-decoration: none;
+  outline: none;
+}
+
+.btn:hover {
+  background-color: #e2e6ea;
+  color: #000;
+}
+
+.btn--success {
+  background-color: var(--success);
+  border-color: green;
+}
+
+.btn--success:hover {
+  background-color: limegreen;
+}
+
+/* --------------------------------------------------------------------------------- */
+/*                        ESTILOS DEL LOBY                                           */
+/* --------------------------------------------------------------------------------- */
+.loby{
+  background-image: url(../img/loby_bg.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+}
+
+.loby__card{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95%;
+  max-width: 380px;
+  padding: 1rem;
+  border: 2px solid var(--black);
+  border-radius: 10px;
+  background-color: #ffcd38de;
+}
+
+.loby__header{
+  margin-bottom: 1rem;
+  border-bottom: 10px double var(--black);
+  text-align: center;
+  font-family: var(--title-font);
+  color: var(--black);
+}
+
+.loby__title{
+  font-size: 2em;
+  margin-top: 0;
+  margin-bottom: 0.1em;
+}
+
+.loby__subtitle{
+  font-size: 1.5em;
+  margin: 0;
+}
+
+.loby__body{
+  display: flex;
+  /* background-color: var(--cyan); */
+}
+
+.loby__fig{
+  margin: 0;
+  margin-left: -10px;
+}
+
+.loby__img{
+  display: block;
+  max-width: 100px;
+}
+
+.loby__label{
+  margin-left: -10px;
+  font-size: 0.9em;
+}
+
+.loby__btn{
+  font-size: 0.9em;
+}
+
+.loby__footer{
+  display: flex;
+  justify-content: space-between;
+}
+
+.copy{
+  font-size: 0.7em;
+}
+
+@media (min-width:768px) {
+  body{
+    font-size: 20px;
+  }
+}
