@@ -25,8 +25,34 @@
   </head>
   <body>
     <div class="container" id="app">
+      <!-- BARRA DE NAVEGACION -->
+      <header class="header" v-if="!loby.visible">
+        <nav class="main-nav">
+          <div class="main-nav__brand">Banco Tio Rico</div>
+          <div class="main-nav__collapsed" id="mainNavMenuCollapsed">
+            <ul class="main-nav__list">
+              <li class="main-nav__item" v-for="item in navItems">
+                <a href="#" class="main-nav__link">
+                  <i :class="['main-nav__link__prepend', item.icon]"></i>
+                  <span class="main-nav__link__body">{{item.name}}</span>
+                </a>
+              </li>
+            </ul>
+
+            <button class="btn btn--danger">Reiniciar</button>
+          </div>
+
+          <button class="main-nav__toggler" @click="showMenuCollpased">
+            <i class="fas fa-bars"></i>
+          </button>
+        </nav>
+      </header>
       <!-- LOBY -->
-      <div class="loby" id="loby">
+      <div
+        v-if="loby.visible"
+        :class="['loby' , {'show' : loby.visible}]"
+        id="loby"
+      >
         <div class="loby__card">
           <!-- El header de la tarjeta -->
           <header class="loby__header">
@@ -38,25 +64,166 @@
 
           <!-- El cuerpo de la tarjeta -->
           <div class="loby__body">
-            <figure class="loby__fig">
-              <img
-                src="./img/TioMacPato.png"
-                alt="Imagen del pato mas rico de todos"
-                class="loby__img"
-              />
-            </figure>
+            <p class="loby__info form__label">
+              Para iniciar escribe el nombre del banquero y una contraseña
+            </p>
+
             <div class="loby__form">
-              <label for="lobyBanker" class="loby__label form__label"
-                >Para iniciar escribe el nombre del banquero</label
-              >
-              <input type="text" class="loby__input form__input" id="lobyBanker" placeholder="Escribelo aquí"/>
-              <button class="loby__btn btn btn--success">Iniciar Partida</button>
+              <figure class="loby__fig">
+                <img
+                  src="./img/TioMacPato.png"
+                  alt="Imagen del pato mas rico de todos"
+                  class="loby__img"
+                />
+              </figure>
+              <div>
+                <input
+                  type="text"
+                  class="loby__input form__input"
+                  id="lobyBanker"
+                  placeholder="Escribelo aquí"
+                  v-model="loby.bankerName"
+                  name="bankerName"
+                />
+
+                <input
+                  type="password"
+                  class="loby__input form__input"
+                  placeholder="Contraseña"
+                  v-model="loby.bankerPassword"
+                  name="bankerPassword"
+                />
+
+                <button
+                  class="loby__btn btn"
+                  :class="{'btn--success' : bankerIsDefined, 'btn--disabled' : !bankerIsDefined}"
+                  @click="createTheBanker"
+                  :disabled="!bankerIsDefined"
+                >
+                  Iniciar Partida
+                </button>
+              </div>
             </div>
           </div>
           <footer class="loby__footer">
-            <p class="copy ">Creado por: <span class="txt-bold">{{author}}</span></p>
+            <p class="copy">
+              Creado por: <span class="txt-bold">{{author}}</span>
+            </p>
             <p class="copy">v-{{version}}</p>
           </footer>
+        </div>
+      </div>
+
+      <main class="main">
+        <div id="dashboard" v-if="views.dashboard">
+          <!-- Panel de control basico -->
+          <div class="panel">
+            <!-- Header -->
+            <div class="panel__header">
+              <h1 class="panel__title">Panel de control</h1>
+              <p class="panel__subtitle">
+                Banquero:
+                <span class="txt-bold">{{banker ? banker.name : ''}}</span>
+              </p>
+            </div>
+
+            <!-- Informacion relevante -->
+            <div class="panel__info">
+              <!-- box 1 -->
+              <div class="panel__box-money">
+                <p class="panel__label">Dinero</p>
+                <p class="panel__money txt-bold">
+                  {{formatCurrency(myBank.money)}}
+                </p>
+              </div>
+
+              <!-- box 2 -->
+              <div class="panel__box-money">
+                <p class="panel__label">Estadisticas</p>
+                <p class="panel__label panel__label--left">
+                  Jugadores: <span class="txt-bold">{{myBank.players.length}}</span>
+                </p>
+                <p class="panel__label panel__label--left">
+                  Dinero: <span class="txt-bold">{{playersMoney}}</span>
+                </p>
+              </div>
+
+              <!-- Final de info -->
+            </div>
+            <!-- Botones -->
+            <div class="panel__action">
+              <button
+                class="btn btn--success"
+                @click="modals.newPlayer.visible = true"
+              >
+                Nuevo jugador
+              </button>
+            </div>
+            <!-- Fin del panel -->
+          </div>
+
+          <!-- Fin de dashboard -->
+          <div class="players">
+            <header class="players__header">
+              <h2 class="players__title">Listado de Jugadores</h2>
+            </header>
+            <div class="players__body">
+              <div class="player-card" v-for="player in myBank.players">
+                <div class="player-card__info">
+                  <p class="player-card__name">{{player.name}}</p>
+                  <p class="player-card__money">
+                    {{formatCurrency(player.money)}}
+                  </p>
+                </div>
+                <div class="player-card__action">
+                  <button class="btn btn--success" @click="paySalary(player)">
+                    Pagar Sueldo
+                  </button>
+                </div>
+              </div>
+            </div>
+            <footer class="players__footer">
+              <p class="players__footer__item">
+                Total: {{myBank.players.length}}
+              </p>
+            </footer>
+          </div>
+        </div>
+      </main>
+
+      <div
+        :class="['modal', {'show' : modals.newPlayer.visible}]"
+        id="newPlayerModal"
+      >
+        <div class="modal__content">
+          <span class="modal__close" @click="closeNewPlayerModal"
+            >×</span
+          >
+          <h2>Nuevo Jugador</h2>
+          <input
+            type="text"
+            name="newPlayer"
+            id="newPlayer"
+            class="form__input"
+            v-model="modals.newPlayer.playerName"
+            placeholder="Escribe el nombre"
+          />
+          <input
+            type="password"
+            name="newPlayerPassword"
+            id="newPlayerPassword"
+            class="form__input"
+            v-model="modals.newPlayer.password"
+            placeholder="Contraseña"
+          />
+          <button
+            class="btn"
+            :class="{'btn--success' : validateNewPlayer, 'btn--disabled' : !validateNewPlayer}"
+            @click="createNewPlayer"
+            :disabled="!validateNewPlayer"
+          >
+            Registrar jugador
+          </button>
         </div>
       </div>
     </div>
@@ -65,6 +232,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
     <!-- script personalizados -->
+    <script src="./js/bank.js"></script>
     <script src="./js/app.js"></script>
   </body>
 </html>

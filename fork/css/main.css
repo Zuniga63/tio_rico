@@ -1,6 +1,6 @@
-:root{
-  --body-font: 'Poppins', sans-serif;
-  --title-font: 'Playfair Display', serif;
+:root {
+  --body-font: "Poppins", sans-serif;
+  --title-font: "Playfair Display", serif;
   --currant: #8c0004;
   --scarlet: #c8000a;
   --magenta: #ff0038;
@@ -9,6 +9,16 @@
   --yellow: #ffce38;
   --marigold: #e8a735;
   --cobblestone: #e2c499;
+
+  --ceramic: #cdcdc0;
+  --ceramic-two: #cdcdc0b2;
+  --slate: #626d71;
+  --slate-two: #5a6062;
+  --latte: #ddbc95;
+  --coffe: #b38867;
+
+  --light: #f8f9fa;
+  --dark: #323436;
   --primary: #007bff;
   --secondary: #6c757d;
   --success: #28a745;
@@ -16,34 +26,61 @@
   --info: #17a2b8;
   --warning: #ffc107;
   --danger: #dc3545;
+
+  --headerHeight: 3.125em;
+  --z-back: -10;
+  --z-normal: 1;
+  --z-tooltip: 10;
+  --z-fixed: 100;
+  --z-modal: 1000;
 }
 
-*, *::before, *::after{
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-body{
+body {
   font-size: 16px;
   font-family: var(--body-font);
   min-height: 100vh;
+  background-image: url(../img/loby_bg_min.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
-.txt-bold{
+.main {
+  margin-top: var(--headerHeight);
+  padding-top: 0.1px;
+  padding-bottom: 0.1px;
+}
+
+.txt-bold {
   font-weight: 800;
 }
 
-.txt-small{
+.txt-small {
   font-size: 0.8em;
 }
 
-.form__label,
-.form__input {
-  display: block;
-  width: 100%;
-  margin-bottom: 5px;
-  padding: 0 5px;
+.txt--meddium {
+  font-size: 1.5em;
 }
 
+.txt-big {
+  font-size: 2em;
+}
+
+.txt-center {
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------------- */
+/*        ESTILOS GENRALES PARA LOS BOTONES                                          */
+/* --------------------------------------------------------------------------------- */
 .btn {
   display: block;
   width: 100%;
@@ -74,6 +111,17 @@ body{
   color: #000;
 }
 
+.btn--disabled {
+  background-color: inherit;
+  color: inherit;
+  opacity: 0.5;
+}
+
+.btn--disabled:hover {
+  background-color: inherit;
+  color: inherit;
+}
+
 .btn--success {
   background-color: var(--success);
   border-color: green;
@@ -83,18 +131,127 @@ body{
   background-color: limegreen;
 }
 
+.btn--danger {
+  background-color: var(--danger);
+  border-color: red;
+}
+
+.btn--danger:hover {
+  background-color: lightcoral;
+}
+/* --------------------------------------------------------------------------------- */
+/*        ESTILOS DE LA BARRA DE NAVEGACION                                          */
+/* --------------------------------------------------------------------------------- */
+.header {
+  background-color: var(--light);
+  height: var(--headerHeight);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.main-nav {
+  background-color: inherit;
+  position: relative;
+  width: 95%;
+  height: var(--headerHeight);
+  padding-top: 5px;
+  padding-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.main-nav__brand {
+  align-self: center;
+  margin-left: 1rem;
+  font-family: var(--title-font);
+  font-size: 1.5em;
+  color: var(--dark);
+  font-weight: bold;
+}
+
+.main-nav__collapsed {
+  background-color: inherit;
+  position: absolute;
+  width: 95%;
+  top: var(--headerHeight);
+  left: 0;
+  transform: translateX(-100%);
+  transition: 0.3s linear;
+}
+
+.main-nav__collapsed.show {
+  transform: translateX(0%);
+}
+
+.main-nav__toggler {
+  font-size: 30px;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 5px;
+  outline: none;
+  color: var(--dark);
+}
+
+.main-nav__list {
+  margin: 0;
+  padding: 1em 0 0;
+  list-style: none;
+  color: var(--dark);
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.main-nav__item {
+  font-size: 1.5em;
+  margin-bottom: 1rem;
+  padding-left: 0.4rem;
+  border-bottom: 1px solid;
+  padding-bottom: 0.5rem;
+}
+
+.main-nav__link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.main-nav__link__prepend {
+  margin-right: 0.5rem;
+}
+
+.main-nav__link__body {
+}
+
+.main-nav .btn {
+  width: 90%;
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: 1rem;
+}
+/* --------------------------------------------------------------------------------- */
+/*        ESTILOS GENRALES PARA FORMULARIOS                                          */
+/* --------------------------------------------------------------------------------- */
+.form__label,
+.form__input {
+  display: block;
+  width: 100%;
+  margin-bottom: 5px;
+  padding: 3px 5px;
+}
+
+.form__input:focus {
+  outline-color: var(--primary);
+}
+
 /* --------------------------------------------------------------------------------- */
 /*                        ESTILOS DEL LOBY                                           */
 /* --------------------------------------------------------------------------------- */
-.loby{
-  background-image: url(../img/loby_bg.jpg);
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+.loby {
   min-height: 100vh;
 }
 
-.loby__card{
+.loby__card {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -107,7 +264,7 @@ body{
   background-color: #ffcd38de;
 }
 
-.loby__header{
+.loby__header {
   margin-bottom: 1rem;
   border-bottom: 10px double var(--black);
   text-align: center;
@@ -115,52 +272,256 @@ body{
   color: var(--black);
 }
 
-.loby__title{
+.loby__title {
   font-size: 2em;
   margin-top: 0;
   margin-bottom: 0.1em;
 }
 
-.loby__subtitle{
+.loby__subtitle {
   font-size: 1.5em;
   margin: 0;
 }
 
-.loby__body{
-  display: flex;
+.loby__body {
+  display: grid;
   /* background-color: var(--cyan); */
 }
 
-.loby__fig{
+.loby__fig {
   margin: 0;
   margin-left: -10px;
 }
 
-.loby__img{
+.loby__img {
   display: block;
   max-width: 100px;
 }
 
-.loby__label{
-  margin-left: -10px;
+.loby__info {
+  width: 100%;
+  margin-top: 0;
   font-size: 0.9em;
 }
 
-.loby__btn{
+.loby__form {
+  display: flex;
+}
+
+.loby__btn {
   font-size: 0.9em;
 }
 
-.loby__footer{
+.loby__footer {
   display: flex;
   justify-content: space-between;
 }
 
-.copy{
+.copy {
   font-size: 0.7em;
 }
 
-@media (min-width:768px) {
-  body{
+/* --------------------------------------------------------------------------------- */
+/*                        ESTILOS DEL DASHBOARD                                      */
+/* --------------------------------------------------------------------------------- */
+.panel {
+  background-color: var(--ceramic-two);
+  padding: 0.6em;
+  width: 95%;
+  color: var(--dark);
+  margin: 1em auto;
+  border-radius: 10px;
+  border: 2px solid var(--coffe);
+}
+
+.panel__header {
+  font-family: var(--title-font);
+  text-align: center;
+  padding-bottom: 0.8em;
+  border-bottom: 5px double var(--coffe);
+  margin-bottom: 1em;
+}
+
+.panel__title,
+.panel__subtitle {
+  margin: 0;
+}
+
+.panel__title {
+  font-size: 1.8em;
+  letter-spacing: 2px;
+}
+
+.panel__info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5em;
+  align-items: center;
+  margin-bottom: 1em;
+}
+
+.panel__box-money {
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  padding-left: 0.2em;
+  background-color: var(--latte);
+  border: 2px solid var(--coffe);
+  border-radius: 5px;
+}
+
+.panel__label,
+.panel__money {
+  margin: 0;
+  margin-bottom: 0.3em;
+  text-align: center;
+  font-size: 0.8em;
+}
+
+.panel__money {
+  font-size: 1.2em;
+  letter-spacing: 2px;
+}
+
+.panel__label--left {
+  text-align: left;
+}
+
+/* SE EL DA ESTILO AL CONTENEDOR DE JUGADORES */
+.players {
+  --b-radius: 8px;
+  --margin-w: 3px;
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2em;
+  color: var(--dark);
+}
+
+.players__header {
+  background-color: var(--latte);
+  border-top: 3px solid;
+  border-bottom: 5px double;
+  border-top-right-radius: var(--b-radius);
+  border-top-left-radius: var(--b-radius);
+}
+
+.players__body {
+  background-color: var(--ceramic-two);
+  padding: 0.5em 0 0.1px;
+  max-height: 60vh;
+  overflow: scroll;
+}
+
+.players__footer {
+  background-color: var(--slate);
+  color: var(--ceramic);
+  padding: 0.5em;
+  border-top: 5px double;
+  border-bottom: 3px double;
+  border-bottom-left-radius: var(--b-radius);
+  border-bottom-right-radius: var(--b-radius);
+}
+
+.players__header,
+.players__body,
+.players__footer {
+  border-left: var(--margin-w) solid;
+  border-right: var(--margin-w) solid;
+  border-color: var(--coffe);
+}
+
+.players__title {
+  text-align: center;
+  font-size: 1.2em;
+}
+
+.players__footer__item {
+  margin: 0;
+  text-align: right;
+  font-size: 1em;
+  font-weight: bold;
+  letter-spacing: 3px;
+}
+
+.player-card {
+  display: grid;
+  grid-template-columns: 5fr 1fr;
+  align-items: center;
+  background-color: var(--ceramic);
+  padding: 0.5em;
+  border: 2px solid var(--slate);
+  border-radius: 8px;
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1em;
+}
+
+.player-card__info {
+}
+
+.player-card__name {
+  font-family: var(--title-font);
+  font-weight: bold;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 0.2em;
+}
+
+.player-card__money {
+  font-weight: bold;
+  margin: 0;
+  font-size: 1.5em;
+  text-align: center;
+}
+
+.player-card .btn {
+  font-size: 0.8em;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: var(--z-modal);
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal.show{
+  display: block;
+}
+
+.modal__content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid lightgray;
+  border-top: 10px solid #58abb7;
+  width: 90%;
+}
+
+.modal__close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.modal__close:hover,
+.modal__close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  body {
     font-size: 20px;
   }
 }
