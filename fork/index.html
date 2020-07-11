@@ -24,15 +24,18 @@
     <link rel="stylesheet" href="./css/main.css" />
   </head>
   <body>
-    <div class="container" id="app">
+    <div class="content" id="app">
       <!-- BARRA DE NAVEGACION -->
       <header class="header" v-if="!loby.visible">
         <nav class="main-nav">
           <div class="main-nav__brand">Banco Tio Rico</div>
           <div class="main-nav__collapsed" id="mainNavMenuCollapsed">
             <ul class="main-nav__list">
-              <li class="main-nav__item" v-for="item in navItems">
-                <a href="#" class="main-nav__link">
+              <li
+                :class="['main-nav__item', {'main-nav__item--active' : item.visible}]"
+                v-for="item in views"
+              >
+                <a href="#" class="main-nav__link" @click="item.visible = true">
                   <i :class="['main-nav__link__prepend', item.icon]"></i>
                   <span class="main-nav__link__body">{{item.name}}</span>
                 </a>
@@ -47,6 +50,7 @@
           </button>
         </nav>
       </header>
+
       <!-- LOBY -->
       <div
         v-if="loby.visible"
@@ -115,7 +119,8 @@
       </div>
 
       <main class="main">
-        <div id="dashboard" v-if="views.dashboard">
+        <!-- Dashboard -->
+        <div id="dashboard" v-if="views.dashboard.visible">
           <!-- Panel de control basico -->
           <div class="panel">
             <!-- Header -->
@@ -141,7 +146,8 @@
               <div class="panel__box-money">
                 <p class="panel__label">Estadisticas</p>
                 <p class="panel__label panel__label--left">
-                  Jugadores: <span class="txt-bold">{{myBank.players.length}}</span>
+                  Jugadores:
+                  <span class="txt-bold">{{myBank.players.length}}</span>
                 </p>
                 <p class="panel__label panel__label--left">
                   Dinero: <span class="txt-bold">{{playersMoney}}</span>
@@ -189,16 +195,317 @@
             </footer>
           </div>
         </div>
+
+        <div id="transfer">
+          <div class="container">
+            <div class="container__header">
+              <h1 class="container__title">Transferencia de efectivo</h1>
+            </div>
+            <div class="container__content">
+              <!-- TODO -->
+              <div class="form__group">
+                <label for="transferSender" class="form__label"
+                  >Remitente</label
+                >
+                <select
+                  name="transferSender"
+                  id="transferSender"
+                  class="form__input"
+                >
+                  <option value="-1">Selecciona al remitente</option>
+                </select>
+                <div class="alert alert--danger show">
+                  Se debe elegir al remitente
+                </div>
+              </div>
+
+              <div class="form__group">
+                <label for="transferAddressee" class="form__label"
+                  >Destinatario</label
+                >
+                <select
+                  name="transferAddressee"
+                  id="transferAddressee"
+                  class="form__input"
+                >
+                  <option class="form__option" value="-1"
+                    >Selecciona al Destinatario</option
+                  >
+                </select>
+                <div class="alert alert--danger show">
+                  Se debe elegir un destinatario
+                </div>
+              </div>
+
+              <div class="form__group">
+                <label for="transferAmount" class="form__label txt-center"
+                  >Monto a transferir</label
+                >
+                <input
+                  type="text"
+                  name="transferAmount"
+                  id="transferAmount"
+                  class="form__input"
+                  placeholder="Ingresa la cantidad"
+                />
+                <div class="alert alert--danger show">
+                  Debe ser mayor que cero
+                </div>
+              </div>
+            </div>
+            <div class="container__footer">
+              <div class="alert alert--big alert--success show">
+                Transferencia exitosa
+              </div>
+              <button class="btn btn--success">Hacer Transferencia</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="transactions">
+          <div class="container">
+            <div class="container__header">
+              <h1 class="container__title">Transacciones</h1>
+              <p class="container__subtitle">Deposito</p>
+            </div>
+
+            <div class="container__content">
+              <div class="form__group-flex">
+                <div class="form__group">
+                  <input
+                    type="radio"
+                    name="transactionType"
+                    id="transactionDeposit"
+                    checked
+                  />
+                  <label for="transactionDeposit" class="form__label"
+                    >Deposito</label
+                  >
+                </div>
+
+                <div class="form__group">
+                  <input
+                    type="radio"
+                    name="transactionType"
+                    id="transactionWhitdrawal"
+                  />
+                  <label for="transactionWhitdrawal" class="form__label"
+                    >Retiro</label
+                  >
+                </div>
+              </div>
+
+              <div class="form__group">
+                <label for="transaccionAcount" class="form__labe"
+                  >Titular de la cuenta</label
+                >
+                <select
+                  name="transaccionAcount"
+                  id="transferSender"
+                  class="form__input"
+                >
+                  <option value="-1">Selecciona al jugador</option>
+                </select>
+                <div class="alert alert--danger show">
+                  Se debe elegir una persona
+                </div>
+              </div>
+
+              <div class="form__group">
+                <label
+                  for="transactionAmount"
+                  class="form__label form__label--center"
+                  >Importe</label
+                >
+                <input
+                  type="text"
+                  name="transactionAmount"
+                  id="transactionAmount"
+                  class="form__input"
+                  placeholder="Ingresa la cantidad"
+                />
+                <div class="alert alert--danger show">
+                  Debe ser mayor que cero
+                </div>
+              </div>
+            </div>
+
+            <div class="container__footer">
+              <div class="alert alert--big alert--success show">
+                Transaccion exitosa
+              </div>
+              <button class="btn btn--success">Realizar Transaccion</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="salesAndPurchase">
+          <div class="container">
+            <div class="container__header">
+              <h1 class="container__title">Ventas y compras</h1>
+              <p class="container__subtitle">Se va a realizar una venta</p>
+            </div>
+
+            <div class="container__content">
+              <!-- Los botones para definir la operacion -->
+              <div class="form__group-flex form__group-flex--bg">
+                <div class="form__group">
+                  <input type="radio" name="operationType" id="sale" checked />
+                  <label for="sale" class="form__label">Venta</label>
+                </div>
+
+                <div class="form__group">
+                  <input type="radio" name="operationType" id="purchase" />
+                  <label for="purchase" class="form__label">Compra</label>
+                </div>
+              </div>
+
+              <div class="form__group">
+                <label for="operationAcount" class="form__label"
+                  >Comprador / Vendedor</label
+                >
+                <select
+                  name="operationAcount"
+                  id="operationAcount"
+                  class="form__input"
+                >
+                  <option value="-1">Selecciona al jugador</option>
+                </select>
+                <div class="alert alert--danger show">
+                  Se debe elegir a un jugador
+                </div>
+
+                <!-- Seleccion de activo -->
+                <label class="form__group"> Selecciona el tipo de activo</label>
+                <div class="form__group-flex form__group-flex--bg">
+                  <div class="form__group">
+                    <input type="radio" name="asset" id="titleAsset" checked />
+                    <label for="titleAsset" class="form__label">Titulo</label>
+                  </div>
+
+                  <div class="form__group">
+                    <input type="radio" name="asset" id="lineAsset" />
+                    <label for="lineAsset" class="form__label">Linea</label>
+                  </div>
+
+                  <div class="form__group">
+                    <input type="radio" name="asset" id="customsAsset" />
+                    <label for="customsAsset" class="form__label">Paso</label>
+                  </div>
+
+                  <div class="form__group">
+                    <input type="radio" name="asset" id="houseAsset" />
+                    <label for="houseAsset" class="form__label">Casa</label>
+                  </div>
+
+                  <div class="form__group">
+                    <input type="radio" name="asset" id="castleAsset" />
+                    <label for="castleAsset" class="form__label"
+                      >Castillo</label
+                    >
+                  </div>
+                </div>
+
+                <div class="form__group">
+                  <label
+                    for="operationAmount"
+                    class="form__label form__label--center"
+                    >Valor del producto</label
+                  >
+                  <input
+                    type="text"
+                    name="operationAmount"
+                    id="operationAmount"
+                    class="form__input"
+                    placeholder="Ingresa la cantidad"
+                  />
+                  <div class="alert alert--danger show">
+                    Debe ser mayor que cero
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="container__footer">
+              <div class="alert alert--big alert--success show">
+                Operacion exitosa
+              </div>
+              <button class="btn btn--success">Hacer Venta / Compra</button>
+            </div>
+            <!-- Fin de container__footer -->
+          </div>
+        </div>
+
+        <div id="awards">
+          <div class="container">
+            <!-- Header -->
+            <div class="container__header">
+              <h1 class="container__title">Entrega de premios</h1>
+            </div>
+
+            <!-- Container -->
+            <div class="container__content">
+              <!-- Campo para seleccionar un jugador -->
+              <div class="form__group">
+                <label for="awardAcount" class="form__label">Jugador</label>
+                <select name="awardAcount" id="awardAcount" class="form__input">
+                  <option value="" disabled selected hidden>
+                    Selecciona un jugador</option
+                  >
+                </select>
+              </div>
+
+              <!-- Los cuatro premios disponibles -->
+              <label class="form__label">Selecciona el premio</label>
+              <div class="form__group-flex form__group-flex--bg">
+                <div class="form__group">
+                  <input
+                    type="radio"
+                    name="awardType"
+                    id="awardBamby"
+                    checked
+                  />
+                  <label for="awardBamby" class="form__label">Bambi</label>
+                </div>
+
+                <div class="form__group">
+                  <input type="radio" name="awardType" id="awardPinochio" />
+                  <label for="awardPinochio" class="form__label">Pinocho</label>
+                </div>
+
+                <div class="form__group">
+                  <input type="radio" name="awardType" id="awardDaisy" />
+                  <label for="awardDaisy" class="form__label">Daisy</label>
+                </div>
+
+                <div class="form__group">
+                  <input type="radio" name="awardType" id="awardCinderella" />
+                  <label for="awardCinderella" class="form__label"
+                    >Ceninicienta</label
+                  >
+                </div>
+              </div>
+            </div>
+            <!-- Fin de container__content -->
+
+            <div class="container__footer">
+              <div class="alert alert--big alert--success show">
+                Operacion exitosa
+              </div>
+              <button class="btn btn--success">Entregar premio</button>
+            </div>
+          </div>
+        </div>
       </main>
 
+      <!-- MODALES -->
+      <!-- Modal para nuevos usuarios -->
       <div
         :class="['modal', {'show' : modals.newPlayer.visible}]"
         id="newPlayerModal"
       >
         <div class="modal__content">
-          <span class="modal__close" @click="closeNewPlayerModal"
-            >×</span
-          >
+          <span class="modal__close" @click="closeNewPlayerModal">×</span>
           <h2>Nuevo Jugador</h2>
           <input
             type="text"

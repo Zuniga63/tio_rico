@@ -7,11 +7,18 @@ const app = new Vue({
     banker: null,
     loby: {
       visible: true,
-      bankerName: "",
-      bankerPassword: ""
+      bankerName: "Andrés Felipe",
+      bankerPassword: "0000"
     },
     views: {
-      dashboard: false,
+      dashboard: { name: 'Dashboard', icon: 'fas fa-chart-line', visible: false },
+      transfer: { name: 'Transferencia', icon: 'fas fa-random', visible: false },
+      deposit: { name: 'Transaccion', icon: 'fas fa-money-bill-alt', visible: false },
+      sale: { name: 'Ventas y Compras', icon: 'fas fa-cash-register', visible: false },
+      awards: { name: 'Premios', icon: 'fas fa-gift', visible: false },
+      // taxes: { name: 'Impuestos', icon: 'fas fa-gavel', visible: false },
+      // history: { name: 'Historial', icon: 'fas fa-book', visible: false },
+      // config: { name: 'Configuración', icon: 'fas fa-tools', visible: false },
     },
     modals: {
       newPlayer: {
@@ -21,7 +28,7 @@ const app = new Vue({
       },
     },
     navItems: [
-      { name: 'Dashboard', icon: 'fas fa-chart-line' },
+      { name: 'Dashboard', icon: 'fas fa-chart-line', visible: false },
       { name: 'Transferencia', icon: 'fas fa-random' },
       { name: 'Deposito', icon: 'fas fa-money-bill-alt' },
       { name: 'Retiro', icon: 'fas fa-money-bill-alt' },
@@ -35,7 +42,7 @@ const app = new Vue({
       let result = this.myBank.createNewPlayer(this.loby.bankerName, this.loby.bankerPassword);
       this.banker = this.myBank.players[0];
       this.loby.visible = !result;
-      this.views.dashboard = true;
+      this.views.dashboard.visible = true;
     },
     showMenuCollpased() {
       const mainNavMenuCollapsed = document.getElementById('mainNavMenuCollapsed');
@@ -63,7 +70,9 @@ const app = new Vue({
       }//Fin de if
     },
     paySalary(player) {
-      this.myBank.paySalary(player);
+      if(confirm(`Se va a realizar el pago de salario a ${player.name}`)){
+        this.myBank.paySalary(player);
+      }
     },
     closeNewPlayerModal(){
       this.modals.newPlayer.visible = false;
@@ -101,7 +110,7 @@ const app = new Vue({
     }
   },
   created() {
-    // this.myBank = new Bank();
-    // this.createTheBanker();
+    this.myBank = new Bank();
+    this.createTheBanker();
   }
 })

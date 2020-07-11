@@ -11,7 +11,7 @@
   --cobblestone: #e2c499;
 
   --ceramic: #cdcdc0;
-  --ceramic-two: #cdcdc0b2;
+  --ceramic-two: #cdcdc0c9;
   --slate: #626d71;
   --slate-two: #5a6062;
   --latte: #ddbc95;
@@ -139,6 +139,49 @@ body {
 .btn--danger:hover {
   background-color: lightcoral;
 }
+
+/********************************************************************************************/
+/*                            ESTILOS DE LAS ALERTAS                                        */
+/********************************************************************************************/
+
+.alert {
+  display: none;
+  border-radius: 0.25rem;
+  padding: 0.3rem 0.25rem;
+  font-size: 0.8em;
+  margin-bottom: 0.3rem;
+  opacity: 1;
+  border: 1px solid transparent;
+}
+
+.alert.show {
+  display: block;
+}
+
+.alert--big {
+  font-size: 1.2em;
+  padding: 0.6rem 0.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.alert--danger {
+  color: #721c24;
+  background-color: #f8d7d9;
+  border-color: #f5c6cb;
+}
+
+.alert--warning {
+  color: #856404;
+  background-color: #fff3cd;
+  border-color: #ffeeba;
+}
+
+.alert--success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
 /* --------------------------------------------------------------------------------- */
 /*        ESTILOS DE LA BARRA DE NAVEGACION                                          */
 /* --------------------------------------------------------------------------------- */
@@ -186,34 +229,48 @@ body {
 }
 
 .main-nav__toggler {
-  font-size: 30px;
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
-  border-radius: 5px;
-  outline: none;
+  line-height: 1;
+  font-size: 1.25rem;
   color: var(--dark);
+  background-color: transparent;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid transparent;
+  border-color: var(--dark);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.main-nav__toggler:focus{
+  border-color: rgb(77, 144, 254);
 }
 
 .main-nav__list {
-  margin: 0;
-  padding: 1em 0 0;
   list-style: none;
   color: var(--dark);
   background-color: rgba(0, 0, 0, 0.2);
+  padding: 0;
+  margin: 0;
+  margin-bottom: 1em;
 }
 
 .main-nav__item {
   font-size: 1.5em;
-  margin-bottom: 1rem;
-  padding-left: 0.4rem;
+  padding: 0.2em;
+  padding-left: 0.4em;
+  /* margin-bottom: 0.5rem; */
   border-bottom: 1px solid;
-  padding-bottom: 0.5rem;
 }
 
 .main-nav__link {
+  display: block;
   text-decoration: none;
   color: inherit;
+}
+
+.main-nav__item--active {
+  background-color: var(--dark);
+  color: var(--light);
 }
 
 .main-nav__link__prepend {
@@ -232,6 +289,9 @@ body {
 /* --------------------------------------------------------------------------------- */
 /*        ESTILOS GENRALES PARA FORMULARIOS                                          */
 /* --------------------------------------------------------------------------------- */
+.inline{
+  display: inline;
+}
 .form__label,
 .form__input {
   display: block;
@@ -240,7 +300,30 @@ body {
   padding: 3px 5px;
 }
 
-.form__input:focus {
+.form__group{
+  margin-bottom: 0.3em;
+}
+
+.form__group-flex{
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  margin-bottom: 0.5em;
+}
+
+.form__group-flex--bg{
+  background-color: var(--ceramic);
+  padding: 0.5em 0.5em 0.1px;
+  border: 2px solid var(--slate);
+  border-radius: 5px;
+}
+
+.form__group-flex .form__label{
+  display: inline;
+}
+
+.form__input:focus,
+.form__option:focus {
   outline-color: var(--primary);
 }
 
@@ -493,7 +576,7 @@ body {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-.modal.show{
+.modal.show {
   display: block;
 }
 
@@ -518,6 +601,42 @@ body {
   color: #000;
   text-decoration: none;
   cursor: pointer;
+}
+
+.container{
+  background-color: var(--ceramic-two);
+  padding: 0.6em;
+  color: var(--dark);
+  width: 95%;
+  border-radius: 10px;
+  border: 2px solid var(--coffe);
+  margin: 1em auto;
+}
+
+.container__header{
+  font-family: var(--title-font);
+  text-align: center;
+  padding-bottom: 0.8em;
+  border-bottom: 5px double var(--coffe);
+  margin-bottom: 1em;
+}
+
+.container__title,
+.container__subtitle{
+  margin: 0;
+}
+
+.container__title{
+  font-size: 1.8em;
+  letter-spacing: 2px;
+}
+
+.container__content{
+  margin-bottom: 0.5em;
+}
+
+.container__footer{
+
 }
 
 @media (min-width: 768px) {
