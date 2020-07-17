@@ -503,6 +503,7 @@
       <div
         :class="['modal', {'show' : modals.newPlayer.visible}]"
         id="newPlayerModal"
+        @click.self="closeNewPlayerModal"
       >
         <div class="modal__content">
           <span class="modal__close" @click="closeNewPlayerModal">×</span>
